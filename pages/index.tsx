@@ -1,8 +1,18 @@
 import type { NextPage } from 'next';
+import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import Image from 'next/image';
+import Form from '@lib/components/Form';
 
 const Home: NextPage = () => {
+  const { status, data: session } = useSession({
+    required: false,
+  });
+
+  if (status === 'loading') {
+    return <>'Loading or not authenticated...'</>;
+  }
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center py-2">
       <Head>
@@ -17,6 +27,16 @@ const Home: NextPage = () => {
             Next.js!
           </a>
         </h1>
+
+        {!session && <p>not logged in</p>}
+        {session && (
+          <p>
+            Hello, {`${session?.user?.email}`} You can see this because you're
+            logged in.
+          </p>
+        )}
+
+        <Form />
 
         <p className="mt-3 text-2xl">
           Get started by editing{' '}
