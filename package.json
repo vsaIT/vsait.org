@@ -12,7 +12,6 @@
     "db:studio": "prisma studio --schema=./db/schema.prisma"
   },
   "dependencies": {
-    "@prisma/client": "4.4.0",
     "husky": "^8.0.1",
     "next": "latest",
     "prettier": "^2.7.1",
