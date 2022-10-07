@@ -20,6 +20,10 @@ To follow along with this guide, you'll need the following:
 - [Node (LTS)](https://nodejs.org/en/)
 - A [free Netlify account](https://app.netlify.com/signup)
 
+### One-click Deploy with Netlify (recommended)
+
+[![Deploy to Netlify button](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/vsaIT/vsait.org)
+
 ## How to use
 
 TBA
