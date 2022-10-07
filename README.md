@@ -7,7 +7,7 @@
 - Auth - [NextAuth.js](https://next-auth.js.org/)
 - Database - [PlanetScale](https://planetscale.com)
 - ORM - [Prisma](https://prisma.io)
-- Hosting - [Vercel](https://vercel.com)
+- Hosting - [Netlify](https://netlify.com/)
 - Styling - [TailwindCSS](https://tailwindcss.com)
 
 ## Getting Started
@@ -18,13 +18,7 @@ To follow along with this guide, you'll need the following:
 - The [PlanetScale CLI](https://github.com/planetscale/cli#installation)
 - [Yarn](https://yarnpkg.com/getting-started/install)
 - [Node (LTS)](https://nodejs.org/en/)
-- A [free Vercel account](https://vercel.com/signup)
-
-## Deploy your own
-
-Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=next-example) or preview live with [StackBlitz](https://stackblitz.com/github/vercel/next.js/tree/canary/examples/with-tailwindcss)
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/vercel/next.js/tree/canary/examples/with-tailwindcss&project-name=with-tailwindcss&repository-name=with-tailwindcss)
+- A [free Netlify account](https://app.netlify.com/signup)
 
 ## How to use
 
