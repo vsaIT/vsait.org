@@ -1,6 +1,8 @@
-# Next.js + Tailwind CSS Example
+# vsait.org
 
-## 🥞 Stack
+Site: https://jazzy-malasada-b00157.netlify.app
+
+### 🥞 Stack
 
 - Framework - [Next.js v12](https://nextjs.org)
 - Language - [TypeScript](https://www.typescriptlang.org/)
@@ -10,25 +12,19 @@
 - Hosting - [Netlify](https://netlify.com/)
 - Styling - [TailwindCSS](https://tailwindcss.com)
 
-## Getting Started
+### 🎨 Figma design
 
-To follow along with this guide, you'll need the following:
+https://www.figma.com/file/8WEtfHLJZxjADUfiSiEOKS/VsaIT
 
-- A [free PlanetScale account](https://auth.planetscale.com/sign-up)
-- The [PlanetScale CLI](https://github.com/planetscale/cli#installation)
-- [Yarn](https://yarnpkg.com/getting-started/install)
-- [Node (LTS)](https://nodejs.org/en/)
-- A [free Netlify account](https://app.netlify.com/signup)
-
-### One-click Deploy with Netlify (recommended)
+### ☁️ One-click Deploy with Netlify
 
 [![Deploy to Netlify button](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/vsaIT/vsait.org)
 
-## How to use
+### 💻 Development
 
 TBA
 
-## Good to know sites
+### 📖 Readings
 
 - https://planetscale.com/docs/tutorials/nextjs-planetscale-netlify-template
 - https://dev.to/franciscomendes10866/nextjs-authentication-with-next-auth-trpc-and-prisma-kgl
