@@ -16,7 +16,7 @@ type LoginFormValues = {
   password: string;
 };
 
-export default function Form({ csrfToken }: any) {
+const Form = ({ csrfToken }: any) => {
   const [isSubmitting, setSubmitting] = useState(false);
   const { register, handleSubmit } = useForm<LoginFormValues>();
 
@@ -73,7 +73,7 @@ export default function Form({ csrfToken }: any) {
                     autoComplete="email"
                     required
                     {...register('email')}
-                    className="appearance-none w-full font-medium py-3 border-b border-t-0 border-l-0 border-r-0 border-dashed outline-none text-xl text-center leading-6 bg-transparent placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 transition duration-150 ease-in-out"
+                    className="appearance-none w-full font-medium py-3 border border-b border-t-0 border-l-0 border-r-0 border-dashed outline-none text-xl text-center leading-6 bg-transparent placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 transition duration-150 ease-in-out"
                   />
                 </div>
               </div>
@@ -95,7 +95,7 @@ export default function Form({ csrfToken }: any) {
                     minLength={12}
                     required
                     {...register('password')}
-                    className="appearance-none w-full font-medium py-3 border-b border-t-0 border-l-0 border-r-0 border-dashed outline-none text-xl text-center leading-6 bg-transparent placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 transition duration-150 ease-in-out"
+                    className="appearance-none w-full font-medium py-3 border border-b border-t-0 border-l-0 border-r-0 border-dashed outline-none text-xl text-center leading-6 bg-transparent placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 transition duration-150 ease-in-out"
                   />
                 </div>
               </div>
@@ -104,26 +104,18 @@ export default function Form({ csrfToken }: any) {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="button button__md button__primary w-full"
+                  className="border text-blue-600 w-full"
                 >
                   {isSubmitting ? <p>Loading...</p> : <p>Sign in</p>}
                 </button>
               </div>
             </form>
-            <section className="mt-8 text-center">
-              <div className="flex flex-col mb-3">
-                <hr className="h-0 border-t mt-1" />
-                <div className="-mt-3 text-sm text-center">
-                  <span className="px-2 bg-white text-secondary">Or with</span>
-                </div>
-              </div>
-            </section>
           </div>
         </div>
       </div>
     </>
   );
-}
+};
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await getSession(context);
@@ -141,3 +133,4 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     props: { csrfToken, providers },
   };
 }
+export default Form;
