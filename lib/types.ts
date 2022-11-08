@@ -16,3 +16,12 @@ export type ExtendedAppProps = AppProps & {
   Component: ExtendedPageProps;
   pageProps: { auth?: boolean; session?: Session };
 };
+
+export type ChildrenProps = {
+  children: JSX.Element;
+};
+export type ButtonProps = {
+  children?: JSX.Element;
+  onClick?: () => void;
+  text?: string;
+};
