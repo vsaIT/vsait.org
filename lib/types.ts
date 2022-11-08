@@ -24,4 +24,5 @@ export type ButtonProps = {
   children?: JSX.Element;
   onClick?: () => void;
   text?: string;
+  className?: string;
 };
