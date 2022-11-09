@@ -3,7 +3,7 @@ import Head from 'next/head';
 import Footer from '@lib/components/Footer';
 import Navigation from '@lib/components/Navigation';
 import { SmallHeader } from '@lib/components/Header';
-import LoginForm from '@lib/components/LoginForm';
+import { LoginForm } from '@lib/components/Form';
 
 const Login: NextPage = () => {
   return (

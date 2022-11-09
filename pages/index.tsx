@@ -1,7 +1,6 @@
 import type { NextPage } from 'next';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
-import Form from '@lib/components/LoginForm';
 import Footer from '@lib/components/Footer';
 import Navigation from '@lib/components/Navigation';
 import { LargeHeader } from '@lib/components/Header';

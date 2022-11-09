@@ -8,7 +8,7 @@ import {
 } from 'next-auth/react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Button } from './Button';
+import { Button } from '@lib/components/Button';
 
 const MINIMUM_ACTIVITY_TIMEOUT = 850;
 type LoginFormValues = {
