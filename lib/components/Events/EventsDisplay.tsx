@@ -1,11 +1,10 @@
-import { Button } from '@components/Button';
+import { Button } from '@lib/components/Button';
 import Image from 'next/image';
 
 const events = [
   {
     title: 'Julekos med VSAiT!',
-    image:
-      'https://uccd43b0140f82d267e55f277f83.dl.dropboxusercontent.com/cd/0/get/BwZdF6RaboPJz70w7mlTeEc40ylZLaUf6RYN1Axeqd2-EVeQMmk4MMM5rTPPxntgiXTmcWj_wshHD3b97oaxtYUKx6z6gV-9Y6PAo1_-V5V9A_vDc2kf7EA9oBOrfe0UqaZLS8BD3TDSuDgHnGys9-kTapLJc6yAXKs_BKDXQ_UJeeMD55aLcIyW5BVy4mzo81A/file',
+    image: '/placeholder.png',
     location: 'KJL4, Gløshaugen',
     date: 'Fredag 11.11.2022',
     membership: true,
@@ -16,15 +15,15 @@ const events = [
 
 const EventsDisplay = () => {
   return (
-    <div className="flex w-full flex-1 flex-col items-center text-center my-6">
+    <div className="flex w-full flex-1 flex-col items-center text-center my-6 mb-8">
       <h2 className="text-lg mb-1.5 font-bold text-black">
         Kommende arrangementer
       </h2>
-      <div className="w-full">
+      <div className="w-full mb-2">
         {events.map((event, index) => (
           <div
             key={index}
-            className="w-8/12 mx-auto my-4 items-center justify-center relative rounded-2xl overflow-hidden max-w-screen-lg"
+            className="w-8/12 mx-auto my-4 items-center justify-center relative rounded-xl overflow-hidden max-w-screen-lg"
           >
             <a href="#" className="flex flex-col">
               <Image

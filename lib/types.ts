@@ -18,11 +18,13 @@ export type ExtendedAppProps = AppProps & {
 };
 
 export type ChildrenProps = {
-  children: JSX.Element;
+  children?: JSX.Element;
 };
 export type ButtonProps = {
   children?: JSX.Element;
   onClick?: () => void;
+  disabled?: boolean;
+  type?: 'button' | 'submit' | 'reset';
   text?: string;
   className?: string;
 };

@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import Footer from '@components/Footer';
+import Footer from '@lib/components/Footer';
 import { useRouter } from 'next/router';
 
 const AdminMembershipsEdit: NextPage = () => {

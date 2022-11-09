@@ -1,9 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    './pages/**/*.{js,ts,jsx,tsx}',
-    './components/**/*.{js,ts,jsx,tsx}',
-  ],
+  content: ['./pages/**/*.{js,ts,jsx,tsx}', './lib/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       colors: {
@@ -11,6 +8,7 @@ module.exports = {
         primary: '#D5564D',
         light: '#FE6151',
         dark: '#CC2222',
+        darker: '#841818',
         secondary: '#F2CF76',
       },
       spacing: {

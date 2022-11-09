@@ -4,7 +4,7 @@ module.exports = {
     ignoreBuildErrors: true,
   },
   images: {
-    domains: ['uccd43b0140f82d267e55f277f83.dl.dropboxusercontent.com'],
+    domains: ['medlem.vsait.org'],
   },
   reactStrictMode: true,
 };

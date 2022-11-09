@@ -2,7 +2,6 @@ import '@lib/styles/globals.css';
 import WithAuth from '@lib/auth/WithAuth';
 import { SessionProvider } from 'next-auth/react';
 import type { ExtendedAppProps } from '@lib/types';
-import '../css/main.css';
 
 const MyApp = ({ Component, pageProps }: ExtendedAppProps) => {
   return (

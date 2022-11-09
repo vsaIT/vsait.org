@@ -1,13 +1,13 @@
 import type { NextPage } from 'next';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
-import Form from '@lib/components/Form';
-import Footer from '@components/Footer';
-import Navigation from '@components/Navigation';
-import { LargeHeader } from '@components/Header';
-import { Button } from '@components/Button';
-import Wave from '@components/Wave';
-import { EventsDisplay } from '@components/Events';
+import Form from '@lib/components/LoginForm';
+import Footer from '@lib/components/Footer';
+import Navigation from '@lib/components/Navigation';
+import { LargeHeader } from '@lib/components/Header';
+import { Button } from '@lib/components/Button';
+import Wave from '@lib/components/Wave';
+import { EventsDisplay } from '@lib/components/Events';
 
 const Home: NextPage = () => {
   const { status, data: session } = useSession({
@@ -38,8 +38,12 @@ const Home: NextPage = () => {
               Trondheim.
             </p>
             <div className="flex gap-5 py-10">
-              <Button text="Logg inn" />
-              <Button text="Register" />
+              <a href="/login">
+                <Button text="Logg inn" className="rounded-3xl" />
+              </a>
+              <a href="/register">
+                <Button text="Register" className="rounded-3xl" />
+              </a>
             </div>
             <Wave />
           </>
