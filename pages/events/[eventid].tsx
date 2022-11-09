@@ -1,7 +1,7 @@
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import Footer from '@lib/components/Footer';
+import Footer from '@components/Footer';
 
 const Event: NextPage = () => {
   const router = useRouter();

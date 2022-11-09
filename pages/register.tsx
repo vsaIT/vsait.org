@@ -1,9 +1,9 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import Footer from '@lib/components/Footer';
-import Navigation from '@lib/components/Navigation';
-import { SmallHeader } from '@lib/components/Header';
-import { RegistrationForm } from '@lib/components/Form';
+import Footer from '@components/Footer';
+import Navigation from '@components/Navigation';
+import { SmallHeader } from '@components/Header';
+import { RegistrationForm } from '@components/Form';
 
 const Registration: NextPage = () => {
   return (

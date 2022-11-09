@@ -1,4 +1,4 @@
-import { Button } from '@lib/components/Button';
+import { Button } from '@components/Button';
 import Image from 'next/image';
 
 const events = [
