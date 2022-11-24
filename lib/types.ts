@@ -20,6 +20,9 @@ export type ExtendedAppProps = AppProps & {
 export type ChildrenProps = {
   children?: JSX.Element;
 };
+export type HeaderProps = {
+  title?: string;
+} & ChildrenProps;
 export type ButtonProps = {
   children?: JSX.Element;
   onClick?: () => void;
