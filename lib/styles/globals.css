@@ -7,4 +7,7 @@
   html {
     font-family: 'Poppins', sans-serif;
   }
+  a:hover {
+    text-decoration: underline;
+  }
 }

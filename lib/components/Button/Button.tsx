@@ -13,7 +13,7 @@ const Button = ({
       disabled={disabled ?? false}
       type={type}
       onClick={onClick}
-      className={`text-white py-2 px-10 rounded-xl bg-primary hover:bg-white hover:text-black shadow-md transition-all ${className}`}
+      className={`text-white py-2 px-10 rounded-xl bg-primary hover:bg-white hover:text-black shadow-md transition-all duration-500 ${className}`}
     >
       {text ?? ''}
       {children}
