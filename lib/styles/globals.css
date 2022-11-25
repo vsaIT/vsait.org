@@ -10,7 +10,9 @@
 
   /* /organization */
   .organization::before,
-  .organization::after {
+  .organization::after,
+  .events::before,
+  .events::after {
     content: '';
     position: absolute;
     top: 0;
@@ -23,12 +25,29 @@
     opacity: 0.5;
     transform: translate(-25%, -25%);
   }
-  .organization::after {
+  .organization::after,
+  .events::after {
     top: initial;
     left: initial;
     bottom: 0;
     right: 0;
     background-color: #f2cf76;
     transform: translate(25%, 25%);
+  }
+
+  /* /events */
+  .events::before {
+    left: initial;
+    right: 0;
+    width: 180px;
+    height: 180px;
+    transform: translate(15%, -15%);
+  }
+  .events::after {
+    right: initial;
+    left: 0;
+    width: 180px;
+    height: 180px;
+    transform: translate(-15%, 21%);
   }
 }

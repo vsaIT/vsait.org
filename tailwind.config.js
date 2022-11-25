@@ -17,6 +17,7 @@ module.exports = {
       },
       gridTemplateColumns: {
         layout: '400px 0.75rem 1fr',
+        eventdetail: 'minmax(300px, 1fr) 2fr',
         event: '30px 1fr',
       },
     },
