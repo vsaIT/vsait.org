@@ -138,7 +138,7 @@ const Organization: NextPage = () => {
             </div>
           </div>
 
-          <div>
+          <div className="organization relative my-16">
             <div className="flex flex-col justify-center w-full p-8 mb-4 text-left bg-white shadow-lg rounded-2xl">
               <h2 className="text-3xl font-bold text-center mb-4">
                 Arrangementer
@@ -245,7 +245,7 @@ const Organization: NextPage = () => {
                 </div>
               </div>
 
-              <div className="px-24 py-10 bg-white shadow-lg rounded-2xl my-6">
+              <div className="px-24 py-10 bg-white shadow-lg rounded-2xl mt-12 mb-3">
                 <h3 className="text-2xl font-medium mb-3">Småarrangement</h3>
                 <p className="w-1/2 m-auto text-center">
                   I løpet av året så holder vi mindre arrangement som f.eks.
@@ -253,24 +253,24 @@ const Organization: NextPage = () => {
                 </p>
               </div>
             </div>
+          </div>
 
-            <div className="px-24 py-10 bg-white shadow-lg rounded-2xl my-8">
-              <h2 className="text-3xl font-bold text-center mb-4">Styret</h2>
-              <p className="w-1/2 m-auto text-center">
-                Vi tar imot innmeldinger, spørsmål og andre henvendelser på
-                mail: <a href="mailto:vsait@vsait.org">vsait@vsait.org</a>
-              </p>
-              <div className="grid grid-cols-3 gap-8 my-8">
-                {board.map((member: BoardType) => (
-                  <div
-                    key={member.name}
-                    className="rounded-2xl bg-primary text-white p-8"
-                  >
-                    <p className="text-xl font-bold">{member.name}</p>
-                    <p>{member.role}</p>
-                  </div>
-                ))}
-              </div>
+          <div className="px-24 py-10 bg-white shadow-lg rounded-2xl my-8">
+            <h2 className="text-3xl font-bold text-center mb-4">Styret</h2>
+            <p className="w-1/2 m-auto text-center">
+              Vi tar imot innmeldinger, spørsmål og andre henvendelser på mail:{' '}
+              <a href="mailto:vsait@vsait.org">vsait@vsait.org</a>
+            </p>
+            <div className="grid grid-cols-3 gap-8 my-8">
+              {board.map((member: BoardType) => (
+                <div
+                  key={member.name}
+                  className="rounded-2xl bg-primary text-white p-8"
+                >
+                  <p className="text-xl font-bold">{member.name}</p>
+                  <p>{member.role}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>

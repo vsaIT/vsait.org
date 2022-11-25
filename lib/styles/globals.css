@@ -10,4 +10,28 @@
   a:hover {
     text-decoration: underline;
   }
+
+  /* /organization */
+  .organization::before,
+  .organization::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 240px;
+    height: 240px;
+    z-index: -1;
+    border-radius: 60px 0px;
+    background-color: #d5564d;
+    opacity: 0.5;
+    transform: translate(-25%, -25%);
+  }
+  .organization::after {
+    top: initial;
+    left: initial;
+    bottom: 0;
+    right: 0;
+    background-color: #f2cf76;
+    transform: translate(25%, 25%);
+  }
 }
