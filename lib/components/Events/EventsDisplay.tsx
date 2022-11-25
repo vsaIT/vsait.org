@@ -55,7 +55,9 @@ const EventsDisplay = () => {
           </div>
         ))}
       </div>
-      <Button text="Se alle arrangementer"></Button>
+      <a href="/events">
+        <Button text="Se alle arrangementer"></Button>
+      </a>
     </div>
   );
 };
