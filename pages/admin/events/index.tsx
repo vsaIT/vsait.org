@@ -4,7 +4,7 @@ import Footer from '@components/Footer';
 
 const AdminEvents: NextPage = () => {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-2">
+    <div className="flex min-h-screen flex-col items-center justify-center">
       <Head>
         <title>VSAiT | Administrasjon arrangementer</title>
         <link rel="icon" href="/favicon.ico" />

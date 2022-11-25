@@ -8,7 +8,7 @@ const AdminMembershipsEdit: NextPage = () => {
   const { userid } = router.query;
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-2">
+    <div className="flex min-h-screen flex-col items-center justify-center">
       <Head>
         <title>VSAiT | Administrasjon medlemmer</title>
         <link rel="icon" href="/favicon.ico" />

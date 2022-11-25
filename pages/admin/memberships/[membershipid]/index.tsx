@@ -8,7 +8,7 @@ const AdminMembershipsView: NextPage = () => {
   const { membershipid } = router.query;
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-2">
+    <div className="flex min-h-screen flex-col items-center justify-center">
       <Head>
         <title>VSAiT | Administrasjon medlemsskap</title>
         <link rel="icon" href="/favicon.ico" />
