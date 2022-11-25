@@ -31,3 +31,22 @@ export type ButtonProps = {
   text?: string;
   className?: string;
 };
+
+export type EventType = {
+  id: string;
+  title: string;
+  description: string;
+  image: string;
+  location: string;
+  maxRegistration: number;
+  membershipRequired: boolean;
+  startTime: Date;
+  endTime: Date;
+  registrationDeadline: Date;
+  cancellationDeadline: Date;
+  registrationList: string[];
+  waitingList: string[];
+  checkinId: string;
+  checkinList: string[];
+  draft: boolean;
+};

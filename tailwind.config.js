@@ -15,6 +15,10 @@ module.exports = {
         128: '32rem',
         144: '40rem',
       },
+      gridTemplateColumns: {
+        layout: '400px 0.75rem 1fr',
+        event: '30px 1fr',
+      },
     },
   },
   plugins: [],
