@@ -1,11 +1,26 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    './pages/**/*.{js,ts,jsx,tsx}',
-    './components/**/*.{js,ts,jsx,tsx}',
-  ],
+  content: ['./pages/**/*.{js,ts,jsx,tsx}', './lib/**/*.{js,ts,jsx,tsx}'],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        gray: '#464646',
+        primary: '#D5564D',
+        light: '#FE6151',
+        dark: '#CC2222',
+        darker: '#841818',
+        secondary: '#F2CF76',
+      },
+      spacing: {
+        128: '32rem',
+        144: '40rem',
+      },
+      gridTemplateColumns: {
+        layout: '400px 0.75rem 1fr',
+        eventdetail: 'minmax(300px, 1fr) 2fr',
+        event: '30px 1fr',
+      },
+    },
   },
   plugins: [],
 };

@@ -6,6 +6,7 @@
     "paths": {
       "@api/*": ["pages/api/*"],
       "@lib/*": ["lib/*"],
+      "@components/*": ["lib/components/*"],
       "@db/*": ["db/*"],
       "@db": ["db/index"]
     },
