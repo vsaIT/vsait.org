@@ -20,7 +20,7 @@
     "bcryptjs": "^2.4.3",
     "husky": "^8.0.1",
     "lodash": "^4.17.21",
-    "next": "latest",
+    "next": "12.3.1",
     "next-auth": "^4.12.3",
     "prettier": "^2.7.1",
     "react": "18.1.0",

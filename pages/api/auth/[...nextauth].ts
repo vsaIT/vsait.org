@@ -2,7 +2,7 @@ import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 
-import { verifyPassword } from '@lib/auth/passwords';
+import { hashPassword, verifyPassword } from '@lib/auth/passwords';
 import { Session } from '@lib/auth/session';
 import prisma from '@db/index';
 
@@ -12,7 +12,124 @@ export default NextAuth({
   session: {
     strategy: 'jwt',
   },
+  pages: {
+    signIn: '/login',
+    newUser: '/register',
+  },
   providers: [
+    CredentialsProvider({
+      id: 'app-register',
+      name: 'App Register',
+      credentials: {
+        firstName: {
+          label: 'First Name',
+          type: 'text',
+          placeholder: 'John',
+        },
+        lastName: {
+          label: 'Last Name',
+          type: 'text',
+          placeholder: 'Doe',
+        },
+        birthdate: {
+          label: 'Date of Birth',
+          type: 'date',
+          placeholder: '06/09/2000',
+        },
+        email: {
+          label: 'Email Address',
+          type: 'email',
+          placeholder: 'john.doe@example.com',
+        },
+        password: {
+          label: 'Password',
+          type: 'password',
+          placeholder: 'Your super secure password',
+        },
+        repeatPassword: {
+          label: 'Repeat password',
+          type: 'password',
+          placeholder: 'Your super secure password again',
+        },
+        foodNeeds: {
+          label: 'Food Needs',
+          type: 'text',
+          placeholder: 'Your food needs / allergies',
+        },
+        student: {
+          label: 'Student',
+          type: 'text',
+          placeholder: 'Student status',
+        },
+      },
+      async authorize(credentials) {
+        try {
+          // Check if user exist
+          const maybeUser = await prisma.user.findFirst({
+            where: {
+              email: credentials?.email,
+            },
+            select: {
+              id: true,
+              email: true,
+              password: true,
+              firstName: true,
+              lastName: true,
+              role: true,
+            },
+          });
+          let newUser = null;
+          if (!maybeUser) {
+            if (
+              !credentials?.firstName ||
+              !credentials?.lastName ||
+              !credentials?.email ||
+              !credentials?.birthdate ||
+              !credentials?.password ||
+              !credentials?.repeatPassword ||
+              !credentials?.student
+            ) {
+              throw new Error('Missing fields' + JSON.stringify(credentials));
+            }
+            if (credentials.password !== credentials.repeatPassword) {
+              throw new Error('Passwords do not match');
+            }
+            newUser = await prisma.user.create({
+              data: {
+                firstName: credentials.firstName,
+                lastName: credentials.lastName,
+                email: credentials.email,
+                birthdate: new Date(credentials.birthdate),
+                password: await hashPassword(credentials.password),
+                foodNeeds: credentials.foodNeeds,
+                student: credentials.student,
+              },
+              select: {
+                id: true,
+                email: true,
+                password: true,
+                firstName: true,
+                lastName: true,
+                role: true,
+              },
+            });
+          } else {
+            throw new Error('A user with same mail exists');
+          }
+
+          return {
+            id: newUser.id,
+            email: newUser.email,
+            firstName: newUser.firstName,
+            lastName: newUser.lastName,
+            role: newUser.role,
+          };
+        } catch (error) {
+          console.log(error);
+          throw error;
+        }
+      },
+    }),
     CredentialsProvider({
       id: 'app-login',
       name: 'App Login',

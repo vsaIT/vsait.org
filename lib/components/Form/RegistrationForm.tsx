@@ -11,7 +11,7 @@ import { useForm } from 'react-hook-form';
 import { Button } from '@components/Button';
 
 const MINIMUM_ACTIVITY_TIMEOUT = 850;
-type LoginFormValues = {
+type RegistrationFormValues = {
   csrfToken: string;
   firstname: string;
   lastname: string;
@@ -25,16 +25,22 @@ type LoginFormValues = {
 
 const RegistrationForm = ({ csrfToken }: any) => {
   const [isSubmitting, setSubmitting] = useState(false);
-  const { register, handleSubmit } = useForm<LoginFormValues>();
+  const { register, handleSubmit } = useForm<RegistrationFormValues>();
 
   // TODO: fix registration api
-  const onSubmit = async (data: LoginFormValues) => {
+  const onSubmit = async (data: RegistrationFormValues) => {
     setSubmitting(true);
     try {
       signIn('app-register', {
         callbackUrl: '/',
+        firstName: data.firstname,
+        lastName: data.lastname,
+        birthdate: data.birthdate,
         email: data.email,
         password: data.password,
+        repeatPassword: data.repeatPassword,
+        foodNeeds: data.foodNeeds,
+        student: data.student,
       });
 
       setTimeout(() => {
@@ -201,8 +207,6 @@ const RegistrationForm = ({ csrfToken }: any) => {
                   type="text"
                   autoComplete="allergies"
                   placeholder="Matbehov"
-                  minLength={8}
-                  required
                   {...register('foodNeeds')}
                   className="w-full py-3 px-4 border-2 border-stone-300 outline-none text-sm text-left leading-6 bg-transparent rounded-xl transition duration-150 ease-in-out"
                 />
