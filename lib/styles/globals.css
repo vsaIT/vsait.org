@@ -7,6 +7,13 @@
   html {
     font-family: 'Poppins', sans-serif;
   }
+  select {
+    appearance: none;
+    background-image: url('/angle-down-solid.svg');
+    background-size: 12px;
+    background-repeat: no-repeat;
+    background-position: calc(100% - 1.25rem) center;
+  }
 
   /* /pages/organization */
   .organization::before,
