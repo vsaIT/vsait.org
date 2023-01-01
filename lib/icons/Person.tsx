@@ -4,7 +4,7 @@ const Person = ({ color = '#464646', className = '' }) => {
       width="29"
       height="29"
       viewBox="0 0 29 29"
-      fill="none"
+      fill="inherit"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
     >

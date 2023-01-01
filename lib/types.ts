@@ -23,6 +23,7 @@ export type ChildrenProps = {
 export type HeaderProps = {
   title?: string;
 } & ChildrenProps;
+
 export type ButtonProps = {
   children?: JSX.Element;
   onClick?: () => void;
