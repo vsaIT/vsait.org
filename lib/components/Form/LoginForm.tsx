@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@components/Button';
 import { MINIMUM_ACTIVITY_TIMEOUT } from '@lib/constants';
+import ToastMessage from '../Toast';
 
 type LoginFormValues = {
   csrfToken: string;
@@ -35,7 +36,7 @@ const LoginForm = ({ csrfToken }: any) => {
         console.log('Success');
       } else {
         console.error(error);
-        // toast('Credentials do not match!', { type: 'error' });
+        ToastMessage({ type: 'error', message: error });
       }
       setTimeout(() => {
         setSubmitting(false);
