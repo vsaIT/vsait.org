@@ -31,6 +31,7 @@ export type ButtonProps = {
   type?: 'button' | 'submit' | 'reset';
   text?: string;
   className?: string;
+  inverted?: boolean;
 };
 
 export type EventType = {

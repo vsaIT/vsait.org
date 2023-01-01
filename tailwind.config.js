@@ -21,6 +21,10 @@ module.exports = {
         eventdetail: 'minmax(300px, 1fr) 2fr',
         event: '30px 1fr',
       },
+      brightness: {
+        80: '.80',
+        85: '.85',
+      },
     },
   },
   plugins: [],
