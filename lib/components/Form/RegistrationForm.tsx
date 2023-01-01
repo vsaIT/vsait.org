@@ -9,12 +9,12 @@ import {
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@components/Button';
+import { MINIMUM_ACTIVITY_TIMEOUT } from '@lib/constants';
 
-const MINIMUM_ACTIVITY_TIMEOUT = 850;
 type RegistrationFormValues = {
   csrfToken: string;
-  firstname: string;
-  lastname: string;
+  firstName: string;
+  lastName: string;
   email: string;
   birthdate: Date;
   password: string;
@@ -27,29 +27,22 @@ const RegistrationForm = ({ csrfToken }: any) => {
   const [isSubmitting, setSubmitting] = useState(false);
   const { register, handleSubmit } = useForm<RegistrationFormValues>();
 
-  // TODO: fix registration api
   const onSubmit = async (data: RegistrationFormValues) => {
     setSubmitting(true);
-    try {
-      signIn('app-register', {
-        callbackUrl: '/',
-        firstName: data.firstname,
-        lastName: data.lastname,
-        birthdate: data.birthdate,
-        email: data.email,
-        password: data.password,
-        repeatPassword: data.repeatPassword,
-        foodNeeds: data.foodNeeds,
-        student: data.student,
-      });
-
-      setTimeout(() => {
-        setSubmitting(false);
-      }, MINIMUM_ACTIVITY_TIMEOUT);
-    } catch (error) {
-      console.error(error);
-      setSubmitting(false);
-    }
+    signIn('app-register', { ...data, redirect: false }).then(
+      ({ ok, error }: any) => {
+        if (ok) {
+          window.location.replace('/');
+          console.log('Success');
+        } else {
+          console.error(error);
+          // toast('Credentials do not match!', { type: 'error' });
+        }
+        setTimeout(() => {
+          setSubmitting(false);
+        }, MINIMUM_ACTIVITY_TIMEOUT);
+      }
+    );
   };
 
   return (
@@ -83,7 +76,7 @@ const RegistrationForm = ({ csrfToken }: any) => {
                     autoComplete="first-name"
                     placeholder="Fornavn"
                     required
-                    {...register('firstname')}
+                    {...register('firstName')}
                     className="w-full py-3 px-4 border-2 border-stone-300 outline-none text-sm text-left leading-6 bg-transparent rounded-xl transition duration-150 ease-in-out"
                   />
                 </div>
@@ -103,7 +96,7 @@ const RegistrationForm = ({ csrfToken }: any) => {
                     autoComplete="last-name"
                     placeholder="Etternavn"
                     required
-                    {...register('lastname')}
+                    {...register('lastName')}
                     className="w-full py-3 px-4 border-2 border-stone-300 outline-none text-sm text-left leading-6 bg-transparent rounded-xl transition duration-150 ease-in-out"
                   />
                 </div>
@@ -221,16 +214,24 @@ const RegistrationForm = ({ csrfToken }: any) => {
                 Student
               </label>
               <div className="mt-1">
-                <input
+                <select
                   id="student"
-                  type="text"
-                  autoComplete="student"
-                  placeholder="Student"
-                  minLength={8}
                   required
                   {...register('student')}
-                  className="w-full py-3 px-4 border-2 border-stone-300 outline-none text-sm text-left leading-6 bg-transparent rounded-xl transition duration-150 ease-in-out"
-                />
+                  className="w-full py-3 px-4 border-2 border-stone-300 outline-none text-sm text-left leading-6 bg-transparent rounded-xl transition duration-150 ease-in-out invalid:text-placeholder"
+                  defaultValue=""
+                >
+                  <option value="" disabled hidden>
+                    Velg student informasjon
+                  </option>
+                  <option value="NTNU">
+                    Norges teknisk-naturvitenskapelige universitet
+                  </option>
+                  <option value="BI">Handelshøyskolen BI</option>
+                  <option value="DMMH">Dronning Mauds Minne Høgskole</option>
+                  <option value="Other">Andre</option>
+                  <option value="Non-student">Ikke student</option>
+                </select>
               </div>
             </div>
 

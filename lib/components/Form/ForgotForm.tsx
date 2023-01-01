@@ -10,8 +10,8 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@components/Button';
 import Image from 'next/image';
+import { MINIMUM_ACTIVITY_TIMEOUT } from '@lib/constants';
 
-const MINIMUM_ACTIVITY_TIMEOUT = 850;
 type ForgotFormValues = {
   csrfToken: string;
   email: string;
@@ -23,19 +23,20 @@ const ForgotForm = ({ csrfToken }: any) => {
 
   const onSubmit = async (data: ForgotFormValues) => {
     setSubmitting(true);
-    try {
-      signIn('app-forgot', {
-        callbackUrl: '/',
-        email: data.email,
-      });
-
+    signIn('app-forgot', {
+      email: data.email,
+    }).then(({ ok, error }: any) => {
+      if (ok) {
+        window.location.replace('/');
+        console.log('Success');
+      } else {
+        console.error(error);
+        // toast('Credentials do not match!', { type: 'error' });
+      }
       setTimeout(() => {
         setSubmitting(false);
       }, MINIMUM_ACTIVITY_TIMEOUT);
-    } catch (error) {
-      console.error(error);
-      setSubmitting(false);
-    }
+    });
   };
 
   return (

@@ -10,6 +10,7 @@ module.exports = {
         dark: '#CC2222',
         darker: '#841818',
         secondary: '#F2CF76',
+        placeholder: '#9ca3af',
       },
       spacing: {
         128: '32rem',

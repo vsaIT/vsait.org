@@ -114,7 +114,7 @@ export default NextAuth({
               },
             });
           } else {
-            throw new Error('A user with same mail exists');
+            throw new Error('A user with the same email exists');
           }
 
           return {
