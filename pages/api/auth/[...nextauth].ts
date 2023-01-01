@@ -6,6 +6,16 @@ import { hashPassword, verifyPassword } from '@lib/auth/passwords';
 import { Session } from '@lib/auth/session';
 import prisma from '@db/index';
 
+type RegisterInputType =
+  | 'firstName'
+  | 'lastName'
+  | 'birthdate'
+  | 'email'
+  | 'password'
+  | 'repeatPassword'
+  | 'foodNeeds'
+  | 'student';
+
 export default NextAuth({
   adapter: PrismaAdapter(prisma),
   secret: process.env.NEXTAUTH_SECRET,
@@ -79,7 +89,7 @@ export default NextAuth({
             },
           });
           let newUser = null;
-          if (!maybeUser) {
+          if (!maybeUser && credentials) {
             if (
               !credentials?.firstName ||
               !credentials?.lastName ||
@@ -89,7 +99,12 @@ export default NextAuth({
               !credentials?.repeatPassword ||
               !credentials?.student
             ) {
-              throw new Error('Missing fields' + JSON.stringify(credentials));
+              throw new Error(
+                'Missing fields: ' +
+                  Object.keys(credentials)
+                    .filter((k) => !credentials[k as RegisterInputType])
+                    .join(', ')
+              );
             }
             if (credentials.password !== credentials.repeatPassword) {
               throw new Error('Passwords do not match');
