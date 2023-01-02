@@ -21,6 +21,9 @@ module.exports = {
         eventdetail: 'minmax(300px, 1fr) 2fr',
         event: '30px 1fr',
       },
+      gridTemplateRows: {
+        organizationfocus: '1fr 150px',
+      },
       brightness: {
         80: '.80',
         85: '.85',
