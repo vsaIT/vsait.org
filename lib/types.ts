@@ -23,6 +23,7 @@ export type ChildrenProps = {
 export type HeaderProps = {
   title?: string;
 } & ChildrenProps;
+
 export type ButtonProps = {
   children?: JSX.Element;
   onClick?: () => void;
@@ -30,6 +31,7 @@ export type ButtonProps = {
   type?: 'button' | 'submit' | 'reset';
   text?: string;
   className?: string;
+  inverted?: boolean;
 };
 
 export type EventType = {

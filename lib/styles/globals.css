@@ -7,8 +7,15 @@
   html {
     font-family: 'Poppins', sans-serif;
   }
+  select {
+    appearance: none;
+    background-image: url('/angle-down-solid.svg');
+    background-size: 12px;
+    background-repeat: no-repeat;
+    background-position: calc(100% - 1.25rem) center;
+  }
 
-  /* /organization */
+  /* /pages/organization */
   .organization::before,
   .organization::after,
   .events::before,
@@ -35,7 +42,7 @@
     transform: translate(25%, 25%);
   }
 
-  /* /events */
+  /* /pages/events */
   .events::before {
     left: initial;
     right: 0;

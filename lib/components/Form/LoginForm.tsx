@@ -9,8 +9,9 @@ import {
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@components/Button';
+import { MINIMUM_ACTIVITY_TIMEOUT } from '@lib/constants';
+import ToastMessage from '../Toast';
 
-const MINIMUM_ACTIVITY_TIMEOUT = 850;
 type LoginFormValues = {
   csrfToken: string;
   email: string;
@@ -20,28 +21,32 @@ type LoginFormValues = {
 const LoginForm = ({ csrfToken }: any) => {
   const [isSubmitting, setSubmitting] = useState(false);
   const { register, handleSubmit } = useForm<LoginFormValues>();
+  console.log(csrfToken);
 
   const onSubmit = async (data: LoginFormValues) => {
     setSubmitting(true);
-    try {
-      signIn('app-login', {
-        callbackUrl: '/',
-        email: data.email,
-        password: data.password,
-      });
-
+    console.log(csrfToken);
+    signIn('app-login', {
+      email: data.email,
+      password: data.password,
+      redirect: false,
+    }).then(({ ok, error }: any) => {
+      if (ok) {
+        window.location.replace('/');
+        console.log('Success');
+      } else {
+        console.error(error);
+        ToastMessage({ type: 'error', message: error });
+      }
       setTimeout(() => {
         setSubmitting(false);
       }, MINIMUM_ACTIVITY_TIMEOUT);
-    } catch (error) {
-      console.error(error);
-      setSubmitting(false);
-    }
+    });
   };
 
   return (
     <>
-      <div className=" flex flex-col justify-center w-128 p-8 mb-10 text-left bg-white shadow-2xl rounded-2xl transform -translate-y-10">
+      <div className="flex flex-col justify-center w-128 p-8 mb-10 text-left bg-white shadow-2xl rounded-2xl transform -translate-y-10">
         <h1 className="text-xl font-bold leading-7 text-gray-900">Logg inn:</h1>
         <div className="w-full pt-2">
           <form

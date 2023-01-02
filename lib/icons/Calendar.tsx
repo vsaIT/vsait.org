@@ -4,7 +4,7 @@ const Calendar = ({ color = '#464646', className = '' }) => {
       width="29"
       height="31"
       viewBox="0 0 29 31"
-      fill="none"
+      fill="inherit"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
     >

@@ -10,6 +10,7 @@ module.exports = {
         dark: '#CC2222',
         darker: '#841818',
         secondary: '#F2CF76',
+        placeholder: '#9ca3af',
       },
       spacing: {
         128: '32rem',
@@ -19,6 +20,10 @@ module.exports = {
         layout: '400px 0.75rem 1fr',
         eventdetail: 'minmax(300px, 1fr) 2fr',
         event: '30px 1fr',
+      },
+      brightness: {
+        80: '.80',
+        85: '.85',
       },
     },
   },

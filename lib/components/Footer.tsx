@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import { Briefcase, Discord, Envelope, Facebook, Instagram } from '@lib/icons';
 
 const Footer = () => {
   return (
@@ -9,16 +9,43 @@ const Footer = () => {
       <h2 className="text-lg mb-1.5 font-bold text-white">
         Kontaktinformasjon
       </h2>
-      <div>
-        <p>993 646 482 (OrgNr)</p>
-        <p>
-          <a href="mailto:vsait@vsait.org">vsait@vsait.org</a>
+      <div className="flex flex-col gap-1">
+        <p className="flex items-center gap-4">
+          <Briefcase color="inherit" className="flex h-5 w-5 fill-white" />
+          993 646 482 (OrgNr)
+        </p>
+        <p className="flex items-center gap-4 fill-white hover:fill-secondary hover:text-secondary transition-all">
+          <Envelope color="inherit" className="flex h-5 w-5" />
+          <a href="mailto:vsait@vsait.org" className="text-inherit">
+            vsait@vsait.org
+          </a>
         </p>
       </div>
-      <div className="flex gap-4 m-4">
-        <div className="bg-white h-4 w-4"></div>
-        <div className="bg-white h-4 w-4"></div>
-        <div className="bg-white h-4 w-4"></div>
+      <div className="flex gap-4 m-4 mt-8">
+        <div className="flex h-7 w-7">
+          <a
+            href="https://instagram.com/vsaitr"
+            className="fill-white hover:fill-secondary transition-all"
+          >
+            <Instagram color="inherit" className="flex h-7 w-7" />
+          </a>
+        </div>
+        <div className="flex h-7 w-7">
+          <a
+            href="https://facebook.com/VSAITrondheim"
+            className="fill-white hover:fill-secondary transition-all"
+          >
+            <Facebook color="inherit" className="flex h-7 w-7" />
+          </a>
+        </div>
+        <div className="flex h-7 w-7">
+          <a
+            href="https://discord.gg/jJSBfwcUMh"
+            className="fill-white hover:fill-secondary transition-all"
+          >
+            <Discord color="inherit" className="flex h-7 w-7" />
+          </a>
+        </div>
       </div>
     </footer>
   );
