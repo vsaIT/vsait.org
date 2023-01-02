@@ -84,13 +84,13 @@ const Organization: NextPage = () => {
           <div className="flex flex-col justify-center w-full p-8 my-12">
             <h2 className="text-3xl font-bold text-center mb-4">Vår fokus</h2>
             <div className="flex justify-between w-full gap-4">
-              <div className="w-full max-w-xs">
-                <div className="w-3/4 m-auto mb-3">
+              <div className="grid grid-rows-organizationfocus w-full max-w-xs">
+                <div className="justify-items-center w-3/4 m-auto mb-3">
                   <Image
-                    src="https://medlem.vsait.org/static/home/logo.svg"
-                    alt="Vercel Logo"
-                    width={256}
-                    height={256}
+                    src="/fokus1.png"
+                    alt="Sosialt miljø icon"
+                    width={2048}
+                    height={1569}
                     layout="responsive"
                   />
                 </div>
@@ -102,13 +102,13 @@ const Organization: NextPage = () => {
                   </p>
                 </div>
               </div>
-              <div className="w-full max-w-xs">
-                <div className="w-3/4 m-auto mb-3">
+              <div className="grid grid-rows-organizationfocus w-full max-w-xs">
+                <div className="justify-items-center w-3/4 m-auto mb-3">
                   <Image
-                    src="https://medlem.vsait.org/static/home/logo.svg"
-                    alt="Vercel Logo"
-                    width={256}
-                    height={256}
+                    src="/fokus2.png"
+                    alt="Kultur icon"
+                    width={2048}
+                    height={1609}
                     layout="responsive"
                   />
                 </div>
@@ -120,13 +120,13 @@ const Organization: NextPage = () => {
                   </p>
                 </div>
               </div>
-              <div className="w-full max-w-xs">
-                <div className="w-3/4 m-auto mb-3">
+              <div className="grid grid-rows-organizationfocus w-full max-w-xs">
+                <div className="justify-items-center w-3/4 m-auto mb-3">
                   <Image
-                    src="https://medlem.vsait.org/static/home/logo.svg"
-                    alt="Vercel Logo"
-                    width={256}
-                    height={256}
+                    src="/fokus3.png"
+                    alt="Arrangement icon"
+                    width={2048}
+                    height={1941}
                     layout="responsive"
                   />
                 </div>
@@ -154,12 +154,12 @@ const Organization: NextPage = () => {
             <div className="flex flex-col">
               <div className="flex justify-between px-24 py-12 my-2">
                 <div className="flex w-full justify-start">
-                  <div className="w-3/4 max-w-sm">
+                  <div className="w-3/4 max-w-sm rounded-2xl overflow-hidden">
                     <Image
-                      src="https://medlem.vsait.org/static/home/logo.svg"
-                      alt="Vercel Logo"
-                      width={256}
-                      height={128}
+                      src="/cover1.jpg"
+                      alt="Bilde av Bli kjent grilling arrangement"
+                      width={300}
+                      height={200}
                       layout="responsive"
                     />
                   </div>
@@ -177,12 +177,12 @@ const Organization: NextPage = () => {
 
               <div className="flex justify-between px-24 py-16 bg-white shadow-lg rounded-2xl my-2">
                 <div className="flex w-full justify-end order-1">
-                  <div className="w-3/4 max-w-sm">
+                  <div className="w-3/4 max-w-sm rounded-2xl overflow-hidden">
                     <Image
-                      src="https://medlem.vsait.org/static/home/logo.svg"
-                      alt="Vercel Logo"
-                      width={256}
-                      height={128}
+                      src="/cover2.jpg"
+                      alt="Bilde av Tet Trung Thu arrangement"
+                      width={300}
+                      height={200}
                       layout="responsive"
                     />
                   </div>
@@ -201,12 +201,12 @@ const Organization: NextPage = () => {
 
               <div className="flex justify-between px-24 py-12 my-2">
                 <div className="flex w-full justify-start">
-                  <div className="w-3/4 max-w-sm">
+                  <div className="w-3/4 max-w-sm rounded-2xl overflow-hidden">
                     <Image
-                      src="https://medlem.vsait.org/static/home/logo.svg"
-                      alt="Vercel Logo"
-                      width={256}
-                      height={128}
+                      src="/cover3.jpg"
+                      alt="Bilde av Tet arrangement"
+                      width={325}
+                      height={200}
                       layout="responsive"
                     />
                   </div>
@@ -223,12 +223,12 @@ const Organization: NextPage = () => {
 
               <div className="flex justify-between px-24 py-16 bg-white shadow-lg rounded-2xl my-2">
                 <div className="flex w-full justify-end order-1">
-                  <div className="w-3/4 max-w-sm">
+                  <div className="w-3/4 max-w-sm rounded-2xl overflow-hidden">
                     <Image
-                      src="https://medlem.vsait.org/static/home/logo.svg"
-                      alt="Vercel Logo"
-                      width={256}
-                      height={128}
+                      src="/cover4.jpg"
+                      alt="Bilde av Eksamensgrilling arrangement"
+                      width={300}
+                      height={200}
                       layout="responsive"
                     />
                   </div>
