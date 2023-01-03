@@ -239,7 +239,7 @@ export default NextAuth({
         });
 
         if (!maybeUser) throw new Error('Invalid Credentials.');
-        else if (maybeUser?.role !== 'admin') throw new Error('Unauthorized.');
+        else if (maybeUser?.role !== 'ADMIN') throw new Error('Unauthorized.');
 
         const isValid = await verifyPassword(
           credentials.password,

@@ -7,7 +7,7 @@
     "prepare": "husky install",
     "db:migrate": "prisma migrate dev --schema=./db/schema.prisma",
     "db:generate": "prisma generate --schema=./db/schema.prisma",
-    "db:reset": "prisma migrate reset --schema=./db/schema.prisma",
+    "db:reset": "prisma db push --force-reset --schema=./db/schema.prisma && npx prisma db seed",
     "db:seed": "npx prisma db seed",
     "db:push": "prisma db push --schema=./db/schema.prisma",
     "db:studio": "prisma studio --schema=./db/schema.prisma"

@@ -45,7 +45,7 @@ const Events: NextPage = () => {
       <main className="flex w-full flex-1 flex-col items-center text-center">
         <CurvyHeader title="Arrangementer" />
 
-        <div className="events relative flex flex-col z-10 max-w-screen-xl mb-32 w-full gap-6">
+        <div className="events relative flex flex-col z-10 max-w-screen-xl mb-32 gap-6 w-11/12">
           {events.map((event: EventType) => (
             <a href={`/events/${event.id}`}>
               <div className="p-3 border-2 border-primary rounded-2xl">
