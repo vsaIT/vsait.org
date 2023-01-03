@@ -9,35 +9,32 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { Button } from '@lib/components/Button';
 import { useSession } from 'next-auth/react';
-
-const placeholderEvent: EventType = {
-  id: '1',
-  title: 'Julekos med VSAiT!',
-  description:
-    'Nå nærmer vinteren seg og vi gjør oss klare til JULEKOS med VSAiT!😍Det vil være masse BANGING pizza, varm drikke, juleworkshop, klementiner, pepperkaker og god julemusikk!🥳 Dersom du har vært snill i år så det være at vi får besøk av julenissen🙈! Det blir super lavterskel, mye smil og latter, og vi håper så mange som mulig vil komme! Kom med cozy wozy klær, og det er også mulig å spille brettspill, strikking, lekser og mingle med andre senere utover kvelden <3 🌈',
-  image: '/placeholder.png',
-  location: 'KJL4, Gløshaugen',
-  maxRegistration: 30,
-  membershipRequired: true,
-  startTime: new Date('11-11-2022 17:00'),
-  endTime: new Date('11-11-2022 17:00'),
-  registrationDeadline: new Date('11-11-2022 17:00'),
-  cancellationDeadline: new Date('11-11-2022 17:00'),
-  registrationList: [],
-  waitingList: [],
-  checkinId: 'test',
-  checkinList: [],
-  draft: false,
-};
+import { useQuery } from '@tanstack/react-query';
 
 const Event: NextPage = () => {
   const router = useRouter();
-  const [event, setEvent] = useState<EventType>(placeholderEvent);
+  // const [event, setEvent] = useState<EventType>(placeholderEvent);
   const { status, data: session } = useSession({
     required: false,
   });
   const { eventid } = router.query;
   console.log(eventid, session);
+
+  const {
+    isSuccess,
+    isLoading,
+    error,
+    data: event,
+  } = useQuery({
+    queryKey: ['eventId', eventid],
+    queryFn: () =>
+      fetch(`/api/events/${eventid ?? 1}`).then((res) => res.json()),
+    // options: { enabled: eventid, refetchOnWindowFocus: false },
+  });
+
+  if (isLoading || !isSuccess || event?.statusCode) return <>{'Loading...'}</>;
+  if (error) return <>{'An error has occurred: ' + error}</>;
+  console.log(event);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
@@ -70,25 +67,25 @@ const Event: NextPage = () => {
 
               <div className="flex flex-col gap-2">
                 <p>
-                  <b>Starttid:</b> {event.startTime.toDateString()}
+                  <b>Starttid:</b> {new Date(event.startTime).toDateString()}
                 </p>
                 <p>
-                  <b>Sluttid:</b> {event.endTime.toDateString()}
+                  <b>Sluttid:</b> {new Date(event.endTime).toDateString()}
                 </p>
                 <p>
                   <b>Påmeldingsfrist:</b>{' '}
-                  {event.registrationDeadline.toDateString()}
+                  {new Date(event.registrationDeadline).toDateString()}
                 </p>
                 <p>
                   <b>Avmeldingsfrist:</b>{' '}
-                  {event.cancellationDeadline.toDateString()}
+                  {new Date(event.cancellationDeadline).toDateString()}
                 </p>
                 <p>
                   <b>Sted:</b> {event.location}
                 </p>
                 <p>
                   <b>Åpent for:</b>{' '}
-                  {event.membershipRequired ? 'medlemmer' : 'alle'}
+                  {event.eventType === 'OPEN' ? 'alle' : 'membership'}
                 </p>
               </div>
             </div>
@@ -108,7 +105,7 @@ const Event: NextPage = () => {
                 <div className="flex flex-col gap-2">
                   <p>
                     <b>Antall påmeldte:</b> {event.registrationList.length} /{' '}
-                    {event.maxRegistration}
+                    {event.maxRegistrations}
                   </p>
                   <p>
                     <b>Venteliste:</b> {event.waitingList.length}

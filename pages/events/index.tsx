@@ -6,33 +6,17 @@ import { CurvyHeader } from '@lib/components/Header';
 import { EventType } from '@lib/types';
 import Image from 'next/image';
 import { Calendar, Person, Place } from '@lib/icons';
-
-const placeholderEvent: EventType = {
-  id: '1',
-  title: 'Julekos med VSAiT!',
-  description:
-    'Nå nærmer vinteren seg og vi gjør oss klare til JULEKOS med VSAiT!😍Det vil være masse BANGING pizza, varm drikke, juleworkshop, klementiner, pepperkaker og god julemusikk!🥳 Dersom du har vært snill i år så det være at vi får besøk av julenissen🙈! Det blir super lavterskel, mye smil og latter, og vi håper så mange som mulig vil komme! Kom med cozy wozy klær, og det er også mulig å spille brettspill, strikking, lekser og mingle med andre senere utover kvelden <3 🌈',
-  image: '/placeholder.png',
-  location: 'KJL4, Gløshaugen',
-  maxRegistration: 30,
-  membershipRequired: true,
-  startTime: new Date('11-11-2022 17:00'),
-  endTime: new Date('11-11-2022 17:00'),
-  registrationDeadline: new Date('11-11-2022 17:00'),
-  cancellationDeadline: new Date('11-11-2022 17:00'),
-  registrationList: [],
-  waitingList: [],
-  checkinId: 'test',
-  checkinList: [],
-  draft: false,
-};
-const events: EventType[] = [
-  placeholderEvent,
-  placeholderEvent,
-  placeholderEvent,
-];
+import { useQuery } from '@tanstack/react-query';
 
 const Events: NextPage = () => {
+  const { isLoading, error, data } = useQuery({
+    queryKey: ['events'],
+    queryFn: () => fetch('/api/events').then((res) => res.json()),
+  });
+
+  if (isLoading) return <>{'Loading...'}</>;
+  if (error) return <>{'An error has occurred: ' + error}</>;
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
       <Head>
@@ -46,8 +30,8 @@ const Events: NextPage = () => {
         <CurvyHeader title="Arrangementer" />
 
         <div className="events relative flex flex-col z-10 max-w-screen-xl mb-32 gap-6 w-11/12">
-          {events.map((event: EventType) => (
-            <a href={`/events/${event.id}`}>
+          {data.map((event: EventType, index: number) => (
+            <a href={`/events/${event.id}`} key={index}>
               <div className="p-3 border-2 border-primary rounded-2xl">
                 <div className="relative grid grid-cols-layout w-full mx-auto bg-white shadow-lg rounded-2xl p-3 gap-3">
                   <div className="flex w-full">
@@ -68,8 +52,8 @@ const Events: NextPage = () => {
                       <div className="grid grid-cols-event gap-3">
                         <Calendar className="justify-self-center" />
                         <p className="flex flex-col justify-center">
-                          {event.startTime.toDateString()} -{' '}
-                          {event.endTime.toDateString()}
+                          {new Date(event.startTime).toDateString()} -{' '}
+                          {new Date(event.endTime).toDateString()}
                         </p>
                       </div>
 
@@ -83,7 +67,7 @@ const Events: NextPage = () => {
                         <Person className="justify-self-center" />
                         <p className="flex flex-col justify-center">
                           Antall påmeldte: {event.registrationList.length}/
-                          {event.maxRegistration}
+                          {event.maxRegistrations}
                         </p>
                       </div>
                     </div>

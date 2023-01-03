@@ -1,6 +1,6 @@
 import { PrismaClient, EventType } from '@prisma/client';
 import { hash } from 'bcryptjs';
-const prisma = new PrismaClient();
+import prisma from '.';
 
 async function main() {
   const encryptedPassword = await hash('password1234', 12);

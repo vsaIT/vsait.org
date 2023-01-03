@@ -1,5 +1,6 @@
 import { Session } from 'next-auth';
 import { AppProps } from 'next/app';
+import { EventType as EventTypeType } from '@prisma/client';
 import { Component } from 'react';
 
 export type AuthenticatedPage = {
@@ -40,8 +41,8 @@ export type EventType = {
   description: string;
   image: string;
   location: string;
-  maxRegistration: number;
-  membershipRequired: boolean;
+  maxRegistrations: number;
+  eventType: EventTypeType;
   startTime: Date;
   endTime: Date;
   registrationDeadline: Date;
@@ -50,5 +51,5 @@ export type EventType = {
   waitingList: string[];
   checkinId: string;
   checkinList: string[];
-  draft: boolean;
+  isDraft: boolean;
 };
