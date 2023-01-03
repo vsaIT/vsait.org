@@ -115,7 +115,7 @@ async function main() {
     await prisma.event.upsert({
       where: { id: i },
       update: {},
-      create: { ...dummy, id: i, title: 'dummy' + i },
+      create: { ...dummy, id: i, title: 'dummy' + i, checkinUrl: 'dummy' + i },
     });
   }
 }

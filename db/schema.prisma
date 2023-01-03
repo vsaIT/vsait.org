@@ -90,30 +90,33 @@ model Event {
 }
 
 model Registrations {
-  id          String    @id @default(cuid())
   createdAt   DateTime  @default(now())
   user        User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String
   event       Event?    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId     Int
+  
+  @@id([userId, eventId])
 }
 
 model Waiting {
-  id          String    @id @default(cuid())
   createdAt   DateTime  @default(now())
   user        User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String
   event       Event?    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId     Int
+
+  @@id([userId, eventId])
 }
 
 model Attendances {
-  id          String    @id @default(cuid())
   createdAt   DateTime  @default(now())
   user        User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String
   event       Event?    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId     Int
+
+  @@id([userId, eventId])
 }
 
 model VerificationToken {
