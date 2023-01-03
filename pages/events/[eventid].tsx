@@ -27,14 +27,15 @@ const Event: NextPage = () => {
     data: event,
   } = useQuery({
     queryKey: ['eventId', eventid],
-    queryFn: () =>
-      fetch(`/api/events/${eventid ?? 1}`).then((res) => res.json()),
-    // options: { enabled: eventid, refetchOnWindowFocus: false },
+    queryFn: () => fetch(`/api/events/${eventid}`).then((res) => res.json()),
+    enabled: !!eventid,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    staleTime: 60000,
   });
 
   if (isLoading || !isSuccess || event?.statusCode) return <>{'Loading...'}</>;
   if (error) return <>{'An error has occurred: ' + error}</>;
-  console.log(event);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">

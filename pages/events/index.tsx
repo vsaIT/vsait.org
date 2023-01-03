@@ -12,10 +12,14 @@ const Events: NextPage = () => {
   const { isLoading, error, data } = useQuery({
     queryKey: ['events'],
     queryFn: () => fetch('/api/events').then((res) => res.json()),
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    staleTime: 60000,
   });
 
   if (isLoading) return <>{'Loading...'}</>;
   if (error) return <>{'An error has occurred: ' + error}</>;
+  console.log(data);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
