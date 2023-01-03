@@ -29,34 +29,39 @@ const Home: NextPage = () => {
       <main className="flex w-full flex-1 flex-col items-center text-center">
         <LargeHeader>
           <>
-            <h1 className="text-7xl mb-1.5 font-bold text-white">VSAiT</h1>
-            <p className="w-9/12 text-white">
-              VSAiT er en frivillig studentorganisasjon som ønsker å samle det
-              vietnamesiske studentmiljøet i Trondheim. Organisasjonen retter
-              seg mot studenter ved NTNU og andre utdanningsinstitusjoner i
-              Trondheim.
-            </p>
-            <div className="flex gap-5 py-10">
-              <a href="/login">
-                <Button text="Logg inn" className="rounded-3xl" inverted />
-              </a>
-              <a href="/register">
-                <Button text="Register" className="rounded-3xl" />
-              </a>
-            </div>
+            {session ? (
+              <>
+                <h1 className="text-4xl mb-1.5 font-bold text-white">
+                  Velkommen tilbake, {`${session?.user?.email}`}
+                </h1>
+                <p className="w-9/12 text-white">
+                  Hello, {`${session?.user?.email}`} You can see this because
+                  you're logged in.
+                </p>
+              </>
+            ) : (
+              <>
+                <h1 className="text-7xl mb-1.5 font-bold text-white">VSAiT</h1>
+                <p className="w-9/12 text-white">
+                  VSAiT er en frivillig studentorganisasjon som ønsker å samle
+                  det vietnamesiske studentmiljøet i Trondheim. Organisasjonen
+                  retter seg mot studenter ved NTNU og andre
+                  utdanningsinstitusjoner i Trondheim.
+                </p>
+                <div className="flex gap-5 py-10">
+                  <a href="/login">
+                    <Button text="Logg inn" className="rounded-3xl" inverted />
+                  </a>
+                  <a href="/register">
+                    <Button text="Register" className="rounded-3xl" />
+                  </a>
+                </div>
+              </>
+            )}
             <Wave />
           </>
         </LargeHeader>
 
-        {/* {!session && <p>not logged in</p>}
-        {session && (
-          <p>
-            Hello, {`${session?.user?.email}`} You can see this because you're
-            logged in.
-          </p>
-        )}
-
-        <Form /> */}
         <EventsDisplay />
       </main>
 

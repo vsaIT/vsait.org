@@ -13,9 +13,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   //   });
   // }
 
-  // TODO: validate id
-  console.log(123, id);
-
   try {
     const events = await prisma.event.findFirst({
       where: {

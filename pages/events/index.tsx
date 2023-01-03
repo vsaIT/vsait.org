@@ -6,20 +6,45 @@ import { CurvyHeader } from '@lib/components/Header';
 import { EventType } from '@lib/types';
 import Image from 'next/image';
 import { Calendar, Person, Place } from '@lib/icons';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+
+const fetchProjects = async (page = 0) => {
+  const data = await fetch(`/api/events?page=${page}`).then((res) =>
+    res.json()
+  );
+  return data;
+};
 
 const Events: NextPage = () => {
-  const { isLoading, error, data } = useQuery({
-    queryKey: ['events'],
-    queryFn: () => fetch('/api/events').then((res) => res.json()),
+  const queryClient = useQueryClient();
+  const router = useRouter();
+  const { page: pageParam } = router.query;
+  const [page, setPage] = useState(Number(pageParam) || 1);
+
+  const { isLoading, error, isFetching, data, isPreviousData } = useQuery({
+    queryKey: ['events', page],
+    queryFn: () => fetchProjects(page),
+    keepPreviousData: true,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     staleTime: 60000,
   });
 
-  if (isLoading) return <>{'Loading...'}</>;
+  useEffect(() => {
+    if (!isPreviousData && data?.page < data?.pages) {
+      console.log('FETCHING');
+      queryClient.prefetchQuery({
+        queryKey: ['projects', page + 1],
+        queryFn: () => fetchProjects(page + 1),
+      });
+    }
+  }, [data, isPreviousData, page, queryClient]);
+
+  if (isLoading || isFetching) return <>{'Loading...'}</>;
   if (error) return <>{'An error has occurred: ' + error}</>;
-  console.log(data);
+  console.log(data, page);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
@@ -33,8 +58,8 @@ const Events: NextPage = () => {
       <main className="flex w-full flex-1 flex-col items-center text-center">
         <CurvyHeader title="Arrangementer" />
 
-        <div className="events relative flex flex-col z-10 max-w-screen-xl mb-32 gap-6 w-11/12">
-          {data.map((event: EventType, index: number) => (
+        <div className="events relative flex flex-col z-10 max-w-screen-xl gap-6 w-11/12 mb-8">
+          {data.events.map((event: EventType, index: number) => (
             <a href={`/events/${event.id}`} key={index}>
               <div className="p-3 border-2 border-primary rounded-2xl">
                 <div className="relative grid grid-cols-layout w-full mx-auto bg-white shadow-lg rounded-2xl p-3 gap-3">
@@ -79,6 +104,20 @@ const Events: NextPage = () => {
                 </div>
               </div>
             </a>
+          ))}
+        </div>
+
+        <div className="flex gap-3 mb-32">
+          {new Array(Math.min(data?.pages, 5)).fill(0).map((_, i) => (
+            <button
+              onClick={() => setPage(i + 1)}
+              className={`bg-white rounded-xl hover:brightness-95 transition-all w-12 h-12 ${
+                page === i + 1 ? ' border-primary border-2' : ''
+              }`}
+              key={`navigation-${i}`}
+            >
+              {i + 1}
+            </button>
           ))}
         </div>
       </main>

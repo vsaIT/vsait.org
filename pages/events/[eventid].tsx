@@ -13,19 +13,13 @@ import { useQuery } from '@tanstack/react-query';
 
 const Event: NextPage = () => {
   const router = useRouter();
-  // const [event, setEvent] = useState<EventType>(placeholderEvent);
   const { status, data: session } = useSession({
     required: false,
   });
   const { eventid } = router.query;
   console.log(eventid, session);
 
-  const {
-    isSuccess,
-    isLoading,
-    error,
-    data: event,
-  } = useQuery({
+  const { isSuccess, isLoading, error, data } = useQuery({
     queryKey: ['eventId', eventid],
     queryFn: () => fetch(`/api/events/${eventid}`).then((res) => res.json()),
     enabled: !!eventid,
@@ -34,8 +28,10 @@ const Event: NextPage = () => {
     staleTime: 60000,
   });
 
-  if (isLoading || !isSuccess || event?.statusCode) return <>{'Loading...'}</>;
+  if (isLoading || !isSuccess || data?.statusCode) return <>{'Loading...'}</>;
   if (error) return <>{'An error has occurred: ' + error}</>;
+
+  const event: EventType = data;
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">

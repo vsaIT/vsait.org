@@ -36,6 +36,29 @@ async function main() {
 
   const open: EventType = 'OPEN';
   const member: EventType = 'MEMBERSHIP';
+  const dummy: any = {
+    id: 2,
+    title: 'Julekos222 med VSAiT! DUMMY',
+    description:
+      'Nå nærmer vinteren seg og vi gjør oss klare til JULEKOS med VSAiT!😍Det vil være masse BANGING pizza, varm drikke, juleworkshop, klementiner, pepperkaker og god julemusikk!🥳 Dersom du har vært snill i år så det være at vi får besøk av julenissen🙈! Det blir super lavterskel, mye smil og latter, og vi håper så mange som mulig vil komme! Kom med cozy wozy klær, og det er også mulig å spille brettspill, strikking, lekser og mingle med andre senere utover kvelden <3 🌈',
+    image: '/placeholder.png',
+
+    startTime: new Date('05-01-2023 17:00'),
+    endTime: new Date('05-01-2023 17:00'),
+    registrationDeadline: new Date('05-01-2023 17:00'),
+    cancellationDeadline: new Date('05-01-2023 17:00'),
+
+    location: 'KJL4, Gløshaugen',
+    eventType: member,
+
+    maxRegistrations: 30,
+
+    checkinUrl: 'test2',
+
+    isDraft: false,
+    isCancelled: false,
+  };
+
   await prisma.event.upsert({
     where: { id: 1 },
     update: {},
@@ -88,6 +111,13 @@ async function main() {
       isCancelled: false,
     },
   });
+  for (let i = 3; i < 12; i++) {
+    await prisma.event.upsert({
+      where: { id: i },
+      update: {},
+      create: { ...dummy, id: i, title: 'dummy' + i },
+    });
+  }
 }
 
 main()
