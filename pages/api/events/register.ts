@@ -1,12 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import prisma, { Prisma } from '@db';
-import isEmpty from 'lodash/isEmpty';
+import prisma from '@db';
 import { getSession } from '@lib/auth/session';
 
 type RegisterBodyType = {
   userId: string;
   eventId: number;
 };
+
 // curl -X POST http://localhost:3000/api/events/register --data-raw "userId=clcgg9ap20002w6lfwak2q3ap&eventId=2"
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'POST') {

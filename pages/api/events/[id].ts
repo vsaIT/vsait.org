@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import prisma, { Prisma } from '@db';
-import isEmpty from 'lodash/isEmpty';
+import prisma from '@db';
 import { getSession } from '@lib/auth/session';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
