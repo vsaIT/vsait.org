@@ -7,7 +7,6 @@ type RegisterBodyType = {
   eventId: number;
 };
 
-// curl -X POST http://localhost:3000/api/events/register --data-raw "userId=clcgg9ap20002w6lfwak2q3ap&eventId=2"
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'POST') {
     return res.status(405).send({ message: 'Only POST requests allowed' });
@@ -43,18 +42,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       });
       message = `Successfully unregistered for event ${eventId}`;
     } else {
-      // await prisma.event.update({
-      //   where: {
-      //     id: eventId,
-      //   },
-      //   data: {
-      //     registrationList: {
-      //       create: [{
-      //         userId: userId,
-      //       }],
-      //     },
-      //   },
-      // });
       await prisma.registrations.create({
         data: {
           eventId: Number(eventId),

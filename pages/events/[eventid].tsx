@@ -5,11 +5,13 @@ import Footer from '@components/Footer';
 import { EventType } from '@lib/types';
 import { SmallHeader } from '@lib/components/Header';
 import Navigation from '@lib/components/Navigation';
-import { useState } from 'react';
 import Image from 'next/image';
 import { Button } from '@lib/components/Button';
 import { useSession } from 'next-auth/react';
 import { useQuery } from '@tanstack/react-query';
+import { useCallback } from 'react';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
 const Event: NextPage = () => {
   const router = useRouter();
@@ -17,6 +19,7 @@ const Event: NextPage = () => {
     required: false,
   });
   const { eventid } = router.query;
+  const MySwal = withReactContent(Swal);
   console.log(eventid, session);
 
   const { isSuccess, isLoading, error, data } = useQuery({
@@ -28,10 +31,63 @@ const Event: NextPage = () => {
     staleTime: 60000,
   });
 
+  const register = useCallback(async () => {
+    if (!eventid || !session?.user?.id) return;
+    const melding = data.registration ? 'av' : 'på';
+    MySwal.fire({
+      icon: 'info',
+      title: <p>Bekreftelse!</p>,
+      text: `Du melder deg nå ${melding} arrangementet`,
+      showCancelButton: true,
+      confirmButtonText: `Ok, meld meg ${melding}`,
+      cancelButtonText: 'Avbryt',
+    })
+      .then(async () => {
+        await fetch('/api/events/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId: session?.user?.id,
+            eventId: eventid,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log('Success:', data);
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+            throw new Error(error);
+          });
+        return MySwal.fire({
+          icon: 'success',
+          title: <p>Registrert!</p>,
+          text: `Du er nå meldt ${melding} arrangementet`,
+          showConfirmButton: false,
+          timer: 1500,
+        }).then(() => {
+          window.location.reload();
+        });
+      })
+      .catch(() => {
+        return MySwal.fire({
+          icon: 'error',
+          title: <p>Ikke registrert!</p>,
+          text: `${
+            data?.registration ? 'Avmelding' : 'Påmelding'
+          } på arrangementet mislykket`,
+          showConfirmButton: false,
+        });
+      });
+  }, [eventid, session?.user?.id, data?.registration]);
+
   if (isLoading || !isSuccess || data?.statusCode) return <>{'Loading...'}</>;
   if (error) return <>{'An error has occurred: ' + error}</>;
 
-  const event: EventType = data;
+  const event: EventType = data.event;
+  console.log(data, data.registration);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
@@ -82,7 +138,7 @@ const Event: NextPage = () => {
                 </p>
                 <p>
                   <b>Åpent for:</b>{' '}
-                  {event.eventType === 'OPEN' ? 'alle' : 'membership'}
+                  {event.eventType === 'OPEN' ? 'Alle' : 'Medlemmer'}
                 </p>
               </div>
             </div>
@@ -108,15 +164,22 @@ const Event: NextPage = () => {
                     <b>Venteliste:</b> {event.waitingList.length}
                   </p>
                   <div className="flex flex-col gap-3 mt-2">
-                    <Button text="Se andre påmeldte" />
-                    <Button text="Meld deg på" />
+                    {session?.user &&
+                      (data.registration ? (
+                        <Button onClick={register} text="Meld deg av" />
+                      ) : (
+                        <Button onClick={register} text="Meld deg på" />
+                      ))}
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col w-full bg-white shadow-2xl rounded-2xl p-6">
-                <h2 className="font-bold text-2xl mb-4">Innslipp</h2>
-                <Button text="Gå til innslipp" />
-              </div>
+
+              {session?.user.role === 'USER' && (
+                <div className="flex flex-col w-full bg-white shadow-2xl rounded-2xl p-6">
+                  <h2 className="font-bold text-2xl mb-4">Innslipp</h2>
+                  <Button text="Gå til innslipp" />
+                </div>
+              )}
             </div>
             <div className="flex flex-col w-full bg-white shadow-2xl rounded-2xl p-6">
               <h2 className="font-bold text-2xl mb-4">Info</h2>
@@ -148,12 +211,14 @@ const Event: NextPage = () => {
             </div>
           </div>
 
-          <div className="flex flex-col text-left">
-            <div className="flex flex-col w-full bg-white shadow-2xl rounded-2xl p-6">
-              <h2 className="font-bold text-2xl mb-4">Liste over påmeldte</h2>
-              <p></p>
+          {session?.user.role === 'USER' && (
+            <div className="flex flex-col text-left">
+              <div className="flex flex-col w-full bg-white shadow-2xl rounded-2xl p-6">
+                <h2 className="font-bold text-2xl mb-4">Liste over påmeldte</h2>
+                <p></p>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </main>
 

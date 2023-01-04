@@ -3,8 +3,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 
 import { hashPassword, verifyPassword } from '@lib/auth/passwords';
-import { Session } from '@lib/auth/session';
-import prisma from '@db/index';
+import prisma, { Role } from '@db/index';
 
 type RegisterInputType =
   | 'firstName'
@@ -272,16 +271,15 @@ export default NextAuth({
         token.id = user.id;
         token.role = user.role;
       }
-
       return token;
     },
     async session({ session, token, user }) {
-      const sess: Session = {
+      const sess = {
         ...session,
         user: {
           ...session.user,
           id: token.id as string,
-          role: token.role as string,
+          role: token.role as Role,
         },
       };
 

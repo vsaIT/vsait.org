@@ -6,14 +6,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { id } = req.query;
   const session = await getSession({ req });
 
-  // if (!session) {
-  //   return res.status(401).json({
-  //     message: 'Unauthorized',
-  //   });
-  // }
-
   try {
-    const events = await prisma.event.findFirst({
+    const event = await prisma.event.findFirst({
       where: {
         id: Number(id),
         isDraft: false,
@@ -24,7 +18,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         attendanceList: session?.user?.role === 'admin',
       },
     });
-    return res.status(200).json(events);
+    let hasRegistration = null;
+    if (session) {
+      hasRegistration = await prisma.registrations.findFirst({
+        where: {
+          userId: session?.user?.id,
+          eventId: Number(id),
+        },
+      });
+    }
+    return res
+      .status(200)
+      .json({ event: event, registration: !!hasRegistration });
   } catch (error: any) {
     console.error(`[api] /api/events/${id}`, error);
     return res.status(500).json({ statusCode: 500, message: error.message });
