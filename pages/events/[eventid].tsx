@@ -271,7 +271,12 @@ const Event: NextPage = () => {
                 {session?.user.role === 'ADMIN' && (
                   <div className="flex flex-col w-full bg-white shadow-2xl rounded-2xl p-6">
                     <h2 className="font-bold text-2xl mb-4">Innslipp</h2>
-                    <Button text="Gå til innslipp" />
+                    <a
+                      className="block w-full"
+                      href={`/events/checkin/${eventid}`}
+                    >
+                      <Button text="Gå til innslipp" className="w-full" />
+                    </a>
                   </div>
                 )}
               </div>

@@ -84,7 +84,7 @@ model Event {
   registrationList Registrations[]
   waitingList      Waiting[]
 
-  checkinUrl     String?
+  checkinUrl     String @unique @default(cuid())
   attendanceList Attendances[]
 
   isDraft     Boolean @default(false)

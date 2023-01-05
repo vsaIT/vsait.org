@@ -24,7 +24,7 @@ const Navigation = () => {
       <nav className="flex gap-5">
         {navigation.map((nav) => (
           <a
-            className="text-white transition-all hover:underline-offset-4"
+            className="text-white transition-all duration-300 underline-offset-4 hover:text-secondary hover:brightness-150"
             key={nav.text}
             href={nav.href}
           >

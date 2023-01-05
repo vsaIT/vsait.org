@@ -15,7 +15,7 @@ type RetrievedUserType = {
 };
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { id } = req.query;
+  const { eventid } = req.query;
   const session = await getSession({ req });
 
   try {
@@ -24,10 +24,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       where:
         session?.user?.role === 'ADMIN'
           ? {
-              id: Number(id),
+              id: Number(eventid),
             }
           : {
-              id: Number(id),
+              id: Number(eventid),
               isDraft: false,
             },
       include: {
@@ -40,7 +40,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         attendanceList: session?.user?.role === 'admin',
       },
     });
-    if (!event) throw new Error(`Could not find event with id ${id}`);
+    if (!event) throw new Error(`Could not find event with id ${eventid}`);
 
     // Set user ids in registrationList as filtering for registered users
     let registeredUsers: RegisteredUserType[] = [];
@@ -104,7 +104,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       hasMembership: hasMembership,
     });
   } catch (error) {
-    console.error(`[api] /api/events/${id}`, getErrorMessage(error));
+    console.error(`[api] /api/events/${eventid}`, getErrorMessage(error));
     return res
       .status(500)
       .json({ statusCode: 500, message: getErrorMessage(error) });
