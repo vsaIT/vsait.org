@@ -10,23 +10,23 @@ generator client {
 }
 
 model Account {
-  id                          String   @id @default(cuid())
-  createdAt                   DateTime @default(now())
-  updatedAt                   DateTime @updatedAt
-  userId                      String
-  type                        String
-  provider                    String
-  providerAccountId           String
-  refresh_token               String? @db.VarChar(500)
-  access_token                String? @db.VarChar(500)
-  refresh_token_expires_in    Int?
-  expires_at                  Int?
-  token_type                  String?
-  scope                       String?
-  id_token                    String? @db.Text
-  session_state               String?
-  oauth_token_secret          String?
-  oauth_token                 String?
+  id                       String   @id @default(cuid())
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+  userId                   String
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String?  @db.VarChar(500)
+  access_token             String?  @db.VarChar(500)
+  refresh_token_expires_in Int?
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String?  @db.Text
+  session_state            String?
+  oauth_token_secret       String?
+  oauth_token              String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -34,94 +34,94 @@ model Account {
 }
 
 model Session {
-  id              String   @id @default(cuid())
-  sessionToken    String   @unique
-  expires         DateTime
-  user            User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId          String?
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  expires      DateTime
+  user         User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String?
 }
 
 model User {
-  id                  String    @id @default(cuid())
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
-  firstName           String?
-  lastName            String?
-  email               String?   @unique
-  password            String?
-  emailVerified       DateTime?
-  birthdate           DateTime?
-  foodNeeds           String?
-  student             String?
-  role                Role      @default(USER)
-  accounts            Account[]
-  sessions            Session[]
-  
-  registrationList    Registrations[]
-  waitingList         Waiting[]
-  attendanceList      Attendances[]
+  id            String    @id @default(cuid())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  firstName     String?
+  lastName      String?
+  email         String?   @unique
+  password      String?
+  emailVerified DateTime?
+  birthdate     DateTime?
+  foodNeeds     String?
+  student       String?
+  role          Role      @default(USER)
+  accounts      Account[]
+  sessions      Session[]
+
+  userRegistrationList Registrations[]
+  userWaitingList      Waiting[]
+  userAttendanceList   Attendances[]
 }
 
 model Event {
-  id                      Int       @id @default(autoincrement())
-  createdAt               DateTime  @default(now())
-  updatedAt               DateTime  @updatedAt
-  title                   String?   @db.VarChar(500)
-  description             String?   @db.VarChar(1000)
-  image                   String?   @db.VarChar(500)
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  title       String?  @db.VarChar(500)
+  description String?  @db.VarChar(1000)
+  image       String?  @db.VarChar(500)
 
-  startTime               DateTime?
-  endTime                 DateTime?
-  registrationDeadline    DateTime?
-  cancellationDeadline    DateTime?
+  startTime            DateTime?
+  endTime              DateTime?
+  registrationDeadline DateTime?
+  cancellationDeadline DateTime?
 
-  location                String?
-  eventType               EventType? @default(MEMBERSHIP)
+  location  String?
+  eventType EventType? @default(MEMBERSHIP)
 
-  maxRegistrations        Int?
-  registrationList        Registrations[]
-  waitingList             Waiting[]
+  maxRegistrations Int?
+  registrationList Registrations[]
+  waitingList      Waiting[]
 
-  checkinUrl              String?
-  attendanceList          Attendances[]
+  checkinUrl     String?
+  attendanceList Attendances[]
 
-  isDraft                 Boolean   @default(false)
-  isCancelled             Boolean   @default(false)
+  isDraft     Boolean @default(false)
+  isCancelled Boolean @default(false)
 }
 
 model Registrations {
-  createdAt   DateTime  @default(now())
-  user        User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId      String
-  event       Event?    @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  eventId     Int
-  
+  createdAt DateTime @default(now())
+  user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  event     Event?    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId   Int
+
   @@id([userId, eventId])
 }
 
 model Waiting {
-  createdAt   DateTime  @default(now())
-  user        User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId      String
-  event       Event?    @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  eventId     Int
+  createdAt DateTime @default(now())
+  user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  event     Event?    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId   Int
 
   @@id([userId, eventId])
 }
 
 model Attendances {
-  createdAt   DateTime  @default(now())
-  user        User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId      String
-  event       Event?    @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  eventId     Int
+  createdAt DateTime @default(now())
+  user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  event     Event?    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId   Int
 
   @@id([userId, eventId])
 }
 
 model VerificationToken {
   identifier String
-  token      String    @unique
+  token      String   @unique
   expires    DateTime
 
   @@unique([identifier, token])
@@ -131,6 +131,7 @@ enum Role {
   USER
   ADMIN
 }
+
 enum EventType {
   OPEN
   MEMBERSHIP

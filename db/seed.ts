@@ -11,6 +11,7 @@ async function main() {
       email: 'a@a.com',
       firstName: 'Alice',
       password: encryptedPassword,
+      role: 'ADMIN',
     },
   });
 
@@ -21,6 +22,7 @@ async function main() {
       email: 'b@b.com',
       firstName: 'Bob',
       password: encryptedPassword,
+      role: 'USER',
     },
   });
 
