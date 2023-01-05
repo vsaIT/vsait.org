@@ -2,23 +2,26 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '@db';
 import { getSession } from '@lib/auth/session';
 import { getErrorMessage } from '@lib/utils';
+import { isEmpty } from 'lodash';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'POST')
     return res.status(405).send({ message: 'Only POST requests allowed' });
 
-  const userId: string = req?.body?.userId;
-  const eventId = Number(req?.body?.eventId);
+  const userId: string = isEmpty(req.body?.userId) ? '' : req.body.userId;
+  const eventId = isEmpty(req?.body?.eventId) ? 0 : Number(req?.body?.eventId);
 
   const session = await getSession({ req });
   if (!session)
     return res.status(401).json({
+      statusCode: 401,
       message: 'Unauthorized',
     });
   if (userId !== session?.user?.id)
-    return res
-      .status(401)
-      .json({ message: 'Cannot register event for another user' });
+    return res.status(200).json({
+      statusCode: 401,
+      message: 'Cannot register event for another user',
+    });
 
   try {
     const event = await prisma.event.findFirst({
@@ -61,6 +64,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     let message = '';
     if (hasWaiting) {
+      // Check for cancellation deadline
+      if (new Date() >= event.cancellationDeadline)
+        throw new Error(`Cancellation deadline has passed for event`);
+
       // If user is in waiting list
       await prisma.waiting.delete({
         where: {
@@ -71,6 +78,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
       });
     } else if (hasRegistration) {
+      // Check for cancellation deadline
+      if (new Date() >= event.cancellationDeadline)
+        throw new Error(`Cancellation deadline has passed for event`);
+
       // If user is in registration list
       await prisma.registrations.delete({
         where: {
@@ -102,6 +113,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         message += `. Spot found, moving a user from waiting to registered`;
       }
     } else {
+      // Check for registration deadline
+      if (new Date() >= event.registrationDeadline)
+        throw new Error(`Registration deadline has passed for event`);
+
       // If user is not in waiting or registration list
       if (event.registrationList.length >= maxRegistrations) {
         // Push user to waitingList if registrationList is full
@@ -124,12 +139,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     }
     return res.status(200).json({
+      statusCode: 200,
       message: message,
     });
   } catch (error) {
     console.error('[api] /api/events', getErrorMessage(error));
     return res
-      .status(500)
+      .status(200)
       .json({ statusCode: 500, message: getErrorMessage(error) });
   }
 };

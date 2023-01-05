@@ -2,7 +2,7 @@ import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Footer from '@components/Footer';
-import { EventType, RegisteredUserType } from '@lib/types';
+import { ApiResponseType, EventType, RegisteredUserType } from '@lib/types';
 import { SmallHeader } from '@lib/components/Header';
 import Navigation from '@lib/components/Navigation';
 import Image from 'next/image';
@@ -60,11 +60,11 @@ const Event: NextPage = () => {
             eventId: eventid,
           }),
         })
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error(response.statusText);
-            }
-            return response.json();
+          .then(async (response) => {
+            if (!response.ok) throw new Error(response.statusText);
+            const data: ApiResponseType = await response.json();
+            if (data.statusCode === 200) return data;
+            else throw new Error(`${data.statusCode}: ${data.message}`);
           })
           .then(async (data) => {
             console.log('Success:', data);
@@ -84,13 +84,14 @@ const Event: NextPage = () => {
               html: (
                 <>
                   <p>
-                    ${data?.registered ? 'Avmelding' : 'Påmelding'} på
+                    {data?.registered ? 'Avmelding' : 'Påmelding'} på
                     arrangementet mislykket
                   </p>
-                  <pre>${getErrorMessage(error)}</pre>
+                  <pre className="mt-2">{getErrorMessage(error)}</pre>
                 </>
               ),
               showConfirmButton: false,
+              timer: 5000,
             });
           });
       },

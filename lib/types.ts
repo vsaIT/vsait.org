@@ -35,6 +35,11 @@ export type ButtonProps = {
   inverted?: boolean;
 };
 
+export type ApiResponseType = {
+  statusCode: number;
+  message: string;
+};
+
 export type RegisteredUserType = {
   name: string;
   email: string;

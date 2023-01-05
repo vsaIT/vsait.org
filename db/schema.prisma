@@ -57,6 +57,7 @@ model User {
   role          Role      @default(USER)
   accounts      Account[]
   sessions      Session[]
+  membership    Membership[]
 
   userRegistrationList Registrations[]
   userWaitingList      Waiting[]
@@ -67,14 +68,14 @@ model Event {
   id          Int      @id @default(autoincrement())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  title       String?  @db.VarChar(500)
-  description String?  @db.VarChar(1000)
+  title       String   @db.VarChar(500)
+  description String   @db.VarChar(1000)
   image       String?  @db.VarChar(500)
 
-  startTime            DateTime?
-  endTime              DateTime?
-  registrationDeadline DateTime?
-  cancellationDeadline DateTime?
+  startTime            DateTime
+  endTime              DateTime
+  registrationDeadline DateTime
+  cancellationDeadline DateTime
 
   location  String?
   eventType EventType? @default(MEMBERSHIP)
@@ -91,33 +92,38 @@ model Event {
 }
 
 model Registrations {
-  createdAt DateTime @default(now())
   user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
   event     Event?    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId   Int
+  createdAt DateTime  @default(now())
 
   @@id([userId, eventId])
 }
 
 model Waiting {
-  createdAt DateTime @default(now())
   user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
   event     Event?    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId   Int
+  createdAt DateTime  @default(now())
 
   @@id([userId, eventId])
 }
 
 model Attendances {
-  createdAt DateTime @default(now())
   user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
   event     Event?    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId   Int
+  createdAt DateTime  @default(now())
 
   @@id([userId, eventId])
+}
+
+model Membership {
+  year      Int       @id
+  users     User[]
 }
 
 model VerificationToken {
