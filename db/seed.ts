@@ -25,6 +25,16 @@ async function main() {
       lastName: 'Dummy',
       password: encryptedPassword,
       role: 'USER',
+      membership: {
+        connectOrCreate: {
+          where: {
+            year: 2022,
+          },
+          create: {
+            year: 2022,
+          },
+        },
+      },
     },
   });
 
@@ -38,6 +48,16 @@ async function main() {
       password: encryptedPassword,
       role: 'USER',
       publicProfile: true,
+      membership: {
+        connectOrCreate: {
+          where: {
+            year: 2021,
+          },
+          create: {
+            year: 2021,
+          },
+        },
+      },
     },
   });
 
@@ -108,7 +128,7 @@ async function main() {
       cancellationDeadline: new Date('07-01-2023 17:00'),
 
       location: 'KJL4, Gløshaugen',
-      eventType: member,
+      eventType: open,
 
       maxRegistrations: 30,
 

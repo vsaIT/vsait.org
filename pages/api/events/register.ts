@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '@db';
 import { getSession } from '@lib/auth/session';
-import { getErrorMessage } from '@lib/utils';
+import { getErrorMessage, getMembershipYear } from '@lib/utils';
 import { isEmpty } from 'lodash';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -12,7 +12,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const eventId = isEmpty(req?.body?.eventId) ? 0 : Number(req?.body?.eventId);
 
   const session = await getSession({ req });
-  if (!session)
+  if (!session || !session?.user)
     return res.status(401).json({
       statusCode: 401,
       message: 'Unauthorized',
@@ -26,7 +26,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const event = await prisma.event.findFirst({
       where:
-        session?.user?.role === 'ADMIN'
+        session.user.role === 'ADMIN'
           ? {
               id: Number(eventId),
             }
@@ -51,10 +51,27 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             createdAt: 'asc',
           },
         },
-        attendanceList: session?.user?.role === 'admin',
+        attendanceList: session.user.role === 'admin',
       },
     });
     if (!event) throw new Error(`Could not find event with id ${eventId}`);
+
+    // Check for user membership on events with MEMBERSHIP as eventType
+    if (event.eventType === 'MEMBERSHIP') {
+      // Retrieve all of user's memberships
+      const userMembership = await prisma.user.findFirst({
+        where: {
+          id: userId,
+        },
+        select: {
+          membership: true,
+        },
+      });
+      const memberships = userMembership?.membership || [];
+      // Check if user have membership for the following year, throw if not
+      if (!memberships.map((m) => m.year).includes(getMembershipYear()))
+        throw new Error('Event requires user to have membership');
+    }
 
     const hasRegistration = event.registrationList
       .map((r) => r.userId)

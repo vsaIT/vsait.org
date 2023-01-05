@@ -34,7 +34,7 @@ const Event: NextPage = () => {
 
   const register = useCallback(async () => {
     if (!eventid || !session?.user?.id) return;
-    const melding = data.registered ? 'av' : 'på';
+    const melding = data.hasRegistered ? 'av' : 'på';
     StyledSwal.fire({
       icon: 'info',
       title: <p>Bekreftelse!</p>,
@@ -64,7 +64,7 @@ const Event: NextPage = () => {
             if (!response.ok) throw new Error(response.statusText);
             const data: ApiResponseType = await response.json();
             if (data.statusCode === 200) return data;
-            else throw new Error(`${data.statusCode}: ${data.message}`);
+            else throw new Error(data.message);
           })
           .then(async (data) => {
             console.log('Success:', data);
@@ -84,10 +84,10 @@ const Event: NextPage = () => {
               html: (
                 <>
                   <p>
-                    {data?.registered ? 'Avmelding' : 'Påmelding'} på
+                    {data.hasRegistered ? 'Avmelding' : 'Påmelding'} på
                     arrangementet mislykket
                   </p>
-                  <pre className="mt-2">{getErrorMessage(error)}</pre>
+                  <code className="mt-2 w-full">{getErrorMessage(error)}</code>
                 </>
               ),
               showConfirmButton: false,
@@ -97,7 +97,7 @@ const Event: NextPage = () => {
       },
       allowOutsideClick: () => !Swal.isLoading(),
     }).finally(() => setRegistrationEnabled(true));
-  }, [eventid, session?.user?.id, data?.registered, setRegistrationEnabled]);
+  }, [eventid, session?.user?.id, data?.hasRegistered, setRegistrationEnabled]);
 
   const showRegistrations = useCallback(() => {
     if (data?.registrations?.length >= 0) {
@@ -128,7 +128,6 @@ const Event: NextPage = () => {
   if (error) return <>{'An error has occurred: ' + error}</>;
 
   const event: EventType = data?.event;
-  console.log(eventid, session, data);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
@@ -213,22 +212,57 @@ const Event: NextPage = () => {
                             onClick={() => showRegistrations()}
                             text="Se andre påmeldte"
                           />
-                          {data.registered ? (
-                            <Button
-                              onClick={() => registrationEnabled && register()}
-                              text="Meld deg av"
-                            />
+                          {new Date() >=
+                          new Date(event.registrationDeadline) ? (
+                            <p className="text-center">
+                              Arrangementet er ikke åpent for påmelding!
+                            </p>
+                          ) : new Date() >=
+                              new Date(event.cancellationDeadline) &&
+                            data.hasRegistered ? (
+                            <p className="text-center">
+                              Arrangementet er ikke lenger åpent for avmelding!
+                            </p>
+                          ) : (data.hasMembership &&
+                              event.eventType === 'MEMBERSHIP') ||
+                            event.eventType === 'OPEN' ? (
+                            data.hasRegistered ? (
+                              <Button
+                                onClick={() =>
+                                  registrationEnabled && register()
+                                }
+                                text="Meld deg av"
+                              />
+                            ) : (
+                              <Button
+                                onClick={() =>
+                                  registrationEnabled && register()
+                                }
+                                text="Meld deg på"
+                              />
+                            )
                           ) : (
-                            <Button
-                              onClick={() => registrationEnabled && register()}
-                              text="Meld deg på"
-                            />
+                            <div className="flex flex-col gap-1">
+                              <p>
+                                Dette arrangementet er kun åpen for medlemmer.
+                              </p>
+                              <p>
+                                Vennligst søk om medlemsskap ved å gå inn på{' '}
+                                <a
+                                  className="font-medium text-primary hover:underline"
+                                  href="/profile"
+                                >
+                                  profil
+                                </a>
+                                .
+                              </p>
+                            </div>
                           )}
                         </>
                       ) : (
-                        <>
-                          <p>Logg på for påmelding av arrangementer</p>
-                        </>
+                        <p className="text-center">
+                          Du må være pålogget for å melde deg på arrangementet!
+                        </p>
                       )}
                     </div>
                   </div>

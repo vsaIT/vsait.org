@@ -1,8 +1,18 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import prisma from '@db';
+import prisma, { Membership } from '@db';
 import { getSession } from '@lib/auth/session';
-import { getErrorMessage } from '@lib/utils';
+import { getErrorMessage, getMembershipYear } from '@lib/utils';
 import { RegisteredUserType } from '@lib/types';
+
+type RetrievedUserType = {
+  id: string;
+  lastName: string;
+  firstName: string;
+  email: string;
+  foodNeeds: string;
+  publicProfile: boolean;
+  membership: Membership[];
+};
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { id } = req.query;
@@ -38,19 +48,22 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const userId = session?.user?.id || '';
 
     // Retrieve registered users if logged in
+    let users: RetrievedUserType[] = [];
     if (session) {
-      const users = await prisma.user.findMany({
+      users = await prisma.user.findMany({
         where: {
           id: {
             in: userIds,
           },
         },
         select: {
+          id: true,
           lastName: true,
           firstName: true,
           email: true,
           foodNeeds: true,
           publicProfile: true,
+          membership: true,
         },
       });
 
@@ -75,13 +88,20 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         };
       });
     }
+    const hasMembership =
+      users.filter(
+        (u) =>
+          u.id === userId &&
+          u.membership.map((m) => m.year).includes(getMembershipYear())
+      ).length > 0;
 
     return res.status(200).json({
       event: event,
       registrations: registeredUsers,
-      registered:
+      hasRegistered:
         userIds.includes(userId) ||
         event.waitingList.map((r) => r.userId).includes(userId),
+      hasMembership: hasMembership,
     });
   } catch (error) {
     console.error(`[api] /api/events/${id}`, getErrorMessage(error));

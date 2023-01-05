@@ -35,7 +35,6 @@ const Events: NextPage = () => {
 
   useEffect(() => {
     if (!isPreviousData && data?.page < data?.pages) {
-      console.log('FETCHING');
       queryClient.prefetchQuery({
         queryKey: ['projects', page + 1],
         queryFn: () => fetchProjects(page + 1),
@@ -44,8 +43,6 @@ const Events: NextPage = () => {
   }, [data, isPreviousData, page, queryClient]);
 
   if (error) return <p>{'An error has occurred: ' + error}</p>;
-
-  console.log(data, page);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
