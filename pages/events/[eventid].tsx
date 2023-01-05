@@ -44,9 +44,9 @@ const Event: NextPage = () => {
       preConfirm: async () => {
         // Disable registration spamming
         setRegistrationEnabled(false);
-        // Hide cancel button on loading
+        // Hide cancel button when loading
         const cancelButton = StyledSwal.getCancelButton();
-        if (cancelButton) cancelButton.style.display = 'none';
+        if (cancelButton) cancelButton.style.opacity = '0';
         // Send registration request
         await fetch('/api/events/register', {
           method: 'POST',
@@ -64,17 +64,16 @@ const Event: NextPage = () => {
             }
             return response.json();
           })
-          .then((data) => {
+          .then(async (data) => {
             console.log('Success:', data);
-            return StyledSwal.fire({
+            await StyledSwal.fire({
               icon: 'success',
               title: <p>Registrert!</p>,
               text: `Du er nå meldt ${melding} arrangementet`,
               showConfirmButton: false,
               timer: 1500,
-            }).then(() => {
-              window.location.reload();
             });
+            window.location.reload();
           })
           .catch(() => {
             return StyledSwal.fire({
