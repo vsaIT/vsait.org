@@ -9,10 +9,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     // Retrieve events including registrationList, waitingList and attendanceList
     const event = await prisma.event.findFirst({
-      where: {
-        id: Number(id),
-        isDraft: false,
-      },
+      where:
+        session?.user?.role === 'ADMIN'
+          ? {
+              id: Number(id),
+            }
+          : {
+              id: Number(id),
+              isDraft: false,
+            },
       include: {
         registrationList: {
           select: {
@@ -23,9 +28,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         attendanceList: session?.user?.role === 'admin',
       },
     });
+    if (!event) throw new Error(`Could not find event with id ${id}`);
+
     // Set user ids in registrationList as filtering for registered users
     let registeredUsers: any[] = [];
-    const userIds = event?.registrationList.map((r) => r.userId) || [];
+    const userIds = event.registrationList.map((r) => r.userId) || [];
+    const userId = session?.user?.id || '';
 
     // Retrieve registered users if logged in
     if (session) {
@@ -45,21 +53,26 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       // Map registered users with fields name, email and foodNeeds
       registeredUsers = registeredUsers.map((user) => {
-        if (session?.user?.role === 'USER') {
-          return { name: 'Anonymous', email: '', foodNeeds: '' };
+        if (
+          session?.user?.role === 'ADMIN' ||
+          session?.user?.email === user.email
+        ) {
+          return {
+            name: `${user.firstName} ${user.lastName}`,
+            email: user.email,
+            foodNeeds: user.foodNeeds,
+          };
         }
-        return {
-          name: `${user.firstName} ${user.lastName}`,
-          email: user.email,
-          foodNeeds: user.foodNeeds,
-        };
+        return { name: 'Anonymous', email: '', foodNeeds: '' };
       });
     }
 
     return res.status(200).json({
       event: event,
       registrations: registeredUsers,
-      registered: userIds.includes(session?.user?.id || ''),
+      registered:
+        userIds.includes(userId) ||
+        event.waitingList.map((r) => r.userId).includes(userId),
     });
   } catch (error: any) {
     console.error(`[api] /api/events/${id}`, error);
