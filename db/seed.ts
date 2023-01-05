@@ -10,6 +10,7 @@ async function main() {
     create: {
       email: 'a@a.com',
       firstName: 'Alice',
+      lastName: 'Dummy',
       password: encryptedPassword,
       role: 'ADMIN',
     },
@@ -21,6 +22,7 @@ async function main() {
     create: {
       email: 'b@b.com',
       firstName: 'Bob',
+      lastName: 'Dummy',
       password: encryptedPassword,
       role: 'USER',
     },
@@ -32,7 +34,10 @@ async function main() {
     create: {
       email: 'c@c.com',
       firstName: 'Carla',
+      lastName: 'Dummy',
       password: encryptedPassword,
+      role: 'USER',
+      publicProfile: true,
     },
   });
 

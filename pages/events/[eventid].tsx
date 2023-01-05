@@ -41,9 +41,14 @@ const Event: NextPage = () => {
       confirmButtonText: `Ok, meld meg ${melding}`,
       cancelButtonText: 'Avbryt',
       showLoaderOnConfirm: true,
-      preConfirm: () => {
+      preConfirm: async () => {
+        // Disable registration spamming
         setRegistrationEnabled(false);
-        fetch('/api/events/register', {
+        // Hide cancel button on loading
+        const cancelButton = StyledSwal.getCancelButton();
+        if (cancelButton) cancelButton.style.display = 'none';
+        // Send registration request
+        await fetch('/api/events/register', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -71,8 +76,7 @@ const Event: NextPage = () => {
               window.location.reload();
             });
           })
-          .catch((error) => {
-            // StyledSwal.showValidationMessage(`Request failed: ${error}`);
+          .catch(() => {
             return StyledSwal.fire({
               icon: 'error',
               title: <p>Ikke registrert!</p>,

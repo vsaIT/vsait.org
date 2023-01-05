@@ -1,17 +1,15 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '@db';
 import { getSession } from '@lib/auth/session';
-
-type RegisterBodyType = {
-  userId: string;
-  eventId: number;
-};
+import { getErrorMessage } from '@lib/utils';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method !== 'POST') {
+  if (req.method !== 'POST')
     return res.status(405).send({ message: 'Only POST requests allowed' });
-  }
-  const { userId, eventId }: RegisterBodyType = req.body;
+
+  const userId: string = req?.body?.userId;
+  const eventId = Number(req?.body?.eventId);
+
   const session = await getSession({ req });
   if (!session)
     return res.status(401).json({
@@ -38,6 +36,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           select: {
             userId: true,
           },
+          orderBy: {
+            createdAt: 'asc',
+          },
         },
         waitingList: {
           select: {
@@ -52,14 +53,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
     if (!event) throw new Error(`Could not find event with id ${eventId}`);
 
-    const registrationUserIds = event.registrationList.map((r) => r.userId);
-    const hasRegistration = registrationUserIds.includes(userId);
+    const hasRegistration = event.registrationList
+      .map((r) => r.userId)
+      .includes(userId);
     const hasWaiting = event.waitingList.map((r) => r.userId).includes(userId);
     const maxRegistrations = event.maxRegistrations || Infinity;
-    console.log(hasRegistration);
 
     let message = '';
     if (hasWaiting) {
+      // If user is in waiting list
       await prisma.waiting.delete({
         where: {
           userId_eventId: {
@@ -69,6 +71,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
       });
     } else if (hasRegistration) {
+      // If user is in registration list
       await prisma.registrations.delete({
         where: {
           userId_eventId: {
@@ -77,9 +80,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           },
         },
       });
-      // Push from waitingList to registrationList
       message = `Successfully unregistered for event ${eventId}`;
+      // Push user from waitingList to registrationList if there is a spot available due to deletion
       if (event.waitingList.length > 0) {
+        // Pop user from waiting list
         const deleted = await prisma.waiting.delete({
           where: {
             userId_eventId: {
@@ -88,6 +92,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             },
           },
         });
+        // Push user to registration list
         await prisma.registrations.create({
           data: {
             eventId: Number(eventId),
@@ -97,8 +102,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         message += `. Spot found, moving a user from waiting to registered`;
       }
     } else {
-      // Push to waitingList if registrationList is full
+      // If user is not in waiting or registration list
       if (event.registrationList.length >= maxRegistrations) {
+        // Push user to waitingList if registrationList is full
         await prisma.waiting.create({
           data: {
             eventId: Number(eventId),
@@ -107,6 +113,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         });
         message = `Successfully registered for event ${eventId}. Event is currently full, adding user to the waiting list`;
       } else {
+        // Push user directly to registrationList
         await prisma.registrations.create({
           data: {
             eventId: Number(eventId),
@@ -116,13 +123,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         message = `Successfully registered for event ${eventId}`;
       }
     }
-
     return res.status(200).json({
       message: message,
     });
-  } catch (error: any) {
-    console.error('[api] /api/events', error);
-    return res.status(500).json({ statusCode: 500, message: error.message });
+  } catch (error) {
+    console.error('[api] /api/events', getErrorMessage(error));
+    return res
+      .status(500)
+      .json({ statusCode: 500, message: getErrorMessage(error) });
   }
 };
 

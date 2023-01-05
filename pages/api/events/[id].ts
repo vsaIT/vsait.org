@@ -1,6 +1,13 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import prisma, { Registrations, User } from '@db';
+import prisma from '@db';
 import { getSession } from '@lib/auth/session';
+import { getErrorMessage } from '@lib/utils';
+
+type RegisteredUserType = {
+  name: string;
+  email: string;
+  foodNeeds: string;
+};
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { id } = req.query;
@@ -31,13 +38,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     if (!event) throw new Error(`Could not find event with id ${id}`);
 
     // Set user ids in registrationList as filtering for registered users
-    let registeredUsers: any[] = [];
+    let registeredUsers: RegisteredUserType[] = [];
     const userIds = event.registrationList.map((r) => r.userId) || [];
     const userId = session?.user?.id || '';
 
     // Retrieve registered users if logged in
     if (session) {
-      registeredUsers = await prisma.user.findMany({
+      const users = await prisma.user.findMany({
         where: {
           id: {
             in: userIds,
@@ -48,11 +55,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           firstName: true,
           email: true,
           foodNeeds: true,
+          publicProfile: true,
         },
       });
 
       // Map registered users with fields name, email and foodNeeds
-      registeredUsers = registeredUsers.map((user) => {
+      registeredUsers = users.map((user) => {
         if (
           session?.user?.role === 'ADMIN' ||
           session?.user?.email === user.email
@@ -63,7 +71,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             foodNeeds: user.foodNeeds,
           };
         }
-        return { name: 'Anonymous', email: '', foodNeeds: '' };
+        return {
+          name: user.publicProfile
+            ? `${user.firstName} ${user.lastName}`
+            : 'Anonymous',
+          email: '',
+          foodNeeds: '',
+        };
       });
     }
 
@@ -74,9 +88,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         userIds.includes(userId) ||
         event.waitingList.map((r) => r.userId).includes(userId),
     });
-  } catch (error: any) {
-    console.error(`[api] /api/events/${id}`, error);
-    return res.status(500).json({ statusCode: 500, message: error.message });
+  } catch (error) {
+    console.error(`[api] /api/events/${id}`, getErrorMessage(error));
+    return res
+      .status(500)
+      .json({ statusCode: 500, message: getErrorMessage(error) });
   }
 };
 
