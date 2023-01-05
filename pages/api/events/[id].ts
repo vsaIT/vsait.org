@@ -2,12 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '@db';
 import { getSession } from '@lib/auth/session';
 import { getErrorMessage } from '@lib/utils';
-
-type RegisteredUserType = {
-  name: string;
-  email: string;
-  foodNeeds: string;
-};
+import { RegisteredUserType } from '@lib/types';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { id } = req.query;

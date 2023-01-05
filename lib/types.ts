@@ -35,8 +35,10 @@ export type ButtonProps = {
   inverted?: boolean;
 };
 
-export type ErrorType = {
-  message: string;
+export type RegisteredUserType = {
+  name: string;
+  email: string;
+  foodNeeds: string;
 };
 
 export type EventType = {

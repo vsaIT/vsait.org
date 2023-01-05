@@ -2,7 +2,7 @@ import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Footer from '@components/Footer';
-import { EventType } from '@lib/types';
+import { EventType, RegisteredUserType } from '@lib/types';
 import { SmallHeader } from '@lib/components/Header';
 import Navigation from '@lib/components/Navigation';
 import Image from 'next/image';
@@ -12,6 +12,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useState } from 'react';
 import Swal from 'sweetalert2';
 import StyledSwal from '@lib/components/StyledSwal';
+import { EventsDetailedSkeleton } from '@lib/components/Events';
+import { getErrorMessage } from '@lib/utils';
 
 const Event: NextPage = () => {
   const router = useRouter();
@@ -75,13 +77,19 @@ const Event: NextPage = () => {
             });
             window.location.reload();
           })
-          .catch(() => {
+          .catch((error: unknown) => {
             return StyledSwal.fire({
               icon: 'error',
               title: <p>Ikke registrert!</p>,
-              text: `${
-                data?.registered ? 'Avmelding' : 'Påmelding'
-              } på arrangementet mislykket`,
+              html: (
+                <>
+                  <p>
+                    ${data?.registered ? 'Avmelding' : 'Påmelding'} på
+                    arrangementet mislykket
+                  </p>
+                  <pre>${getErrorMessage(error)}</pre>
+                </>
+              ),
               showConfirmButton: false,
             });
           });
@@ -97,7 +105,7 @@ const Event: NextPage = () => {
         html: (
           <div className="flex flex-col">
             {data.registrations.length > 0 ? (
-              data.registrations.map((user: any, i: number) => (
+              data.registrations.map((user: RegisteredUserType, i: number) => (
                 <p
                   key={user.name + i}
                   className="border-t-2 border-slate-100 px-2"
@@ -116,10 +124,9 @@ const Event: NextPage = () => {
     }
   }, [data?.registrations]);
 
-  if (isLoading || !isSuccess || data?.statusCode) return <>{'Loading...'}</>;
   if (error) return <>{'An error has occurred: ' + error}</>;
 
-  const event: EventType = data.event;
+  const event: EventType = data?.event;
   console.log(eventid, session, data);
 
   return (
@@ -133,159 +140,165 @@ const Event: NextPage = () => {
 
       <main className="flex w-full flex-1 flex-col items-center text-center">
         <SmallHeader />
-
-        <div className="flex flex-col z-10 max-w-screen-xl mb-32 gap-6 transform -translate-y-10 w-11/12">
-          <div className="flex w-full bg-white shadow-2xl rounded-2xl p-6">
-            <div className="w-full overflow-hidden">
-              <Image
-                src={event.image}
-                alt="Vercel Logo"
-                width={1352}
-                height={564}
-                layout="responsive"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-eventdetail text-left gap-6">
-            <div className="flex flex-col w-full bg-white shadow-2xl rounded-2xl p-6">
-              <h2 className="font-bold text-2xl mb-4">Detaljer</h2>
-
-              <div className="flex flex-col gap-2">
-                <p>
-                  <b>Starttid:</b> {new Date(event.startTime).toDateString()}
-                </p>
-                <p>
-                  <b>Sluttid:</b> {new Date(event.endTime).toDateString()}
-                </p>
-                <p>
-                  <b>Påmeldingsfrist:</b>{' '}
-                  {new Date(event.registrationDeadline).toDateString()}
-                </p>
-                <p>
-                  <b>Avmeldingsfrist:</b>{' '}
-                  {new Date(event.cancellationDeadline).toDateString()}
-                </p>
-                <p>
-                  <b>Sted:</b> {event.location}
-                </p>
-                <p>
-                  <b>Åpent for:</b>{' '}
-                  {event.eventType === 'OPEN' ? 'Alle' : 'Medlemmer'}
-                </p>
+        {status === 'loading' || isLoading || !isSuccess || data?.statusCode ? (
+          <EventsDetailedSkeleton />
+        ) : (
+          <div className="flex flex-col z-10 max-w-screen-xl mb-32 gap-6 transform -translate-y-10 w-11/12">
+            <div className="flex w-full bg-white shadow-2xl rounded-2xl p-6">
+              <div className="w-full overflow-hidden">
+                <Image
+                  src={event.image}
+                  alt="Vercel Logo"
+                  width={1352}
+                  height={564}
+                  layout="responsive"
+                />
               </div>
             </div>
-            <div className="flex flex-col w-full bg-white shadow-2xl rounded-2xl p-6">
-              <h2 className="font-bold text-2xl mb-4">{event.title}</h2>
-              <p className="italic mb-2">
-                Last edited: {new Date().toDateString()}
-              </p>
-              <p>{event.description}</p>
-            </div>
-          </div>
 
-          <div className="grid grid-cols-eventdetail text-left gap-6">
-            <div className="flex flex-col">
-              <div className="flex flex-col w-full bg-white shadow-2xl rounded-2xl p-6 mb-6">
-                <h2 className="font-bold text-2xl mb-4">Påmelding</h2>
+            <div className="grid grid-cols-eventdetail text-left gap-6">
+              <div className="flex flex-col w-full bg-white shadow-2xl rounded-2xl p-6">
+                <h2 className="font-bold text-2xl mb-4">Detaljer</h2>
+
                 <div className="flex flex-col gap-2">
                   <p>
-                    <b>Antall påmeldte:</b> {event.registrationList.length} /{' '}
-                    {event.maxRegistrations}
+                    <b>Starttid:</b> {new Date(event.startTime).toDateString()}
                   </p>
                   <p>
-                    <b>Venteliste:</b> {event.waitingList.length}
+                    <b>Sluttid:</b> {new Date(event.endTime).toDateString()}
                   </p>
-                  <div className="flex flex-col gap-3 mt-2">
-                    {session?.user ? (
-                      <>
-                        <Button
-                          onClick={() => showRegistrations()}
-                          text="Se andre påmeldte"
-                        />
-                        {data.registered ? (
-                          <Button
-                            onClick={() => registrationEnabled && register()}
-                            text="Meld deg av"
-                          />
-                        ) : (
-                          <Button
-                            onClick={() => registrationEnabled && register()}
-                            text="Meld deg på"
-                          />
-                        )}
-                      </>
-                    ) : (
-                      <>
-                        <p>Logg på for påmelding av arrangementer</p>
-                      </>
-                    )}
-                  </div>
+                  <p>
+                    <b>Påmeldingsfrist:</b>{' '}
+                    {new Date(event.registrationDeadline).toDateString()}
+                  </p>
+                  <p>
+                    <b>Avmeldingsfrist:</b>{' '}
+                    {new Date(event.cancellationDeadline).toDateString()}
+                  </p>
+                  <p>
+                    <b>Sted:</b> {event.location}
+                  </p>
+                  <p>
+                    <b>Åpent for:</b>{' '}
+                    {event.eventType === 'OPEN' ? 'Alle' : 'Medlemmer'}
+                  </p>
                 </div>
               </div>
-
-              {session?.user.role === 'ADMIN' && (
-                <div className="flex flex-col w-full bg-white shadow-2xl rounded-2xl p-6">
-                  <h2 className="font-bold text-2xl mb-4">Innslipp</h2>
-                  <Button text="Gå til innslipp" />
-                </div>
-              )}
-            </div>
-            <div className="flex flex-col w-full bg-white shadow-2xl rounded-2xl p-6">
-              <h2 className="font-bold text-2xl mb-4">Info</h2>
-              <div className="flex flex-col gap-4">
-                <p>
-                  Til venstre kan man se antallet påmeldte. Hensikten bak dette
-                  er hovedsakelig for å estimere hvor mye mat som skal kjøpes
-                  inn. Det står også en maksgrense, som gjelder hovedsakelig for
-                  mindre arrangementer der vi ikke kan være alt for mange
-                  mennesker samlet (f. eks buldring, mini-golf og bowling).
-                  Fortvil ikke dersom maksgrensen på et arrangement nås, da du
-                  vil få muligheten til å melde deg på ventelista for
-                  arrangementet - gitt at du er nummer 1 i køen, vil du få
-                  plassen dersom noen melder seg av.
-                </p>
-                <p>
-                  I boksen øverst til venstre, står det en oversikt over start-
-                  og sluttid for arrangementet. Merk at det også står
-                  påmeldings- og avmeldingsfrist som er viktige å forholde seg
-                  til. Avmelding er spesielt viktig, dersom det er en venteliste
-                  på arrangementet, slik at nestemann får plass.
-                </p>
-                <p>
-                  PS! Husk å skriv ned mulige matvarer som kan forårsake
-                  allergiske reaksjoner på profilen din, slik at vi kan tilpasse
-                  mattilbudet på våre arrangementer etter deres matbehov ♥.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {session?.user.role === 'ADMIN' && (
-            <div className="flex flex-col text-left">
               <div className="flex flex-col w-full bg-white shadow-2xl rounded-2xl p-6">
-                <h2 className="font-bold text-2xl mb-4">Liste over påmeldte</h2>
-                <div className="flex flex-col rounded-lg bg-slate-100 overflow-hidden text-xs">
-                  <div className="flex bg-light py-2 px-10 mb-1 font-bold text-white">
-                    <p className="w-1/3">Navn</p>
-                    <p className="w-1/3">E-post</p>
-                    <p className="w-1/3">Matbehov</p>
-                  </div>
-                  {data?.registrations?.map((user: any) => (
-                    <div
-                      key={user.email}
-                      className="flex rounded-md bg-white py-2 px-9 mx-1 mb-1"
-                    >
-                      <p className="w-1/3">{user.name}</p>
-                      <p className="w-1/3">{user.email}</p>
-                      <p className="w-1/3">{user.foodNeeds}</p>
+                <h2 className="font-bold text-2xl mb-4">{event.title}</h2>
+                <p className="italic mb-2">
+                  Last edited: {new Date().toDateString()}
+                </p>
+                <p>{event.description}</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-eventdetail text-left gap-6">
+              <div className="flex flex-col">
+                <div className="flex flex-col w-full bg-white shadow-2xl rounded-2xl p-6 mb-6">
+                  <h2 className="font-bold text-2xl mb-4">Påmelding</h2>
+                  <div className="flex flex-col gap-2">
+                    <p>
+                      <b>Antall påmeldte:</b> {event.registrationList.length} /{' '}
+                      {event.maxRegistrations}
+                    </p>
+                    <p>
+                      <b>Venteliste:</b> {event.waitingList.length}
+                    </p>
+                    <div className="flex flex-col gap-3 mt-2">
+                      {session?.user ? (
+                        <>
+                          <Button
+                            onClick={() => showRegistrations()}
+                            text="Se andre påmeldte"
+                          />
+                          {data.registered ? (
+                            <Button
+                              onClick={() => registrationEnabled && register()}
+                              text="Meld deg av"
+                            />
+                          ) : (
+                            <Button
+                              onClick={() => registrationEnabled && register()}
+                              text="Meld deg på"
+                            />
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          <p>Logg på for påmelding av arrangementer</p>
+                        </>
+                      )}
                     </div>
-                  ))}
+                  </div>
+                </div>
+
+                {session?.user.role === 'ADMIN' && (
+                  <div className="flex flex-col w-full bg-white shadow-2xl rounded-2xl p-6">
+                    <h2 className="font-bold text-2xl mb-4">Innslipp</h2>
+                    <Button text="Gå til innslipp" />
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-col w-full bg-white shadow-2xl rounded-2xl p-6">
+                <h2 className="font-bold text-2xl mb-4">Info</h2>
+                <div className="flex flex-col gap-4">
+                  <p>
+                    Til venstre kan man se antallet påmeldte. Hensikten bak
+                    dette er hovedsakelig for å estimere hvor mye mat som skal
+                    kjøpes inn. Det står også en maksgrense, som gjelder
+                    hovedsakelig for mindre arrangementer der vi ikke kan være
+                    alt for mange mennesker samlet (f. eks buldring, mini-golf
+                    og bowling). Fortvil ikke dersom maksgrensen på et
+                    arrangement nås, da du vil få muligheten til å melde deg på
+                    ventelista for arrangementet - gitt at du er nummer 1 i
+                    køen, vil du få plassen dersom noen melder seg av.
+                  </p>
+                  <p>
+                    I boksen øverst til venstre, står det en oversikt over
+                    start- og sluttid for arrangementet. Merk at det også står
+                    påmeldings- og avmeldingsfrist som er viktige å forholde seg
+                    til. Avmelding er spesielt viktig, dersom det er en
+                    venteliste på arrangementet, slik at nestemann får plass.
+                  </p>
+                  <p>
+                    PS! Husk å skriv ned mulige matvarer som kan forårsake
+                    allergiske reaksjoner på profilen din, slik at vi kan
+                    tilpasse mattilbudet på våre arrangementer etter deres
+                    matbehov ♥.
+                  </p>
                 </div>
               </div>
             </div>
-          )}
-        </div>
+
+            {session?.user.role === 'ADMIN' && (
+              <div className="flex flex-col text-left">
+                <div className="flex flex-col w-full bg-white shadow-2xl rounded-2xl p-6">
+                  <h2 className="font-bold text-2xl mb-4">
+                    Liste over påmeldte
+                  </h2>
+                  <div className="flex flex-col rounded-lg bg-slate-100 overflow-hidden text-xs">
+                    <div className="flex bg-light py-2 px-10 mb-1 font-bold text-white">
+                      <p className="w-1/3">Navn</p>
+                      <p className="w-1/3">E-post</p>
+                      <p className="w-1/3">Matbehov</p>
+                    </div>
+                    {data?.registrations?.map((user: RegisteredUserType) => (
+                      <div
+                        key={user.email}
+                        className="flex rounded-md bg-white py-2 px-9 mx-1 mb-1"
+                      >
+                        <p className="w-1/3">{user.name}</p>
+                        <p className="w-1/3">{user.email}</p>
+                        <p className="w-1/3">{user.foodNeeds}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </main>
 
       <Footer />

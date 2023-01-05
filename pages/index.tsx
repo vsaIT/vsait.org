@@ -6,7 +6,7 @@ import Navigation from '@components/Navigation';
 import { LargeHeader } from '@components/Header';
 import { Button } from '@components/Button';
 import Wave from '@components/Wave';
-import { EventsDisplay } from '@components/Events';
+import { EventsQuickView } from '@components/Events';
 
 const Home: NextPage = () => {
   const { status, data: session } = useSession({
@@ -62,7 +62,7 @@ const Home: NextPage = () => {
           </>
         </LargeHeader>
 
-        <EventsDisplay />
+        <EventsQuickView />
       </main>
 
       <Footer />
