@@ -2,14 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '@db';
 import { getSession } from '@lib/auth/session';
 import { getErrorMessage } from '@lib/utils';
-
-type AttendingUserType = {
-  id: string;
-  name: string;
-  email: string;
-  foodNeeds: string;
-  checked: boolean;
-};
+import { AttendingUserType } from '@lib/types';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { eventid } = req.query;

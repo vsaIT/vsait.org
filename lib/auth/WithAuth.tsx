@@ -2,7 +2,7 @@ import { useSession, signIn } from 'next-auth/react';
 import { useEffect } from 'react';
 import router from 'next/router';
 
-function WithAuth({ children, options }: any) {
+const WithAuth = ({ children, options }: any) => {
   const { data: session, status } = useSession();
   const isUser = !!session?.user;
   useEffect(() => {
@@ -32,6 +32,6 @@ function WithAuth({ children, options }: any) {
       <p>Loading...</p>
     </div>
   );
-}
+};
 
 export default WithAuth;

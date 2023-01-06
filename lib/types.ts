@@ -21,6 +21,10 @@ export type ExtendedAppProps = AppProps & {
 export type ChildrenProps = {
   children?: JSX.Element;
 };
+export type AccordionProps = {
+  className?: string;
+} & ChildrenProps;
+
 export type HeaderProps = {
   title?: string;
 } & ChildrenProps;
@@ -34,16 +38,21 @@ export type ButtonProps = {
   className?: string;
   inverted?: boolean;
 };
-
 export type ApiResponseType = {
   statusCode: number;
   message: string;
 };
-
 export type RegisteredUserType = {
   name: string;
   email: string;
   foodNeeds: string;
+};
+export type AttendingUserType = {
+  id: string;
+  name: string;
+  email: string;
+  foodNeeds: string;
+  checked: boolean;
 };
 
 export type EventType = {

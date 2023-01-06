@@ -5,6 +5,7 @@ import {
   getCsrfToken,
   signIn,
   getProviders,
+  SignInResponse,
 } from 'next-auth/react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -30,13 +31,14 @@ const LoginForm = ({ csrfToken }: any) => {
       email: data.email,
       password: data.password,
       redirect: false,
-    }).then(({ ok, error }: any) => {
-      if (ok) {
+    }).then((res) => {
+      if (!res) return;
+      if (res.ok) {
         window.location.replace('/');
         console.log('Success');
-      } else {
-        console.error(error);
-        ToastMessage({ type: 'error', message: error });
+      } else if (res.error) {
+        console.error(res.error);
+        ToastMessage({ type: 'error', message: res.error });
       }
       setTimeout(() => {
         setSubmitting(false);

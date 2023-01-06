@@ -2,7 +2,7 @@ import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Footer from '@components/Footer';
-import { ApiResponseType, EventType, RegisteredUserType } from '@lib/types';
+import { ApiResponseType, AttendingUserType, EventType } from '@lib/types';
 import { SmallHeader } from '@lib/components/Header';
 import Navigation from '@lib/components/Navigation';
 import Image from 'next/image';
@@ -14,15 +14,15 @@ import Swal from 'sweetalert2';
 import StyledSwal from '@lib/components/StyledSwal';
 import { getErrorMessage } from '@lib/utils';
 import { Person } from '@lib/icons';
+import Accordion from '@lib/components/Accordion';
 
 const Checkin: NextPage = () => {
   const router = useRouter();
   const { status, data: session } = useSession({
-    required: false,
+    required: true,
   });
   const { eventid } = router.query;
   const [registrationEnabled, setRegistrationEnabled] = useState(true);
-  const [email, setEmail] = useState('');
 
   const { isSuccess, isLoading, error, data } = useQuery({
     queryKey: ['eventId', eventid],
@@ -34,9 +34,13 @@ const Checkin: NextPage = () => {
   });
 
   const register = useCallback(
-    async (event: any) => {
+    async (event: React.SyntheticEvent) => {
       event.preventDefault();
       if (!eventid || !session?.user?.id || !registrationEnabled) return;
+      const target = event.target as typeof event.target & {
+        email: { value: string };
+      };
+      const email = target.email.value;
       StyledSwal.fire({
         icon: 'info',
         title: <p>Bekreftelse!</p>,
@@ -105,7 +109,7 @@ const Checkin: NextPage = () => {
         allowOutsideClick: () => !Swal.isLoading(),
       }).finally(() => setRegistrationEnabled(true));
     },
-    [eventid, email, setEmail, setRegistrationEnabled, registrationEnabled]
+    [eventid, setRegistrationEnabled, registrationEnabled]
   );
 
   if (error) return <>{'An error has occurred: ' + error}</>;
@@ -113,6 +117,10 @@ const Checkin: NextPage = () => {
   const event: EventType = data?.event;
   const loading =
     status === 'loading' || isLoading || !isSuccess || data?.statusCode;
+
+  // Redirect user if not admin
+  if (status === 'authenticated' && session.user.role === 'USER')
+    window.location.href = '/';
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
@@ -159,7 +167,12 @@ const Checkin: NextPage = () => {
                 <h2 className="font-bold text-2xl mb-4 bg-slate-400 p-4 rounded-md animate-pulse w-4/12 mx-auto text-center"></h2>
               ) : (
                 <h2 className="font-bold text-2xl mb-4 text-center">
-                  {event.title}
+                  <a
+                    className="text-primary hover:underline"
+                    href={`/events/${eventid}`}
+                  >
+                    {event.title}
+                  </a>
                 </h2>
               )}
 
@@ -178,7 +191,6 @@ const Checkin: NextPage = () => {
                         type="email"
                         autoComplete="email"
                         placeholder="E-post"
-                        onChange={(event) => setEmail(event.target.value)}
                         required
                         className="h-10 w-full py-2 px-4 border-2 border-stone-300 outline-none text-sm text-left leading-6 bg-transparent rounded-xl transition duration-150 ease-in-out"
                       />
@@ -193,37 +205,42 @@ const Checkin: NextPage = () => {
                 <p className="flex items-center gap-3">
                   <Person color="inherit" className="flex h-5 w-5 fill-black" />
                   {
-                    data?.attendances?.filter((u: any) => u.checked).length
-                  } / {data?.attendances?.length} innsjekket
+                    data?.attendances?.filter(
+                      (u: AttendingUserType) => u.checked
+                    ).length
+                  }{' '}
+                  / {data?.attendances?.length} innsjekket
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="flex flex-col text-left">
-            <div className="flex flex-col w-full bg-white shadow-2xl rounded-2xl p-6">
-              <h2 className="font-bold text-2xl mb-4">Liste over påmeldte</h2>
-              <div className="flex flex-col rounded-lg bg-slate-100 overflow-hidden text-xs">
-                <div className="flex bg-light py-2 px-10 mb-1 font-bold text-white">
-                  <p className="w-1/4">Navn</p>
-                  <p className="w-1/4">E-post</p>
-                  <p className="w-1/4">Matbehov</p>
-                  <p className="w-1/4">Checked</p>
-                </div>
-                {data?.attendances?.map((user: any) => (
-                  <div
-                    key={user.email}
-                    className="flex rounded-md bg-white py-2 px-9 mx-1 mb-1"
-                  >
-                    <p className="w-1/4">{user.name}</p>
-                    <p className="w-1/4">{user.email}</p>
-                    <p className="w-1/4">{user.foodNeeds}</p>
-                    <p className="w-1/4">{user.checked ? '✔️' : ''}</p>
+          <Accordion className="rounded-2xl">
+            <div className="flex flex-col text-left">
+              <div className="flex flex-col w-full bg-white shadow-2xl rounded-2xl p-6">
+                <h2 className="font-bold text-2xl mb-4">Liste over påmeldte</h2>
+                <div className="flex flex-col rounded-lg bg-slate-100 overflow-hidden text-xs">
+                  <div className="flex bg-light py-2 px-10 mb-1 font-bold text-white">
+                    <p className="w-1/4">Navn</p>
+                    <p className="w-1/4">E-post</p>
+                    <p className="w-1/4">Matbehov</p>
+                    <p className="w-1/4">Checked</p>
                   </div>
-                ))}
+                  {data?.attendances?.map((user: AttendingUserType) => (
+                    <div
+                      key={user.email}
+                      className="flex rounded-md bg-white py-2 px-9 mx-1 mb-1"
+                    >
+                      <p className="w-1/4">{user.name}</p>
+                      <p className="w-1/4">{user.email}</p>
+                      <p className="w-1/4">{user.foodNeeds}</p>
+                      <p className="w-1/4">{user.checked ? '✔️' : ''}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
+          </Accordion>
         </div>
       </main>
       <Footer />
