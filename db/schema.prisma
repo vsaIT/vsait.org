@@ -80,15 +80,13 @@ model Event {
   location  String?
   eventType EventType? @default(MEMBERSHIP)
 
-  maxRegistrations Int?
-  registrationList Registrations[]
-  waitingList      Waiting[]
+  maxRegistrations     Int?
+  registrationList     Registrations[]
+  waitingList          Waiting[]
+  attendanceList       Attendances[]
 
-  checkinUrl     String @unique @default(cuid())
-  attendanceList Attendances[]
-
-  isDraft     Boolean @default(false)
-  isCancelled Boolean @default(false)
+  isDraft              Boolean @default(false)
+  isCancelled          Boolean @default(false)
 }
 
 model Registrations {
