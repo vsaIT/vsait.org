@@ -215,9 +215,9 @@ const Checkin: NextPage = () => {
             </div>
           </div>
 
-          <Accordion className="rounded-2xl">
-            <div className="flex flex-col text-left">
-              <div className="flex flex-col w-full bg-white shadow-2xl rounded-2xl p-6">
+          <Accordion className="bg-white shadow-2xl rounded-2xl">
+            <div className="flex flex-col text-left p-2">
+              <div className="flex flex-col w-full p-6">
                 <h2 className="font-bold text-2xl mb-4">Liste over påmeldte</h2>
                 <div className="flex flex-col rounded-lg bg-slate-100 overflow-hidden text-xs">
                   <div className="flex bg-light py-2 px-10 mb-1 font-bold text-white">
