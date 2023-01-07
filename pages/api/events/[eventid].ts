@@ -1,18 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import prisma, { Membership } from '@db';
+import prisma from '@db';
 import { getSession } from '@lib/auth/session';
 import { getErrorMessage, getMembershipYear } from '@lib/utils';
 import { RegisteredUserType } from '@lib/types';
-
-type RetrievedUserType = {
-  id: string;
-  lastName: string;
-  firstName: string;
-  email: string;
-  foodNeeds: string;
-  publicProfile: boolean;
-  membership: Membership[];
-};
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { eventid } = req.query;
@@ -34,6 +24,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         registrationList: {
           select: {
             userId: true,
+            user: {
+              select: {
+                id: true,
+                lastName: true,
+                firstName: true,
+                email: true,
+                foodNeeds: true,
+                publicProfile: true,
+                membership: true,
+              },
+            },
           },
         },
         waitingList: true,
@@ -47,28 +48,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const userIds = event.registrationList.map((r) => r.userId) || [];
     const userId = session?.user?.id || '';
 
-    // Retrieve registered users if logged in
-    let users: RetrievedUserType[] = [];
     if (session) {
-      users = await prisma.user.findMany({
-        where: {
-          id: {
-            in: userIds,
-          },
-        },
-        select: {
-          id: true,
-          lastName: true,
-          firstName: true,
-          email: true,
-          foodNeeds: true,
-          publicProfile: true,
-          membership: true,
-        },
-      });
-
       // Map registered users with fields name, email and foodNeeds
-      registeredUsers = users.map((user) => {
+      registeredUsers = event?.registrationList.map(({ user }) => {
+        if (!user) return { name: '', email: '', foodNeeds: '' };
         if (
           session?.user?.role === 'ADMIN' ||
           session?.user?.email === user.email
@@ -89,10 +72,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       });
     }
     const hasMembership =
-      users.filter(
-        (u) =>
-          u.id === userId &&
-          u.membership.map((m) => m.year).includes(getMembershipYear())
+      event?.registrationList.filter(
+        ({ user }) =>
+          user?.id === userId &&
+          user?.membership.map((m) => m.year).includes(getMembershipYear())
       ).length > 0;
 
     return res.status(200).json({

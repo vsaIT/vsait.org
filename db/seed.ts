@@ -80,8 +80,6 @@ async function main() {
 
     maxRegistrations: 30,
 
-    checkinUrl: 'test2',
-
     isDraft: false,
     isCancelled: false,
   };
@@ -105,8 +103,6 @@ async function main() {
       eventType: open,
 
       maxRegistrations: 1,
-
-      checkinUrl: 'test',
 
       isDraft: false,
       isCancelled: false,
@@ -132,8 +128,6 @@ async function main() {
 
       maxRegistrations: 30,
 
-      checkinUrl: 'test2',
-
       isDraft: false,
       isCancelled: false,
     },
@@ -142,7 +136,7 @@ async function main() {
     await prisma.event.upsert({
       where: { id: i },
       update: {},
-      create: { ...dummy, id: i, title: 'dummy' + i, checkinUrl: 'dummy' + i },
+      create: { ...dummy, id: i, title: 'dummy' + i },
     });
   }
 }

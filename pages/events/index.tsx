@@ -57,13 +57,13 @@ const Events: NextPage = () => {
         <CurvyHeader title="Arrangementer" />
 
         <div className="events relative flex flex-col z-10 max-w-screen-xl gap-6 w-11/12 mb-8">
-          {isLoading || isFetching
+          {isLoading || isFetching || !data?.events
             ? new Array(3)
                 .fill(0)
                 .map((_, index: number) => (
                   <EventsDisplaySkeleton key={index} />
                 ))
-            : data?.events.map((event: EventType, index: number) => (
+            : data?.events?.map((event: EventType, index: number) => (
                 <a href={`/events/${event.id}`} key={index}>
                   <div className="p-3 border-2 border-primary rounded-2xl">
                     <div className="relative grid grid-cols-layout w-full mx-auto bg-white shadow-lg rounded-2xl p-3 gap-3">
