@@ -114,7 +114,7 @@ export default NextAuth({
                 lastName: credentials.lastName,
                 email: credentials.email,
                 birthdate: new Date(credentials.birthdate),
-                password: await hashPassword(credentials.password),
+                password: hashPassword(credentials.password, 12),
                 foodNeeds: credentials.foodNeeds,
                 student: credentials.student,
               },
@@ -180,7 +180,7 @@ export default NextAuth({
           });
 
           if (maybeUser) {
-            const isValid = await verifyPassword(
+            const isValid = verifyPassword(
               credentials.password,
               maybeUser.password || ''
             );
@@ -240,7 +240,7 @@ export default NextAuth({
         if (!maybeUser) throw new Error('Invalid Credentials.');
         else if (maybeUser?.role !== 'ADMIN') throw new Error('Unauthorized.');
 
-        const isValid = await verifyPassword(
+        const isValid = verifyPassword(
           credentials.password,
           maybeUser.password || ''
         );

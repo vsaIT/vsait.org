@@ -1,9 +1,9 @@
-import { PrismaClient, EventType } from '@prisma/client';
-import { hash } from 'bcryptjs';
+import { hashPassword } from '../lib/auth/passwords';
+import { EventType } from '@prisma/client';
 import prisma from '.';
 
 async function main() {
-  const encryptedPassword = await hash('password1234', 12);
+  const encryptedPassword = hashPassword('password1234', 12);
   await prisma.user.upsert({
     where: { email: 'a@a.com' },
     update: {},
