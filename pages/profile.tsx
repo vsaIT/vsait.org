@@ -7,7 +7,7 @@ import { SmallHeader } from '@lib/components/Header';
 
 const Profile: NextPage = () => {
   const { status, data: session } = useSession({
-    required: false,
+    required: true,
   });
 
   if (status === 'loading') {

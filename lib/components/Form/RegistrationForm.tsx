@@ -5,7 +5,6 @@ import {
   getCsrfToken,
   signIn,
   getProviders,
-  SignInResponse,
 } from 'next-auth/react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -31,20 +30,19 @@ const RegistrationForm = ({ csrfToken }: any) => {
 
   const onSubmit = async (data: RegistrationFormValues) => {
     setSubmitting(true);
-    signIn('app-register', { ...data, redirect: false }).then(
-      ({ ok, error }: any) => {
-        if (ok) {
-          window.location.replace('/');
-          console.log('Success');
-        } else {
-          console.error(error);
-          ToastMessage({ type: 'error', message: error });
-        }
-        setTimeout(() => {
-          setSubmitting(false);
-        }, MINIMUM_ACTIVITY_TIMEOUT);
+    signIn('app-register', { ...data, redirect: false }).then((res) => {
+      if (!res) return;
+      if (res.ok) {
+        window.location.replace('/');
+        console.log('Success');
+      } else if (res.error) {
+        console.error(res.error);
+        ToastMessage({ type: 'error', message: res.error });
       }
-    );
+      setTimeout(() => {
+        setSubmitting(false);
+      }, MINIMUM_ACTIVITY_TIMEOUT);
+    });
   };
 
   return (

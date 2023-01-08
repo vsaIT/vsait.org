@@ -17,13 +17,13 @@ model Account {
   type                     String
   provider                 String
   providerAccountId        String
-  refresh_token            String? @db.VarChar(500)
-  access_token             String? @db.VarChar(500)
+  refresh_token            String?  @db.VarChar(500)
+  access_token             String?  @db.VarChar(500)
   refresh_token_expires_in Int?
   expires_at               Int?
   token_type               String?
   scope                    String?
-  id_token                 String? @db.Text
+  id_token                 String?  @db.Text
   session_state            String?
   oauth_token_secret       String?
   oauth_token              String?
@@ -45,17 +45,83 @@ model User {
   id            String    @id @default(cuid())
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-  firstName     String?
-  lastName      String?
-  email         String?   @unique
-  password      String?
+  firstName     String
+  lastName      String
+  email         String    @unique
+  password      String
   emailVerified DateTime?
-  birthdate   DateTime?
-  foodNeeds     String?
+  birthdate     DateTime?
+  foodNeeds     String    @default("")
   student       String?
-  role          String?   @default("user")
+  publicProfile Boolean   @default(false)
+  role          Role      @default(USER)
   accounts      Account[]
   sessions      Session[]
+  membership    Membership[]
+
+  userRegistrationList Registrations[]
+  userWaitingList      Waiting[]
+  userAttendanceList   Attendances[]
+}
+
+model Event {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  title       String   @db.VarChar(500)
+  description String   @db.VarChar(1000)
+  image       String?  @db.VarChar(500)
+
+  startTime            DateTime
+  endTime              DateTime
+  registrationDeadline DateTime
+  cancellationDeadline DateTime
+
+  location  String?
+  eventType EventType? @default(MEMBERSHIP)
+
+  maxRegistrations     Int?
+  registrationList     Registrations[]
+  waitingList          Waiting[]
+  attendanceList       Attendances[]
+
+  isDraft              Boolean @default(false)
+  isCancelled          Boolean @default(false)
+}
+
+model Registrations {
+  user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  event     Event?    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId   Int
+  createdAt DateTime  @default(now())
+
+  @@id([userId, eventId])
+}
+
+model Waiting {
+  user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  event     Event?    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId   Int
+  createdAt DateTime  @default(now())
+
+  @@id([userId, eventId])
+}
+
+model Attendances {
+  user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  event     Event?    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId   Int
+  createdAt DateTime  @default(now())
+
+  @@id([userId, eventId])
+}
+
+model Membership {
+  year      Int       @id
+  users     User[]
 }
 
 model VerificationToken {
@@ -64,4 +130,14 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum EventType {
+  OPEN
+  MEMBERSHIP
 }
