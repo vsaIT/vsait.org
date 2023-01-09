@@ -260,20 +260,32 @@ export default NextAuth({
     }),
   ],
   callbacks: {
-    async signIn({ user, account, profile, email, credentials }) {
+    async signIn({
+      user: _user,
+      account: _account,
+      profile: _profile,
+      email: _email,
+      credentials: _credentials,
+    }) {
       return true;
     },
     async redirect({ url, baseUrl }) {
       return url.startsWith(baseUrl) ? url : baseUrl;
     },
-    async jwt({ token, user, account, profile, isNewUser }) {
+    async jwt({
+      token,
+      user,
+      account: _account,
+      profile: _profile,
+      isNewUser: _isNewUser,
+    }) {
       if (user) {
         token.id = user.id;
         token.role = user.role;
       }
       return token;
     },
-    async session({ session, token, user }) {
+    async session({ session, token, user: _user }) {
       const sess = {
         ...session,
         user: {
