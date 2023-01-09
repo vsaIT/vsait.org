@@ -1,9 +1,9 @@
-import { AccordionProps } from '@lib/types';
+import { ChildrenProps } from '@lib/types';
 import AnimateHeight from 'react-animate-height';
 import { useState } from 'react';
 import { CaretUp, CaretDown } from '@lib/icons';
 
-const Accordion = ({ children, className = '' }: AccordionProps) => {
+const Accordion = ({ children, className = '' }: ChildrenProps) => {
   const [toggled, setToggled] = useState(false);
 
   return (

@@ -20,10 +20,8 @@ export type ExtendedAppProps = AppProps & {
 
 export type ChildrenProps = {
   children?: JSX.Element;
-};
-export type AccordionProps = {
   className?: string;
-} & ChildrenProps;
+};
 
 export type HeaderProps = {
   title?: string;
