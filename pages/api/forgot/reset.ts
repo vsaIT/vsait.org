@@ -13,7 +13,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (password !== repeatPassword) throw new Error('Passwords do not match!');
   if (password.length < 8)
-    throw new Error('Password must include more than 8 characters');
+    throw new Error('Minimum password length is set at 8 characters');
 
   try {
     const userWithResetId = await prisma.user.findFirst({

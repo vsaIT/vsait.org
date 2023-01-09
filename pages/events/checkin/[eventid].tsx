@@ -10,7 +10,6 @@ import { Button } from '@lib/components/Button';
 import { useSession } from 'next-auth/react';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useState } from 'react';
-import Swal from 'sweetalert2';
 import StyledSwal from '@lib/components/StyledSwal';
 import { getErrorMessage } from '@lib/utils';
 import { Person } from '@lib/icons';
