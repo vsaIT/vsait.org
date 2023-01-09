@@ -6,8 +6,8 @@ import Navigation from '@lib/components/Navigation';
 import { SmallHeader } from '@lib/components/Header';
 
 const Profile: NextPage = () => {
-  const { status, data: session } = useSession({
-    required: false,
+  const { status, data: _session } = useSession({
+    required: true,
   });
 
   if (status === 'loading') {

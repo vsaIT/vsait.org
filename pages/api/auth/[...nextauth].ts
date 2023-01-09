@@ -3,8 +3,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 
 import { hashPassword, verifyPassword } from '@lib/auth/passwords';
-import { Session } from '@lib/auth/session';
-import prisma from '@db/index';
+import prisma, { Role } from '@db/index';
 
 type RegisterInputType =
   | 'firstName'
@@ -115,7 +114,7 @@ export default NextAuth({
                 lastName: credentials.lastName,
                 email: credentials.email,
                 birthdate: new Date(credentials.birthdate),
-                password: await hashPassword(credentials.password),
+                password: hashPassword(credentials.password, 12),
                 foodNeeds: credentials.foodNeeds,
                 student: credentials.student,
               },
@@ -181,7 +180,7 @@ export default NextAuth({
           });
 
           if (maybeUser) {
-            const isValid = await verifyPassword(
+            const isValid = verifyPassword(
               credentials.password,
               maybeUser.password || ''
             );
@@ -239,9 +238,9 @@ export default NextAuth({
         });
 
         if (!maybeUser) throw new Error('Invalid Credentials.');
-        else if (maybeUser?.role !== 'admin') throw new Error('Unauthorized.');
+        else if (maybeUser?.role !== 'ADMIN') throw new Error('Unauthorized.');
 
-        const isValid = await verifyPassword(
+        const isValid = verifyPassword(
           credentials.password,
           maybeUser.password || ''
         );
@@ -261,27 +260,38 @@ export default NextAuth({
     }),
   ],
   callbacks: {
-    async signIn({ user, account, profile, email, credentials }) {
+    async signIn({
+      user: _user,
+      account: _account,
+      profile: _profile,
+      email: _email,
+      credentials: _credentials,
+    }) {
       return true;
     },
     async redirect({ url, baseUrl }) {
       return url.startsWith(baseUrl) ? url : baseUrl;
     },
-    async jwt({ token, user, account, profile, isNewUser }) {
+    async jwt({
+      token,
+      user,
+      account: _account,
+      profile: _profile,
+      isNewUser: _isNewUser,
+    }) {
       if (user) {
         token.id = user.id;
         token.role = user.role;
       }
-
       return token;
     },
-    async session({ session, token, user }) {
-      const sess: Session = {
+    async session({ session, token, user: _user }) {
+      const sess = {
         ...session,
         user: {
           ...session.user,
           id: token.id as string,
-          role: token.role as string,
+          role: token.role as Role,
         },
       };
 

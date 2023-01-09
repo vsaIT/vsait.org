@@ -5,6 +5,10 @@ export { default as Place } from './Place';
 export { default as Briefcase } from './Briefcase';
 export { default as Envelope } from './Envelope';
 
+// Accordion
+export { default as CaretUp } from './CaretUp';
+export { default as CaretDown } from './CaretDown';
+
 // Social media
 export { default as Instagram } from './Instagram';
 export { default as Facebook } from './Facebook';

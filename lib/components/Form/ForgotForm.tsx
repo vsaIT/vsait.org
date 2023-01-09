@@ -26,13 +26,14 @@ const ForgotForm = ({ csrfToken }: any) => {
     setSubmitting(true);
     signIn('app-forgot', {
       email: data.email,
-    }).then(({ ok, error }: any) => {
-      if (ok) {
+    }).then((res) => {
+      if (!res) return;
+      if (res.ok) {
         window.location.replace('/');
         console.log('Success');
-      } else {
-        console.error(error);
-        ToastMessage({ type: 'error', message: error });
+      } else if (res.error) {
+        console.error(res.error);
+        ToastMessage({ type: 'error', message: res.error });
       }
       setTimeout(() => {
         setSubmitting(false);
