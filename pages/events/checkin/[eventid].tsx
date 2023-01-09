@@ -106,21 +106,23 @@ const Checkin: NextPage = () => {
               });
             });
         },
-        allowOutsideClick: () => !Swal.isLoading(),
+        allowOutsideClick: () => false,
       }).finally(() => setRegistrationEnabled(true));
     },
     [eventid, setRegistrationEnabled, registrationEnabled]
   );
 
-  if (error) return <>{'An error has occurred: ' + error}</>;
-
   const event: EventType = data?.event;
   const loading =
-    status === 'loading' || isLoading || !isSuccess || data?.statusCode;
+    status === 'loading' || isLoading || !isSuccess || data?.statusCode !== 200;
 
   // Redirect user if not admin
   if (status === 'authenticated' && session.user.role === 'USER')
     window.location.href = '/';
+  // Redirect to 404 if event not found
+  if (!isLoading && !event) window.location.href = '/404';
+  // Redirect to 500 if error
+  if (error) window.location.href = '/500';
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">

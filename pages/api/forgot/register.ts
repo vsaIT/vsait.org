@@ -47,19 +47,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       select: {
         email: true,
         firstName: true,
-        emailVerificationUrl: true,
+        passwordResetUrl: true,
       },
     });
 
     if (user) {
-      console.log(123);
-      await sendEmail(user.firstName, user.email, user.emailVerificationUrl)
+      await sendEmail(user.firstName, user.email, user.passwordResetUrl)
         .then(({ data }) => {
-          console.log(data);
-          if (data.error) throw new Error('Sending failed');
+          if (data.error) throw new Error('Sending failed!');
         })
         .catch(() => {
-          throw new Error('Sending failed');
+          throw new Error('Sending failed!');
         });
     }
 
@@ -69,7 +67,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         'An e-mail with the instructions to reset the password will be sent if a user is registered with given email.',
     });
   } catch (error) {
-    console.error('[api] /api/forgot', getErrorMessage(error));
+    console.error('[api] /api/forgot/register', getErrorMessage(error));
     return res
       .status(500)
       .json({ statusCode: 500, message: getErrorMessage(error) });

@@ -5,7 +5,7 @@ import { getErrorMessage } from '@lib/utils';
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { resetid } = req.query;
   try {
-    const user = await prisma.user.findMany({
+    const user = await prisma.user.findFirst({
       where: {
         passwordResetUrl: String(resetid),
       },
@@ -13,9 +13,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         id: true,
       },
     });
-    return res.status(200).json({ user });
+    return res.status(200).json({ statusCode: 200, user });
   } catch (error) {
-    console.error('[api] /api/forgot', getErrorMessage(error));
+    console.error('[api] /api/forgot/[resetid]', getErrorMessage(error));
     return res
       .status(500)
       .json({ statusCode: 500, message: getErrorMessage(error) });

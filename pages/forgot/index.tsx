@@ -3,7 +3,6 @@ import Head from 'next/head';
 import Footer from '@components/Footer';
 import Navigation from '@lib/components/Navigation';
 import { SmallHeader } from '@lib/components/Header';
-import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { MINIMUM_ACTIVITY_TIMEOUT } from '@lib/constants';
@@ -19,13 +18,10 @@ type ForgotFormValues = {
 };
 
 const ForgotPassword: NextPage = () => {
-  const router = useRouter();
-  const { resetid } = router.query;
   const [isSubmitting, setSubmitting] = useState(false);
   const { register, handleSubmit } = useForm<ForgotFormValues>();
 
   const onSubmit = async (data: ForgotFormValues) => {
-    console.log(data.email);
     StyledSwal.fire({
       icon: 'info',
       title: <p>Tilbakebestill passord!</p>,
@@ -65,7 +61,7 @@ const ForgotPassword: NextPage = () => {
             await StyledSwal.fire({
               icon: 'success',
               title: <p>Vellykket!</p>,
-              text: 'En e-post med instruksjoner for å tilbakestille passordet er blitt sendt hvis en bruker er funnet til å være registrert med gitt e-post.',
+              text: 'En e-post med instruksjoner for å tilbakestille passordet er blitt sendt til en bruker registrert med gitt e-post',
               showConfirmButton: false,
               timer: 5000,
             });
@@ -95,8 +91,6 @@ const ForgotPassword: NextPage = () => {
       }, MINIMUM_ACTIVITY_TIMEOUT)
     );
   };
-
-  console.log(resetid);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
