@@ -10,7 +10,7 @@ const sendEmail = async (name: string, email: string, restUrl: string) => {
     to: [email],
     sender: 'noreply@vsait.org',
     subject: '[VSAiT] Tilbakestill passord',
-    text_body: `Hei ${name}!\n\nVi har mottatt en forespørsel om å tilbakestille passordet ditt.\nBenytt denne lenken for å opprette et nytt passord: http://localhost/forgot/${restUrl}\n\nHvis du ikke har sendt denne forespørselen, kan du se bort fra denne eposten.\n\nVennlig hilsen,\nVietnamese Student Association in Trondheim`,
+    text_body: `Hei ${name}!\n\nVi har mottatt en forespørsel om å tilbakestille passordet ditt.\nBenytt denne lenken for å opprette et nytt passord: ${url}/forgot/${restUrl}\n\nHvis du ikke har sendt denne forespørselen, kan du se bort fra denne eposten.\n\nVennlig hilsen,\nVietnamese Student Association in Trondheim`,
     html_body: `
     <body>
     Hei ${name}!<br/>
