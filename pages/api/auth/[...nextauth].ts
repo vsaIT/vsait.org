@@ -287,6 +287,8 @@ export default NextAuth({
     }) {
       if (user) {
         token.id = user.id;
+        token.firstName = user.firstName;
+        token.lastName = user.lastName;
         token.role = user.role;
       }
       return token;
@@ -297,10 +299,11 @@ export default NextAuth({
         user: {
           ...session.user,
           id: token.id as string,
+          firstName: token.firstName as string,
+          lastName: token.lastName as string,
           role: token.role as Role,
         },
       };
-
       return sess;
     },
   },

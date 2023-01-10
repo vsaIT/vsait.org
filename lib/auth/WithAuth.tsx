@@ -21,17 +21,7 @@ const WithAuth = ({ children, options }: any) => {
     }
   }, [isUser, status]);
 
-  if (isUser) {
-    return children;
-  }
-
-  // Session is being fetched, or no user.
-  // If no user, useEffect() will redirect.
-  return (
-    <div className="h-screen w-screen flex flex-col justify-center content-center items-center">
-      <p>Loading...</p>
-    </div>
-  );
+  return children;
 };
 
 export default WithAuth;

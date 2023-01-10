@@ -18,6 +18,7 @@ const Home: NextPage = () => {
     triggerOnce: true,
     initialInView: false,
   });
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
       <Head>
@@ -28,21 +29,25 @@ const Home: NextPage = () => {
       <Navigation />
 
       <main className="flex w-full flex-1 flex-col items-center text-center">
-        <LargeHeader ref={ref}>
+        <LargeHeader
+          ref={ref}
+          className={`transition-all duration-1200 delay-150 ${
+            inView ? 'max-h-128' : 'max-h-144'
+          }`}
+        >
           <>
             <div
-              className={`flex flex-col justify-center transition-all duration-700 ${
+              className={`flex flex-col justify-center items-center transition-all duration-700 ${
                 inView ? 'opacity-100' : 'opacity-0'
               }`}
             >
               {session && status === 'authenticated' ? (
                 <>
-                  <h1 className="text-4xl mb-1.5 font-bold text-white mx-auto">
-                    Velkommen tilbake, {`${session?.user?.email}`}
+                  <h1 className="text-4xl mb-1.5 font-bold text-white">
+                    Velkommen tilbake, {`${session?.user?.firstName}`}
                   </h1>
-                  <p className="w-9/12 text-white mx-auto">
-                    Hello, {`${session?.user?.email}`} You can see this because
-                    you're logged in.
+                  <p className="w-9/12 text-white">
+                    Medlemskap bekreftet for 2022 / 2023
                   </p>
                 </>
               ) : (
