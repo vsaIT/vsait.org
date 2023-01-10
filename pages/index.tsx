@@ -9,6 +9,7 @@ import Wave from '@components/Wave';
 import { EventsQuickView } from '@components/Events';
 import { useInView } from 'react-intersection-observer';
 import Link from 'next/link';
+import { getMembershipYear } from '@lib/utils';
 
 const Home: NextPage = () => {
   const { status, data: session } = useSession({
@@ -55,7 +56,17 @@ const Home: NextPage = () => {
                     Velkommen tilbake, {`${session?.user?.firstName}`}
                   </h1>
                   <p className="w-9/12 text-white">
-                    Medlemskap bekreftet for 2022 / 2023
+                    {session?.user?.membership.includes(getMembershipYear()) ? (
+                      <>
+                        {`Medlemskap bekreftet for ${getMembershipYear()} / ${
+                          getMembershipYear() + 1
+                        }`}
+                      </>
+                    ) : (
+                      <>
+                        {`Du er ikke medlem for skoleåret ${getMembershipYear()}`}
+                      </>
+                    )}
                   </p>
                 </>
               ) : (

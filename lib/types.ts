@@ -1,7 +1,7 @@
 import { Session } from 'next-auth';
 import { AppProps } from 'next/app';
 import { EventType as EventTypeType } from '@prisma/client';
-import { Component, LegacyRef } from 'react';
+import { Component } from 'react';
 
 export type AuthenticatedPage = {
   role?: string;

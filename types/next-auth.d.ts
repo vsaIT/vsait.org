@@ -7,6 +7,7 @@ declare module 'next-auth' {
     firstName: string;
     lastName: string;
     email: string;
+    membership: number[];
   }
   interface Session {
     user: {
@@ -15,6 +16,7 @@ declare module 'next-auth' {
       firstName: string;
       lastName: string;
       email: string;
+      membership: number[];
     };
   }
 }

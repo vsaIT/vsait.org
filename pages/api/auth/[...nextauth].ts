@@ -143,6 +143,7 @@ export default NextAuth({
             firstName: newUser.firstName,
             lastName: newUser.lastName,
             role: newUser.role,
+            membership: [],
           };
         } catch (error) {
           console.log(error);
@@ -182,6 +183,11 @@ export default NextAuth({
               firstName: true,
               lastName: true,
               role: true,
+              membership: {
+                select: {
+                  year: true,
+                },
+              },
             },
           });
 
@@ -203,65 +209,12 @@ export default NextAuth({
             firstName: maybeUser.firstName,
             lastName: maybeUser.lastName,
             role: maybeUser.role,
+            membership: maybeUser.membership.map((m) => m.year),
           };
         } catch (error) {
           console.log(error);
           throw error;
         }
-      },
-    }),
-    CredentialsProvider({
-      id: 'admin-login',
-      name: 'Administrator Login',
-      credentials: {
-        email: {
-          label: 'Email Address',
-          type: 'email',
-          placeholder: 'john.doe@example.com',
-        },
-        password: {
-          label: 'Password',
-          type: 'password',
-          placeholder: 'Your super secure password',
-        },
-      },
-      async authorize(credentials) {
-        if (!credentials?.password || !credentials?.email) {
-          throw new Error('Invalid Credentials');
-        }
-        const maybeUser = await prisma.user.findFirst({
-          where: {
-            email: credentials?.email,
-          },
-          select: {
-            id: true,
-            email: true,
-            password: true,
-            firstName: true,
-            lastName: true,
-            role: true,
-          },
-        });
-
-        if (!maybeUser) throw new Error('Invalid Credentials.');
-        else if (maybeUser?.role !== 'ADMIN') throw new Error('Unauthorized.');
-
-        const isValid = verifyPassword(
-          credentials.password,
-          maybeUser.password || ''
-        );
-
-        if (!isValid) {
-          throw new Error('Invalid Credentials');
-        }
-
-        return {
-          id: maybeUser.id,
-          email: maybeUser.email,
-          firstName: maybeUser.firstName,
-          lastName: maybeUser.lastName,
-          role: maybeUser.role,
-        };
       },
     }),
   ],
@@ -290,6 +243,7 @@ export default NextAuth({
         token.firstName = user.firstName;
         token.lastName = user.lastName;
         token.role = user.role;
+        token.membership = user.membership;
       }
       return token;
     },
@@ -302,6 +256,7 @@ export default NextAuth({
           firstName: token.firstName as string,
           lastName: token.lastName as string,
           role: token.role as Role,
+          membership: token.membership as number[],
         },
       };
       return sess;
