@@ -28,6 +28,7 @@
     "react-animate-height": "^3.1.0",
     "react-dom": "18.1.0",
     "react-hook-form": "^7.37.0",
+    "react-intersection-observer": "^9.4.1",
     "react-toastify": "^9.1.1",
     "sweetalert2": "^11.6.16",
     "sweetalert2-react-content": "^5.0.7"

@@ -1,7 +1,7 @@
 import { Session } from 'next-auth';
 import { AppProps } from 'next/app';
 import { EventType as EventTypeType } from '@prisma/client';
-import { Component } from 'react';
+import { Component, LegacyRef } from 'react';
 
 export type AuthenticatedPage = {
   role?: string;
@@ -16,6 +16,10 @@ export type ExtendedPageProps = {
 export type ExtendedAppProps = AppProps & {
   Component: ExtendedPageProps;
   pageProps: { auth?: boolean; session?: Session };
+};
+
+export type CustomComponentProps = {
+  className?: string;
 };
 
 export type ChildrenProps = {

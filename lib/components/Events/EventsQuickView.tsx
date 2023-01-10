@@ -1,19 +1,13 @@
 import { Button } from '@components/Button';
-import { EventType } from '@lib/types';
+import { CustomComponentProps, EventType } from '@lib/types';
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 
-const fetchProjects = async () => {
-  const data = await fetch(`/api/events?page=1&upcoming=true`).then((res) =>
-    res.json()
-  );
-  return data;
-};
-
-const EventsDisplay = () => {
+const EventsDisplay = ({ className = '' }: CustomComponentProps) => {
   const { isSuccess, isLoading, error, data } = useQuery({
     queryKey: ['quickEvents'],
-    queryFn: () => fetchProjects(),
+    queryFn: () =>
+      fetch(`/api/events?page=1&upcoming=true`).then((res) => res.json()),
     keepPreviousData: true,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
@@ -27,7 +21,9 @@ const EventsDisplay = () => {
   if (error) window.location.href = '/500';
 
   return (
-    <div className="flex w-full flex-1 flex-col items-center text-center my-6 mb-8">
+    <div
+      className={`flex w-full flex-1 flex-col items-center text-center my-6 mb-8 ${className}`}
+    >
       <h2 className="text-lg mb-1.5 font-bold text-black">
         Kommende arrangementer
       </h2>

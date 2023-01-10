@@ -7,12 +7,17 @@ import { LargeHeader } from '@components/Header';
 import { Button } from '@components/Button';
 import Wave from '@components/Wave';
 import { EventsQuickView } from '@components/Events';
+import { useInView } from 'react-intersection-observer';
 
 const Home: NextPage = () => {
   const { status, data: session } = useSession({
     required: false,
   });
-
+  const { ref, inView } = useInView({
+    threshold: 0,
+    triggerOnce: true,
+    initialInView: false,
+  });
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
       <Head>
@@ -23,42 +28,58 @@ const Home: NextPage = () => {
       <Navigation />
 
       <main className="flex w-full flex-1 flex-col items-center text-center">
-        <LargeHeader>
+        <LargeHeader ref={ref}>
           <>
-            {session && status === 'authenticated' ? (
-              <>
-                <h1 className="text-4xl mb-1.5 font-bold text-white">
-                  Velkommen tilbake, {`${session?.user?.email}`}
-                </h1>
-                <p className="w-9/12 text-white">
-                  Hello, {`${session?.user?.email}`} You can see this because
-                  you're logged in.
-                </p>
-              </>
-            ) : (
-              <>
-                <h1 className="text-7xl mb-1.5 font-bold text-white">VSAiT</h1>
-                <p className="w-9/12 text-white">
-                  VSAiT er en frivillig studentorganisasjon som ønsker å samle
-                  det vietnamesiske studentmiljøet i Trondheim. Organisasjonen
-                  retter seg mot studenter ved NTNU og andre
-                  utdanningsinstitusjoner i Trondheim.
-                </p>
-                <div className="flex gap-5 py-10">
-                  <a href="/login">
-                    <Button text="Logg inn" className="rounded-3xl" inverted />
-                  </a>
-                  <a href="/register">
-                    <Button text="Register" className="rounded-3xl" />
-                  </a>
-                </div>
-              </>
-            )}
+            <div
+              className={`flex flex-col justify-center transition-all duration-700 ${
+                inView ? 'opacity-100' : 'opacity-0'
+              }`}
+            >
+              {session && status === 'authenticated' ? (
+                <>
+                  <h1 className="text-4xl mb-1.5 font-bold text-white mx-auto">
+                    Velkommen tilbake, {`${session?.user?.email}`}
+                  </h1>
+                  <p className="w-9/12 text-white mx-auto">
+                    Hello, {`${session?.user?.email}`} You can see this because
+                    you're logged in.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h1 className="text-7xl mb-1.5 font-bold text-white">
+                    VSAiT
+                  </h1>
+                  <p className="w-9/12 text-white">
+                    VSAiT er en frivillig studentorganisasjon som ønsker å samle
+                    det vietnamesiske studentmiljøet i Trondheim. Organisasjonen
+                    retter seg mot studenter ved NTNU og andre
+                    utdanningsinstitusjoner i Trondheim.
+                  </p>
+                  <div className="flex gap-5 py-10">
+                    <a href="/login">
+                      <Button
+                        text="Logg inn"
+                        className="rounded-3xl"
+                        inverted
+                      />
+                    </a>
+                    <a href="/register">
+                      <Button text="Register" className="rounded-3xl" />
+                    </a>
+                  </div>
+                </>
+              )}
+            </div>
             <Wave />
           </>
         </LargeHeader>
 
-        <EventsQuickView />
+        <EventsQuickView
+          className={`flex flex-col justify-center transition-all duration-700 delay-300 ${
+            inView ? 'opacity-100' : 'opacity-0'
+          }`}
+        />
       </main>
 
       <Footer />
