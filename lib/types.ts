@@ -18,6 +18,10 @@ export type ExtendedAppProps = AppProps & {
   pageProps: { auth?: boolean; session?: Session };
 };
 
+export type CustomComponentProps = {
+  className?: string;
+};
+
 export type ChildrenProps = {
   children?: JSX.Element;
   className?: string;

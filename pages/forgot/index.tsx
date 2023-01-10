@@ -12,6 +12,7 @@ import { ApiResponseType } from '@lib/types';
 import StyledSwal from '@lib/components/StyledSwal';
 import { getErrorMessage } from '@lib/utils';
 import Swal from 'sweetalert2';
+import Link from 'next/link';
 
 type ForgotFormValues = {
   email: string;
@@ -157,9 +158,9 @@ const ForgotPassword: NextPage = () => {
               </div>
             </form>
             <div className="flex justify-center mt-4">
-              <a href="/login" className="text-darker">
-                Logg inn
-              </a>
+              <Link href="/login">
+                <a className="text-darker">Logg inn</a>
+              </Link>
             </div>
           </div>
         </div>

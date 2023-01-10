@@ -14,6 +14,7 @@ import Swal from 'sweetalert2';
 import StyledSwal from '@lib/components/StyledSwal';
 import { EventsDetailedSkeleton } from '@lib/components/Events';
 import { getErrorMessage } from '@lib/utils';
+import Link from 'next/link';
 
 const Event: NextPage = () => {
   const router = useRouter();
@@ -251,12 +252,11 @@ const Event: NextPage = () => {
                               </p>
                               <p>
                                 Vennligst søk om medlemsskap ved å gå inn på{' '}
-                                <a
-                                  className="font-medium text-primary hover:underline"
-                                  href="/profile"
-                                >
-                                  profil
-                                </a>
+                                <Link href="/profile">
+                                  <a className="font-medium text-primary hover:underline">
+                                    profil
+                                  </a>
+                                </Link>
                                 .
                               </p>
                             </div>
