@@ -14,6 +14,7 @@ import StyledSwal from '@lib/components/StyledSwal';
 import { getErrorMessage } from '@lib/utils';
 import { Person } from '@lib/icons';
 import Accordion from '@lib/components/Accordion';
+import Link from 'next/link';
 
 const Checkin: NextPage = () => {
   const router = useRouter();
@@ -168,12 +169,11 @@ const Checkin: NextPage = () => {
                 <h2 className="font-bold text-2xl mb-4 bg-slate-400 p-4 rounded-md animate-pulse w-4/12 mx-auto text-center"></h2>
               ) : (
                 <h2 className="font-bold text-2xl mb-4 text-center">
-                  <a
-                    className="text-primary hover:underline"
-                    href={`/events/${eventid}`}
-                  >
-                    {event.title}
-                  </a>
+                  <Link href={`/events/${eventid}`}>
+                    <a className="text-primary hover:underline">
+                      {event.title}
+                    </a>
+                  </Link>
                 </h2>
               )}
 

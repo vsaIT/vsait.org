@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 
 const navigation = [
   { href: '/', text: 'Hjem' },
@@ -23,13 +24,11 @@ const Navigation = () => {
       </a>
       <nav className="flex gap-5">
         {navigation.map((nav) => (
-          <a
-            className="text-white transition-all duration-300 underline-offset-4 hover:text-secondary hover:brightness-150"
-            key={nav.text}
-            href={nav.href}
-          >
-            {nav.text}
-          </a>
+          <Link href={nav.href} key={nav.text}>
+            <a className="text-white transition-all duration-300 underline-offset-4 hover:text-secondary hover:brightness-150">
+              {nav.text}
+            </a>
+          </Link>
         ))}
       </nav>
       <a

@@ -1,14 +1,14 @@
 import { useSession, signIn } from 'next-auth/react';
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import router from 'next/router';
 
 const WithAuth = ({ children, options }: any) => {
   const { data: session, status } = useSession();
   const isUser = !!session?.user;
-  useEffect(() => {
+  useLayoutEffect(() => {
     // Do nothing while loading
     if (status === 'loading') {
-      return;
+      return children;
     }
 
     // If not authenticated, redirect to provided url or

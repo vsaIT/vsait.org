@@ -2,6 +2,7 @@ import { Button } from '@components/Button';
 import { CustomComponentProps, EventType } from '@lib/types';
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const EventsDisplay = ({ className = '' }: CustomComponentProps) => {
   const { isSuccess, isLoading, error, data } = useQuery({
@@ -39,35 +40,37 @@ const EventsDisplay = ({ className = '' }: CustomComponentProps) => {
               key={index}
               className="w-8/12 mx-auto my-4 items-center justify-center relative rounded-xl overflow-hidden max-w-screen-lg"
             >
-              <a href="#" className="flex flex-col">
-                <Image
-                  src={event.image}
-                  alt="image src"
-                  width={1352}
-                  height={564}
-                  objectFit="cover"
-                />
-                <p className="absolute top-4 left-4 bg-opacity-50 bg-black text-white text-2xl px-2 py-1 font-bold rounded-md">
-                  {event.title}
-                </p>
-                <p className="absolute bottom-10 transform -translate-y-20 right-4 bg-opacity-80 bg-black text-white text-base px-2 py-1 font-bold rounded-sm">
-                  {event.location}
-                </p>
-                <p className="absolute bottom-10 transform -translate-y-10 right-4 bg-opacity-80 bg-black text-white text-base px-2 py-1 font-bold rounded-sm">
-                  {new Date(event.startTime).toDateString()}
-                </p>
-                <p className="absolute bottom-10 right-4 bg-opacity-80 bg-black text-white text-base px-2 py-1 font-bold rounded-sm">
-                  {event.eventType === 'MEMBERSHIP'
-                    ? 'Krever medlemsskap'
-                    : 'Åpen for alle'}
-                </p>
-                <div className="w-full bg-light">
-                  <p className="w-full text-white m-1 box-border">
-                    Antall påmeldte {event.registrationList.length}/
-                    {event.maxRegistrations}
+              <Link href={`/events/${event.id}`}>
+                <a className="flex flex-col">
+                  <Image
+                    src={event.image}
+                    alt="image src"
+                    width={1352}
+                    height={564}
+                    objectFit="cover"
+                  />
+                  <p className="absolute top-4 left-4 bg-opacity-50 bg-black text-white text-2xl px-2 py-1 font-bold rounded-md">
+                    {event.title}
                   </p>
-                </div>
-              </a>
+                  <p className="absolute bottom-10 transform -translate-y-20 right-4 bg-opacity-80 bg-black text-white text-base px-2 py-1 font-bold rounded-sm">
+                    {event.location}
+                  </p>
+                  <p className="absolute bottom-10 transform -translate-y-10 right-4 bg-opacity-80 bg-black text-white text-base px-2 py-1 font-bold rounded-sm">
+                    {new Date(event.startTime).toDateString()}
+                  </p>
+                  <p className="absolute bottom-10 right-4 bg-opacity-80 bg-black text-white text-base px-2 py-1 font-bold rounded-sm">
+                    {event.eventType === 'MEMBERSHIP'
+                      ? 'Krever medlemsskap'
+                      : 'Åpen for alle'}
+                  </p>
+                  <div className="w-full bg-light">
+                    <p className="w-full text-white m-1 box-border">
+                      Antall påmeldte {event.registrationList.length}/
+                      {event.maxRegistrations}
+                    </p>
+                  </div>
+                </a>
+              </Link>
             </div>
           ))
         )}

@@ -8,6 +8,7 @@ import { Button } from '@components/Button';
 import Wave from '@components/Wave';
 import { EventsQuickView } from '@components/Events';
 import { useInView } from 'react-intersection-observer';
+import Link from 'next/link';
 
 const Home: NextPage = () => {
   const { status, data: session } = useSession({
@@ -18,6 +19,7 @@ const Home: NextPage = () => {
     triggerOnce: true,
     initialInView: false,
   });
+  const loading = status === 'loading';
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
@@ -41,7 +43,13 @@ const Home: NextPage = () => {
                 inView ? 'opacity-100' : 'opacity-0'
               }`}
             >
-              {session && status === 'authenticated' ? (
+              {loading ? (
+                <>
+                  <h1 className="text-4xl mb-1.5 font-bold text-white">
+                    Velkommen tilbake, bruker
+                  </h1>
+                </>
+              ) : session && status === 'authenticated' ? (
                 <>
                   <h1 className="text-4xl mb-1.5 font-bold text-white">
                     Velkommen tilbake, {`${session?.user?.firstName}`}
@@ -62,16 +70,20 @@ const Home: NextPage = () => {
                     utdanningsinstitusjoner i Trondheim.
                   </p>
                   <div className="flex gap-5 py-10">
-                    <a href="/login">
-                      <Button
-                        text="Logg inn"
-                        className="rounded-3xl"
-                        inverted
-                      />
-                    </a>
-                    <a href="/register">
-                      <Button text="Register" className="rounded-3xl" />
-                    </a>
+                    <Link href="/login">
+                      <a>
+                        <Button
+                          text="Logg inn"
+                          className="rounded-3xl"
+                          inverted
+                        />
+                      </a>
+                    </Link>
+                    <Link href="/register">
+                      <a>
+                        <Button text="Register" className="rounded-3xl" />
+                      </a>
+                    </Link>
                   </div>
                 </>
               )}
