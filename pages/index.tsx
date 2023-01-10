@@ -92,11 +92,13 @@ const Home: NextPage = () => {
           </>
         </LargeHeader>
 
-        <EventsQuickView
-          className={`flex flex-col justify-center transition-all duration-700 delay-300 ${
-            inView ? 'opacity-100' : 'opacity-0'
-          }`}
-        />
+        <div className="flex flex-col w-11/12 max-w-screen-lg justify-center p-4 -mb-24 bg-white shadow-lg rounded-2xl -translate-y-40">
+          <EventsQuickView
+            className={`flex flex-col justify-center transition-all duration-700 delay-700 ${
+              inView ? 'opacity-100' : 'opacity-0'
+            }`}
+          />
+        </div>
       </main>
 
       <Footer />

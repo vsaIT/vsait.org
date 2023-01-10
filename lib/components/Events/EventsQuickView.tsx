@@ -23,12 +23,12 @@ const EventsDisplay = ({ className = '' }: CustomComponentProps) => {
 
   return (
     <div
-      className={`flex w-full flex-1 flex-col items-center text-center my-6 mb-8 ${className}`}
+      className={`flex w-full flex-1 items-center text-center my-6 mb-8 ${className}`}
     >
       <h2 className="text-lg mb-1.5 font-bold text-black">
         Kommende arrangementer
       </h2>
-      <div className="w-full mb-2">
+      <div className="mb-2 px-6">
         {isLoading || !isSuccess || data?.statusCode ? (
           <p className="my-10">
             Det ser ikke ut som vi har noen planlagte arrangementer annonsert
@@ -38,7 +38,7 @@ const EventsDisplay = ({ className = '' }: CustomComponentProps) => {
           events?.map((event, index) => (
             <div
               key={index}
-              className="w-8/12 mx-auto my-4 items-center justify-center relative rounded-xl overflow-hidden max-w-screen-lg"
+              className="w-full mx-auto my-4 items-center justify-center relative rounded-xl overflow-hidden max-w-screen-lg"
             >
               <Link href={`/events/${event.id}`}>
                 <a className="flex flex-col">
@@ -75,9 +75,11 @@ const EventsDisplay = ({ className = '' }: CustomComponentProps) => {
           ))
         )}
       </div>
-      <a href="/events">
-        <Button text="Se alle arrangementer"></Button>
-      </a>
+      <Link href="/events">
+        <a>
+          <Button text="Se alle arrangementer"></Button>
+        </a>
+      </Link>
     </div>
   );
 };
