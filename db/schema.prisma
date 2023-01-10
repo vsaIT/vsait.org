@@ -42,26 +42,29 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  firstName     String
-  lastName      String
-  email         String    @unique
-  password      String
-  emailVerified DateTime?
-  birthdate     DateTime?
-  foodNeeds     String    @default("")
-  student       String?
-  publicProfile Boolean   @default(false)
-  role          Role      @default(USER)
-  accounts      Account[]
-  sessions      Session[]
-  membership    Membership[]
+  id                    String    @id @default(cuid())
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  firstName             String
+  lastName              String
+  email                 String    @unique
+  password              String
+  emailVerified         DateTime?
+  birthdate             DateTime?
+  foodNeeds             String    @default("")
+  student               String?
+  publicProfile         Boolean   @default(false)
+  role                  Role      @default(USER)
+  accounts              Account[]
+  sessions              Session[]
+  membership            Membership[]
 
-  userRegistrationList Registrations[]
-  userWaitingList      Waiting[]
-  userAttendanceList   Attendances[]
+  userRegistrationList  Registrations[]
+  userWaitingList       Waiting[]
+  userAttendanceList    Attendances[]
+
+  emailVerificationUrl  String
+  passwordResetUrl      String
 }
 
 model Event {

@@ -13,10 +13,6 @@ const Home: NextPage = () => {
     required: false,
   });
 
-  if (status === 'loading') {
-    return <>'Loading or not authenticated...'</>;
-  }
-
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
       <Head>
@@ -29,7 +25,7 @@ const Home: NextPage = () => {
       <main className="flex w-full flex-1 flex-col items-center text-center">
         <LargeHeader>
           <>
-            {session ? (
+            {session && status === 'authenticated' ? (
               <>
                 <h1 className="text-4xl mb-1.5 font-bold text-white">
                   Velkommen tilbake, {`${session?.user?.email}`}

@@ -1,4 +1,4 @@
-import { hashPassword } from '../lib/auth/passwords';
+import { generateSalt, hashPassword } from '../lib/auth/passwords';
 import { EventType } from '@prisma/client';
 import prisma from '.';
 
@@ -13,6 +13,8 @@ async function main() {
       lastName: 'Dummy',
       password: encryptedPassword,
       role: 'ADMIN',
+      emailVerificationUrl: generateSalt(12),
+      passwordResetUrl: generateSalt(12),
     },
   });
 
@@ -35,6 +37,8 @@ async function main() {
           },
         },
       },
+      emailVerificationUrl: generateSalt(12),
+      passwordResetUrl: generateSalt(12),
     },
   });
 
@@ -58,6 +62,8 @@ async function main() {
           },
         },
       },
+      emailVerificationUrl: generateSalt(12),
+      passwordResetUrl: generateSalt(12),
     },
   });
 

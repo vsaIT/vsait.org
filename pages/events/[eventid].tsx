@@ -125,9 +125,12 @@ const Event: NextPage = () => {
     }
   }, [data?.registrations]);
 
-  if (error) return <>{'An error has occurred: ' + error}</>;
-
   const event: EventType = data?.event;
+
+  // Redirect to 404 if event not found
+  if (!isLoading && !event) window.location.href = '/404';
+  // Redirect to 500 if error
+  if (error) window.location.href = '/500';
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">

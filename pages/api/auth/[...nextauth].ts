@@ -2,7 +2,11 @@ import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 
-import { hashPassword, verifyPassword } from '@lib/auth/passwords';
+import {
+  generateSalt,
+  hashPassword,
+  verifyPassword,
+} from '@lib/auth/passwords';
 import prisma, { Role } from '@db/index';
 
 type RegisterInputType =
@@ -117,6 +121,8 @@ export default NextAuth({
                 password: hashPassword(credentials.password, 12),
                 foodNeeds: credentials.foodNeeds,
                 student: credentials.student,
+                emailVerificationUrl: generateSalt(12),
+                passwordResetUrl: generateSalt(12),
               },
               select: {
                 id: true,
