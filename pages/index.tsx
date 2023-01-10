@@ -35,7 +35,7 @@ const Home: NextPage = () => {
         <LargeHeader
           ref={ref}
           className={`transition-all duration-1200 delay-150 ${
-            inView ? 'max-h-128' : 'max-h-144'
+            inView && session ? 'max-h-128' : 'max-h-144'
           }`}
         >
           <>
@@ -45,11 +45,7 @@ const Home: NextPage = () => {
               }`}
             >
               {loading ? (
-                <>
-                  <h1 className="text-4xl mb-1.5 font-bold text-white">
-                    Velkommen tilbake, bruker
-                  </h1>
-                </>
+                <></>
               ) : session && status === 'authenticated' ? (
                 <>
                   <h1 className="text-4xl mb-1.5 font-bold text-white">
@@ -103,7 +99,11 @@ const Home: NextPage = () => {
           </>
         </LargeHeader>
 
-        <div className="flex flex-col w-11/12 max-w-screen-lg justify-center p-4 -mb-24 bg-white shadow-lg rounded-2xl -translate-y-40">
+        <div
+          className={`flex flex-col w-11/12 max-w-screen-lg justify-center p-4 -mb-24 bg-white shadow-lg rounded-2xl -translate-y-40 ${
+            !session ? '!translate-y-0 !mb-12 shadow-none' : ''
+          }`}
+        >
           <EventsQuickView
             className={`flex flex-col justify-center transition-all duration-700 delay-700 ${
               inView ? 'opacity-100' : 'opacity-0'
