@@ -158,8 +158,8 @@ const Organization: NextPage = () => {
                     <Image
                       src="/cover1.jpg"
                       alt="Bilde av Bli kjent grilling arrangement"
-                      width={300}
-                      height={200}
+                      width={1024}
+                      height={683}
                       layout="responsive"
                     />
                   </div>
@@ -181,8 +181,8 @@ const Organization: NextPage = () => {
                     <Image
                       src="/cover2.jpg"
                       alt="Bilde av Tet Trung Thu arrangement"
-                      width={300}
-                      height={200}
+                      width={1024}
+                      height={683}
                       layout="responsive"
                     />
                   </div>
@@ -205,8 +205,8 @@ const Organization: NextPage = () => {
                     <Image
                       src="/cover3.jpg"
                       alt="Bilde av Tet arrangement"
-                      width={325}
-                      height={200}
+                      width={1270}
+                      height={683}
                       layout="responsive"
                     />
                   </div>
@@ -227,8 +227,8 @@ const Organization: NextPage = () => {
                     <Image
                       src="/cover4.jpg"
                       alt="Bilde av Eksamensgrilling arrangement"
-                      width={300}
-                      height={200}
+                      width={1024}
+                      height={683}
                       layout="responsive"
                     />
                   </div>

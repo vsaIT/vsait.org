@@ -23,7 +23,6 @@ const sendEmail = async (name: string, email: string, restUrl: string) => {
     </body>
     `,
   };
-
   const response = await fetch('https://api.smtp2go.com/v3/email/send', {
     method: 'POST',
     headers: {
@@ -31,7 +30,6 @@ const sendEmail = async (name: string, email: string, restUrl: string) => {
     },
     body: JSON.stringify(body),
   });
-
   return await response.json();
 };
 
