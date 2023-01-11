@@ -1,14 +1,14 @@
 import { useSession, signIn } from 'next-auth/react';
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import router from 'next/router';
 
 const WithAuth = ({ children, options }: any) => {
   const { data: session, status } = useSession();
   const isUser = !!session?.user;
-  useEffect(() => {
+  useLayoutEffect(() => {
     // Do nothing while loading
     if (status === 'loading') {
-      return;
+      return children;
     }
 
     // If not authenticated, redirect to provided url or
@@ -21,17 +21,7 @@ const WithAuth = ({ children, options }: any) => {
     }
   }, [isUser, status]);
 
-  if (isUser) {
-    return children;
-  }
-
-  // Session is being fetched, or no user.
-  // If no user, useEffect() will redirect.
-  return (
-    <div className="h-screen w-screen flex flex-col justify-center content-center items-center">
-      <p>Loading...</p>
-    </div>
-  );
+  return children;
 };
 
 export default WithAuth;
