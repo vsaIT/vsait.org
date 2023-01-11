@@ -2,7 +2,7 @@ import type { NextPage } from 'next';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import Footer from '@components/Footer';
-import Navigation from '@components/Navigation';
+import { Navigation } from '@lib/components/Navigation';
 import { LargeHeader } from '@components/Header';
 import { Button } from '@components/Button';
 import Wave from '@components/Wave';

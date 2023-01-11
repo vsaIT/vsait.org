@@ -1,7 +1,7 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Footer from '@components/Footer';
-import Navigation from '@lib/components/Navigation';
+import { Navigation } from '@lib/components/Navigation';
 import { SmallHeader } from '@lib/components/Header';
 import { useRouter } from 'next/router';
 import { useState } from 'react';

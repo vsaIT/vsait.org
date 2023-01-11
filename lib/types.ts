@@ -18,10 +18,13 @@ export type ExtendedAppProps = AppProps & {
   pageProps: { auth?: boolean; session?: Session };
 };
 
-export type ChildrenProps = {
-  children?: JSX.Element;
+export type ExtendedComponentProps = {
   className?: string;
 };
+
+export type ChildrenProps = {
+  children?: JSX.Element;
+} & ExtendedComponentProps;
 
 export type HeaderProps = {
   title?: string;

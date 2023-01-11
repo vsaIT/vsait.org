@@ -4,7 +4,7 @@ import Head from 'next/head';
 import Footer from '@components/Footer';
 import { ApiResponseType, EventType, RegisteredUserType } from '@lib/types';
 import { SmallHeader } from '@lib/components/Header';
-import Navigation from '@lib/components/Navigation';
+import { Navigation } from '@lib/components/Navigation';
 import Image from 'next/image';
 import { Button } from '@lib/components/Button';
 import { useSession } from 'next-auth/react';
