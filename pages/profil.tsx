@@ -31,8 +31,7 @@ const Profil: NextPage = () => {
         <div className="flex flex-col z-10 max-w-screen-xl mb-32 w-full gap-6 transform -translate-y-10">
           <div className="w-full bg-white shadow-2xl rounded-2xl p-6">
             <div className="flex items-center">
-              <ProfileImage />
-              <div className="pl-5 text-left">
+              <div className="pl-10 py-8 text-left">
                 <p>Navn Navnesen</p>
                 <p className="text-slate-500">Medlem</p>
               </div>
