@@ -4,7 +4,6 @@ import Head from 'next/head';
 import Footer from '@components/Footer';
 import Navigation from '@lib/components/Navigation';
 import { SmallHeader } from '@lib/components/Header';
-import ProfileImage from '@components/ProfileImage';
 import Card from '@components/Card';
 
 const Profil: NextPage = () => {
@@ -31,13 +30,13 @@ const Profil: NextPage = () => {
         <div className="flex flex-col z-10 max-w-screen-xl mb-32 w-full gap-6 transform -translate-y-10">
           <div className="w-full bg-white shadow-2xl rounded-2xl p-6">
             <div className="flex items-center">
-              <div className="pl-10 py-8 text-left">
+              <div className="pl-20 py-10 text-left">
                 <p>Navn Navnesen</p>
                 <p className="text-slate-500">Medlem</p>
               </div>
             </div>
 
-            <div>
+            <div className="mx-10">
               <Card />
             </div>
           </div>
