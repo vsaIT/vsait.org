@@ -113,6 +113,122 @@ const Card = () => {
           <p>2022</p>
         </div>
       </div>
+
+      <div className="flex flex-col border rounded-3xl border-stone-300 mt-10">
+        <div className="flex flex-col h-16 border-b border-stone-300 justify-center">
+          <h1 className="text-xl font-medium text-left pl-4">Endre passord</h1>
+        </div>
+
+        <div className="mx-28 my-10">
+          <div className="mx-5">
+            <label
+              htmlFor="old-password"
+              className="block text-sm font-medium text-left text-stone-500 bg-white w-fit left-4 top-3 px-2 relative"
+            >
+              Gammelt passord*
+            </label>
+            <input
+              id="old-password"
+              type="password"
+              placeholder="Gammelt passord"
+              className="w-full py-3 px-4 border-2 border-stone-300 outline-none text-sm text-left leading-6 bg-transparent rounded-xl transition duration-150 ease-in-out"
+            />
+          </div>
+
+          <div className="mx-5">
+            <label
+              htmlFor="old-password"
+              className="block text-sm font-medium text-left text-stone-500 bg-white w-fit left-4 top-3 px-2 relative"
+            >
+              Nytt passord*
+            </label>
+            <input
+              id="old-password"
+              type="password"
+              placeholder="Gammelt passord"
+              className="w-full py-3 px-4 border-2 border-stone-300 outline-none text-sm text-left leading-6 bg-transparent rounded-xl transition duration-150 ease-in-out"
+            />
+          </div>
+
+          <div className="mx-5">
+            <label
+              htmlFor="old-password"
+              className="block text-sm font-medium text-left text-stone-500 bg-white w-fit left-4 top-3 px-2 relative"
+            >
+              Bekreft nytt passord*
+            </label>
+            <input
+              id="old-password"
+              type="password"
+              placeholder="Gammelt passord"
+              className="w-full py-3 px-4 border-2 border-stone-300 outline-none text-sm text-left leading-6 bg-transparent rounded-xl transition duration-150 ease-in-out"
+            />
+          </div>
+
+          <div className="flex flex-col bg-red-100 text-left text-stone-500 m-5 p-5 rounded-2xl w-fit">
+            <p>
+              Passordet ditt kan ikke være for likt dine andre
+              personopplysninger.
+            </p>
+            <p>Passordet ditt må bestå av minst 8 tegn.</p>
+            <p>Passordet ditt kan ikke være et ofte brukt passord.</p>
+            <p>Passordet ditt kan ikke inneholde bare tall.</p>
+          </div>
+
+          <div className="my-5">
+            <div className="flex flex-col justify-center">
+              <div>
+                <Button
+                  // disabled={isSubmitting}
+                  onClick={() => console.log('submit')}
+                  type="submit"
+                >
+                  <p>Bytt passord</p>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-col border rounded-3xl border-stone-300 mt-10">
+        <div className="flex flex-col h-16 border-b border-stone-300 justify-center">
+          <h1 className="text-xl font-medium text-left pl-4">Statistikk</h1>
+        </div>
+
+        <div className="mx-28 my10">
+          <div>
+            <p>Du har vært med på 16 arrangementer så langt!</p>
+          </div>
+
+          <div className="border rounded-3xl border-stone-200 bg-stone-200 shadow-md shadow-stone-300 my-5 py-3">
+            Arrangement
+          </div>
+
+          <div className="flex flex-col justify-center mb-5">
+            <div>
+              <Button
+                // disabled={isSubmitting}
+                onClick={() => console.log('submit')}
+                type="submit"
+              >
+                <p>Last inn mer</p>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-col justify-center mt-5">
+        <div>
+          <Button
+            // disabled={isSubmitting}
+            onClick={() => console.log('submit')}
+            type="submit"
+          >
+            <p>Logg ut</p>
+          </Button>
+        </div>
+      </div>
     </>
   );
 };
