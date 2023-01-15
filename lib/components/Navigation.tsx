@@ -45,7 +45,7 @@ const Navigation = () => {
         <Link href="/profile">
           <a
             className={`flex w-auto items-center justify-end gap-2 text-white fill-white transition-all duration-300 underline-offset-4 hover:text-secondary hover:brightness-150 hover:fill-secondary ${
-              router.pathname.includes('profile')
+              router.pathname.includes('profil')
                 ? 'underline !text-secondary brightness-150 !fill-secondary'
                 : ''
             }`}

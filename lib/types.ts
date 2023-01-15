@@ -75,3 +75,13 @@ export type EventType = {
   checkinList: string[];
   isDraft: boolean;
 };
+
+export type UserType = {
+  id?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  birthdate?: string;
+  foodNeeds?: string;
+  student?: string;
+};

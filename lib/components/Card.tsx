@@ -1,7 +1,8 @@
 import React from 'react';
 import { Button } from '@components/Button';
+import { UserType } from '@lib/types';
 
-const Card = () => {
+const Card = ({ user }: any) => {
   return (
     <>
       <div className="w-full border rounded-3xl border-stone-300">
@@ -14,16 +15,18 @@ const Card = () => {
           <div className="flex flex-col sm:grid sm:grid-cols-2 border-b border-stone-300">
             <div className="grid grid-rows-3 border-r border-stone-300">
               <div className="border-b border-stone-300 text-left pl-4 py-5 h-fit">
-                <p className="text-stone-500">Email:</p>
-                <p>epost</p>
+                <p className="text-stone-500">Navn:</p>
+                <p>
+                  {user.firstName} {user.lastName}
+                </p>
               </div>
               <div className="border-b border-stone-300 text-left pl-4 py-5 h-fit">
-                <p className="text-stone-500">Navn:</p>
-                <p>navn</p>
+                <p className="text-stone-500">E-post:</p>
+                <p>{user.email}</p>
               </div>
               <div className="border-b border-stone-300 sm:border-0 text-left pl-4 py-5 h-fit">
                 <p className="text-stone-500">Fødselsdato:</p>
-                <p>dato</p>
+                <p>{user.birthdate}</p>
               </div>
             </div>
             <div className="flex flex-col px-12 my-5">
@@ -39,7 +42,11 @@ const Card = () => {
                     id="foodNeeds"
                     type="text"
                     autoComplete="allergies"
-                    placeholder="Matallergi og intoleranse"
+                    placeholder={
+                      user.foodNeeds === ''
+                        ? 'Matallergi og intoleranse'
+                        : user.foodNeeds
+                    }
                     className="w-full py-3 px-4 border-2 border-stone-300 outline-none text-sm text-left leading-6 bg-transparent rounded-xl transition duration-150 ease-in-out"
                   />
                 </div>
