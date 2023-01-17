@@ -1,7 +1,7 @@
 import { Session } from 'next-auth';
 import { AppProps } from 'next/app';
 import { EventType as EventTypeType } from '@prisma/client';
-import { Component } from 'react';
+import { ChangeEvent, ChangeEventHandler, Component } from 'react';
 
 export type AuthenticatedPage = {
   role?: string;
@@ -76,12 +76,22 @@ export type EventType = {
   isDraft: boolean;
 };
 
+export type SelectProps = {
+  options: {
+    value: string;
+    label: string;
+  }[];
+  defaultValue: string;
+  onChange: React.ChangeEventHandler<HTMLSelectElement>;
+};
+
 export type UserType = {
-  id?: string;
+  id: string;
   firstName?: string;
-  lastName?: string;
-  email?: string;
-  birthdate?: string;
-  foodNeeds?: string;
-  student?: string;
+  lastName: string;
+  email: string;
+  birthdate: string;
+  foodNeeds: string;
+  student: string;
+  publicProfile: boolean;
 };

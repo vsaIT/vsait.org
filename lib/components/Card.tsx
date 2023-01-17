@@ -1,8 +1,26 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@components/Button';
-import { UserType } from '@lib/types';
+import { Select } from '@components/Select';
 
 const Card = ({ user }: any) => {
+  const [userInformation, setUserInformation] = useState({
+    foodNeeds: user.foodNeeds,
+    student: user.student,
+    publicProfile: user.publicProfile,
+  });
+
+  useEffect(() => {
+    console.log(userInformation);
+  }, [userInformation]);
+
+  const studentSelectOptions = [
+    { value: 'NTNU', label: 'Norges teknisk-naturvitenskapelige universitet' },
+    { value: 'BI', label: 'Handelshøyskolen BI' },
+    { value: 'DMMH', label: 'Dronning Mauds Minne Høgskole' },
+    { value: 'Non-student', label: 'Ikke student' },
+    { value: 'Other', label: 'Andre' },
+  ];
+
   return (
     <>
       <div className="w-full border rounded-3xl border-stone-300">
@@ -41,6 +59,13 @@ const Card = ({ user }: any) => {
                   <input
                     id="foodNeeds"
                     type="text"
+                    value={userInformation.foodNeeds}
+                    onChange={(e) =>
+                      setUserInformation((prevState) => ({
+                        ...prevState,
+                        foodNeeds: e.target.value,
+                      }))
+                    }
                     autoComplete="allergies"
                     placeholder={
                       user.foodNeeds === ''
@@ -60,23 +85,16 @@ const Card = ({ user }: any) => {
                   Utdanningsinstutisjon*
                 </label>
                 <div>
-                  <select
-                    id="education"
-                    required
-                    className="w-full py-3 px-4 border-2 border-stone-300 outline-none text-sm text-left leading-6 bg-transparent rounded-xl transition duration-150 ease-in-out invalid:text-placeholder"
-                    defaultValue=""
-                  >
-                    <option value="" disabled hidden>
-                      Velg sted
-                    </option>
-                    <option value="NTNU">
-                      Norges teknisk-naturvitenskapelige universitet
-                    </option>
-                    <option value="BI">Handelshøyskolen BI</option>
-                    <option value="DMMH">Dronning Mauds Minne Høgskole</option>
-                    <option value="Other">Andre</option>
-                    <option value="Non-student">Ikke student</option>
-                  </select>
+                  <Select
+                    options={studentSelectOptions}
+                    defaultValue={userInformation.student}
+                    onChange={(e) =>
+                      setUserInformation((prevState) => ({
+                        ...prevState,
+                        student: e.currentTarget.value,
+                      }))
+                    }
+                  />
                 </div>
               </div>
 
@@ -89,9 +107,22 @@ const Card = ({ user }: any) => {
                     id="visibleProfile"
                     type="checkbox"
                     className="sr-only peer"
+                    checked={userInformation.publicProfile}
+                    onChange={(e) =>
+                      setUserInformation((prevState) => ({
+                        ...prevState,
+                        publicProfile: e.target.checked,
+                      }))
+                    }
                   />
-                  <div className="w-11 h-6 bg-placeholder peer-focus:outline-none peer-focus:ring-4 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-                  <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+                  <div
+                    className="w-11 h-6 bg-placeholder peer-focus:outline-none peer-focus:ring-4
+                  rounded-full peer peer-checked:after:translate-x-full
+                  peer-checked:after:border-white after:content-[''] after:absolute
+                  after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300
+                 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"
+                  ></div>
+                  <span className="ml-3 text-sm font-medium text-gray-900">
                     Synlig brukerprofil
                   </span>
                 </label>

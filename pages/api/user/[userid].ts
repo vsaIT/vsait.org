@@ -1,15 +1,14 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getSession } from '@lib/auth/session';
 import prisma from '@db';
 import { getErrorMessage } from '@lib/utils';
 
 export const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = await getSession({ req });
+  const { userid } = req.query;
 
   try {
     const user = await prisma.user.findFirst({
       where: {
-        id: session?.user?.id,
+        id: userid as string,
       },
       select: {
         id: true,
@@ -19,6 +18,7 @@ export const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         birthdate: true,
         foodNeeds: true,
         student: true,
+        publicProfile: true,
       },
     });
 

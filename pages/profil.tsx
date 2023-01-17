@@ -9,29 +9,29 @@ import { useEffect, useState } from 'react';
 import { UserType } from '@lib/types';
 
 const Profil: NextPage = () => {
-  const { status, data: session } = useSession({
-    required: false,
+  const { data: session, status } = useSession({
+    required: true,
   });
-
-  const [user, setUser] = useState<UserType>({
+  const [user, setUser] = useState<any>({
     id: '',
-    birthdate: '',
-    email: '',
     firstName: '',
-    foodNeeds: '',
     lastName: '',
+    email: '',
+    birthdate: '',
+    foodNeeds: '',
     student: '',
+    publicProfile: '',
   });
 
   const fetchUser = async () => {
-    await fetch('/api/user/')
+    await fetch(`/api/user/${session?.user.id}`)
       .then((res) => res.json())
-      .then((data) => setUser(data));
+      .then((data) => setUser((prevState: any) => ({ ...prevState, ...data })));
   };
 
   useEffect(() => {
     fetchUser().catch((error) => console.log(error));
-  }, []);
+  }, [session]);
 
   useEffect(() => {
     console.log(user);
