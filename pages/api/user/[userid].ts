@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '@db';
 import { getErrorMessage } from '@lib/utils';
+import { getSession } from '@lib/auth/session';
 
 export const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { query, method } = req;
@@ -13,8 +14,7 @@ export const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       statusCode: 401,
       message: 'Unauthorized',
     });
-
-  if (userID !== session?.user?.id || session?.user?.role === "ADMIN")
+  if (userID !== session?.user?.id && session?.user?.role !== 'ADMIN')
     return res.status(200).json({
       statusCode: 401,
       message: 'Cannot register event for another user',
@@ -38,9 +38,9 @@ export const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             publicProfile: true,
           },
         });
-
         return res.status(200).json(user);
       } catch (error) {
+        console.log(123, error);
         console.error(`[api] /api/user`, getErrorMessage(error));
         return res
           .status(500)
@@ -49,7 +49,7 @@ export const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     case 'POST':
       try {
-        const updateUser = await prisma.user.update({
+        await prisma.user.update({
           where: {
             id: userID,
           },

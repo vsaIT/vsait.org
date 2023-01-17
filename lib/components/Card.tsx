@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
 import { Button } from '@components/Button';
 import { Select } from '@components/Select';
-import { CardProps, UserInformationType } from '@lib/types';
+import { ApiResponseType, CardProps } from '@lib/types';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
 type UserFormValues = {
@@ -19,138 +19,138 @@ const studentSelectOptions = [
 ];
 
 const Card = ({ user, session }: CardProps) => {
-  const { register, handleSubmit } = useForm<UserFormValues>();
+  const { register, handleSubmit, setValue } = useForm<UserFormValues>();
 
   // Can wrap with useCallback
   const updateUserData = async (data: UserFormValues) => {
+    console.log(data);
     await fetch(`/api/user/${session?.user.id}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
-    }).then(async (response) => {
-      if (!response.ok) throw new Error(response.statusText);
-      const data: ApiResponseType = await response.json();
-      if (data.statusCode === 200) return data;
-      else throw new Error(data.message);
     })
-    .then((data) => {}) 
-    .catch((error) => {
-      window.location.href = "/500";
-    });
+      .then(async (response) => {
+        if (!response.ok) throw new Error(response.statusText);
+        const data: ApiResponseType = await response.json();
+        if (data.statusCode === 200) return data;
+        else throw new Error(data.message);
+      })
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((_error) => {
+        window.location.href = '/500';
+      });
   };
 
-  // Debug
   useEffect(() => {
-    console.log(userInformation);
-  }, [userInformation]);
+    if (user.id === '') return;
+    setValue('foodNeeds', user.foodNeeds);
+    setValue('student', user.student);
+    setValue('publicProfile', user.publicProfile);
+  }, [user]);
 
   return (
     <>
       <div className="w-full border rounded-3xl border-stone-300">
         <form onSubmit={handleSubmit(updateUserData)}>
-        <div className="flex flex-col border-stone-300">
-          <div className="flex flex-col h-16 border-b border-stone-300  justify-center">
-            <h1 className="text-xl font-medium text-left pl-4">
-              Brukerinformasjon
-            </h1>
-          </div>
-          <div className="flex flex-col sm:grid sm:grid-cols-2 border-b border-stone-300">
-            <div className="grid grid-rows-3 border-r border-stone-300">
-              <div className="border-b border-stone-300 text-left pl-4 py-5 h-fit">
-                <p className="text-stone-500">Navn:</p>
-                <p>
-                  {user.firstName} {user.lastName}
-                </p>
-              </div>
-              <div className="border-b border-stone-300 text-left pl-4 py-5 h-fit">
-                <p className="text-stone-500">E-post:</p>
-                <p>{user.email}</p>
-              </div>
-              <div className="border-b border-stone-300 sm:border-0 text-left pl-4 py-5 h-fit">
-                <p className="text-stone-500">Fødselsdato:</p>
-                <p>{user.birthdate}</p>
-              </div>
+          <div className="flex flex-col border-stone-300">
+            <div className="flex flex-col h-16 border-b border-stone-300  justify-center">
+              <h1 className="text-xl font-medium text-left pl-4">
+                Brukerinformasjon
+              </h1>
             </div>
-            <div className="flex flex-col px-12 my-5">
-              <div className="pb-3">
-                <label
-                  htmlFor="foodNeeds"
-                  className="block text-sm font-medium text-left text-stone-500 bg-white w-fit relative left-4 top-3 px-2"
-                >
-                  Matbehov
-                </label>
-                <div>
-                  <input
-                    
-                    id="foodNeeds"
-                    type="text"
-                    {...register('foodNeeds')}
-                    autoComplete="allergies"
-                    placeholder={
-                      user.foodNeeds === ''
-                        ? 'Matallergi og intoleranse'
-                        : user.foodNeeds
-                    }
-                    className="w-full py-3 px-4 border-2 border-stone-300 outline-none text-sm text-left leading-6 bg-transparent rounded-xl transition duration-150 ease-in-out"
-                  />
+            <div className="flex flex-col sm:grid sm:grid-cols-2 border-b border-stone-300">
+              <div className="grid grid-rows-3 border-r border-stone-300">
+                <div className="border-b border-stone-300 text-left pl-4 py-5 h-fit">
+                  <p className="text-stone-500">Navn:</p>
+                  <p>
+                    {user.firstName} {user.lastName}
+                  </p>
+                </div>
+                <div className="border-b border-stone-300 text-left pl-4 py-5 h-fit">
+                  <p className="text-stone-500">E-post:</p>
+                  <p>{user.email}</p>
+                </div>
+                <div className="border-b border-stone-300 sm:border-0 text-left pl-4 py-5 h-fit">
+                  <p className="text-stone-500">Fødselsdato:</p>
+                  <p>{user.birthdate}</p>
                 </div>
               </div>
-
-              <div className="pb-3">
-                <label
-                  htmlFor="education"
-                  className="block text-sm font-medium text-left text-stone-500 bg-white w-fit relative left-4 top-3 px-2"
-                >
-                  Utdanningsinstutisjon*
-                </label>
-                <div>
-                  <Select
-                    id="student"
-                    options={studentSelectOptions}
-                    value={userInformation.student}
-                    register={register}
-                  />
+              <div className="flex flex-col px-12 my-5">
+                <div className="pb-3">
+                  <label
+                    htmlFor="foodNeeds"
+                    className="block text-sm font-medium text-left text-stone-500 bg-white w-fit relative left-4 top-3 px-2"
+                  >
+                    Matbehov
+                  </label>
+                  <div>
+                    <input
+                      id="foodNeeds"
+                      type="text"
+                      {...register('foodNeeds')}
+                      autoComplete="allergies"
+                      placeholder={
+                        user.foodNeeds === ''
+                          ? 'Matallergi og intoleranse'
+                          : user.foodNeeds
+                      }
+                      className="w-full py-3 px-4 border-2 border-stone-300 outline-none text-sm text-left leading-6 bg-transparent rounded-xl transition duration-150 ease-in-out"
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <div className="w-full py-5 text-left">
-                <label
-                  className="relative inline-flex items-center cursor-pointer"
-                  htmlFor="publicProfile"
-                >
-                  <input
-                    id="publicProfile"
-                    type="checkbox"
-                    className="sr-only peer"
-                    {...register('publicProfile')}
-                  />
-                  <div
-                    className="w-11 h-6 bg-placeholder peer-focus:outline-none peer-focus:ring-4
+                <div className="pb-3">
+                  <label
+                    htmlFor="education"
+                    className="block text-sm font-medium text-left text-stone-500 bg-white w-fit relative left-4 top-3 px-2"
+                  >
+                    Utdanningsinstutisjon*
+                  </label>
+                  <div>
+                    <Select
+                      id="student"
+                      options={studentSelectOptions}
+                      register={register}
+                    />
+                  </div>
+                </div>
+
+                <div className="w-full py-5 text-left">
+                  <label
+                    className="relative inline-flex items-center cursor-pointer"
+                    htmlFor="publicProfile"
+                  >
+                    <input
+                      id="publicProfile"
+                      type="checkbox"
+                      className="sr-only peer"
+                      {...register('publicProfile')}
+                    />
+                    <div
+                      className="w-11 h-6 bg-placeholder peer-focus:outline-none peer-focus:ring-4
                   rounded-full peer peer-checked:after:translate-x-full
                   peer-checked:after:border-white after:content-[''] after:absolute
                   after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300
                  after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"
-                  ></div>
-                  <span className="ml-3 text-sm font-medium text-gray-900">
-                    Synlig brukerprofil
-                  </span>
-                </label>
+                    ></div>
+                    <span className="ml-3 text-sm font-medium text-gray-900">
+                      Synlig brukerprofil
+                    </span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col justify-center h-16 my-5">
+              <div className="my-10">
+                <Button type="submit" text="Oppdater" className="bg-light" />
               </div>
             </div>
           </div>
-
-          <div className="flex flex-col justify-center h-16 my-5">
-            <div className="my-10">
-              <Button
-                type="submit"
-                text="Oppdater"
-                className="bg-light"
-              />
-            </div>
-          </div>
-        </div>
         </form>
       </div>
 

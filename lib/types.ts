@@ -1,7 +1,8 @@
 import { Session } from 'next-auth';
 import { AppProps } from 'next/app';
 import { EventType as EventTypeType } from '@prisma/client';
-import { ChangeEvent, ChangeEventHandler, Component } from 'react';
+import { Component } from 'react';
+import { UseFormRegister } from 'react-hook-form';
 
 export type AuthenticatedPage = {
   role?: string;
@@ -81,10 +82,8 @@ export type SelectProps = {
     value: string;
     label: string;
   }[];
-  value: string;
-  onChange: React.ChangeEventHandler<HTMLSelectElement>;
   id?: string;
-  register?: UseFormRegister<FieldValues>;
+  register?: UseFormRegister<any>;
 };
 
 export type UserType = {
@@ -97,12 +96,12 @@ export type UserType = {
   student: string;
   publicProfile: boolean;
 };
-type UserInformationType = {
-  foodNeeds: string,
-  student: string,
-  publicProfile: boolean,
-}
-type CardProps = {
+export type UserInformationType = {
+  foodNeeds: string;
+  student: string;
+  publicProfile: boolean;
+};
+export type CardProps = {
   user: UserType;
-  session: Session;
-}
+  session: Session | null;
+};

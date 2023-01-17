@@ -6,12 +6,13 @@ import Navigation from '@lib/components/Navigation';
 import { SmallHeader } from '@lib/components/Header';
 import Card from '@components/Card';
 import { useEffect, useState } from 'react';
-import { UserType, UserInformationType } from '@lib/types';
+import { UserType, UserInformationType, ApiResponseType } from '@lib/types';
 
 const Profil: NextPage = () => {
   const { data: session, status } = useSession({
     required: true,
   });
+  const [fetching, setFetching] = useState(true);
   const [user, setUser] = useState<UserType>({
     id: '',
     firstName: '',
@@ -23,35 +24,32 @@ const Profil: NextPage = () => {
     publicProfile: false,
   });
 
-
   useEffect(() => {
     if (!session?.user?.id) return;
     const fetchUser = async () => {
+      setFetching(true);
       await fetch(`/api/user/${session.user.id}`)
         .then(async (response) => {
           if (!response.ok) throw new Error(response.statusText);
-          const data: ApiResponseType = await response.json();
-          if (data.statusCode === 200) return data;
-          else throw new Error(data.message);
+          return await response.json();
         })
-        .then((data) => {
-          const userData: UserType = data;
-          setUser((prevState: UserType) => ({ ...prevState, ...(userData) }))
-        }) 
+        .then((data: UserType) => {
+          setUser((prevState) => ({ ...prevState, ...data }));
+        })
         .catch((error) => {
-          window.location.href = "/500";
+          console.log(error);
+          window.location.href = '/500';
+        })
+        .finally(() => {
+          setFetching(false);
         });
     };
     fetchUser();
-  }, [session?.user?.id]);
+  }, [session?.user?.id, setFetching]);
 
   useEffect(() => {
-    console.log(user);
-  }, [user]);
-
-  if (status === 'loading') {
-    return <>'Loading or not authenticated...'</>;
-  }
+    console.log(user, fetching);
+  }, [user, fetching]);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
@@ -66,18 +64,22 @@ const Profil: NextPage = () => {
         <SmallHeader />
 
         <div className="flex flex-col z-10 max-w-screen-xl mb-32 w-full gap-6 transform -translate-y-10">
-          <div className="w-full bg-white shadow-2xl rounded-2xl p-6">
-            <div className="flex flex-col ml-10 sm:ml-20 my-5 sm:my-10 text-left">
-              <p>
-                {user.firstName} {user.lastName}
-              </p>
-              <p className="text-slate-500">Medlem</p>
-            </div>
+          {status === 'loading' && fetching ? (
+            <>'Loading or not authenticated...'</>
+          ) : (
+            <div className="w-full bg-white shadow-2xl rounded-2xl p-6">
+              <div className="flex flex-col ml-10 sm:ml-20 my-5 sm:my-10 text-left">
+                <p>
+                  {user.firstName} {user.lastName}
+                </p>
+                <p className="text-slate-500">Medlem</p>
+              </div>
 
-            <div className="my-8 sm:mx-10">
-              <Card user={user} session={session} />
+              <div className="my-8 sm:mx-10">
+                <Card user={user} session={session} />
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </main>
 
