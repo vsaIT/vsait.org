@@ -1,29 +1,55 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from '@components/Button';
 import { Select } from '@components/Select';
+import { CardProps, UserInformationType } from '@lib/types';
+import { useForm } from 'react-hook-form';
 
-const Card = ({ user, handleUserUpdate }: any) => {
-  const [userInformation, setUserInformation] = useState({
-    foodNeeds: user.foodNeeds,
-    student: user.student,
-    publicProfile: user.publicProfile,
-  });
+type UserFormValues = {
+  foodNeeds: string;
+  student: string;
+  publicProfile: boolean;
+};
 
+const studentSelectOptions = [
+  { value: 'NTNU', label: 'Norges teknisk-naturvitenskapelige universitet' },
+  { value: 'BI', label: 'Handelshøyskolen BI' },
+  { value: 'DMMH', label: 'Dronning Mauds Minne Høgskole' },
+  { value: 'Non-student', label: 'Ikke student' },
+  { value: 'Other', label: 'Andre' },
+];
+
+const Card = ({ user, session }: CardProps) => {
+  const { register, handleSubmit } = useForm<UserFormValues>();
+
+  // Can wrap with useCallback
+  const updateUserData = async (data: UserFormValues) => {
+    await fetch(`/api/user/${session?.user.id}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    }).then(async (response) => {
+      if (!response.ok) throw new Error(response.statusText);
+      const data: ApiResponseType = await response.json();
+      if (data.statusCode === 200) return data;
+      else throw new Error(data.message);
+    })
+    .then((data) => {}) 
+    .catch((error) => {
+      window.location.href = "/500";
+    });
+  };
+
+  // Debug
   useEffect(() => {
     console.log(userInformation);
   }, [userInformation]);
 
-  const studentSelectOptions = [
-    { value: 'NTNU', label: 'Norges teknisk-naturvitenskapelige universitet' },
-    { value: 'BI', label: 'Handelshøyskolen BI' },
-    { value: 'DMMH', label: 'Dronning Mauds Minne Høgskole' },
-    { value: 'Non-student', label: 'Ikke student' },
-    { value: 'Other', label: 'Andre' },
-  ];
-
   return (
     <>
       <div className="w-full border rounded-3xl border-stone-300">
+        <form onSubmit={handleSubmit(updateUserData)}>
         <div className="flex flex-col border-stone-300">
           <div className="flex flex-col h-16 border-b border-stone-300  justify-center">
             <h1 className="text-xl font-medium text-left pl-4">
@@ -57,15 +83,10 @@ const Card = ({ user, handleUserUpdate }: any) => {
                 </label>
                 <div>
                   <input
+                    
                     id="foodNeeds"
                     type="text"
-                    value={userInformation.foodNeeds}
-                    onChange={(e) =>
-                      setUserInformation((prevState) => ({
-                        ...prevState,
-                        foodNeeds: e.target.value,
-                      }))
-                    }
+                    {...register('foodNeeds')}
                     autoComplete="allergies"
                     placeholder={
                       user.foodNeeds === ''
@@ -86,14 +107,10 @@ const Card = ({ user, handleUserUpdate }: any) => {
                 </label>
                 <div>
                   <Select
+                    id="student"
                     options={studentSelectOptions}
                     value={userInformation.student}
-                    onChange={(e) =>
-                      setUserInformation((prevState) => ({
-                        ...prevState,
-                        student: e.target.value,
-                      }))
-                    }
+                    register={register}
                   />
                 </div>
               </div>
@@ -101,19 +118,13 @@ const Card = ({ user, handleUserUpdate }: any) => {
               <div className="w-full py-5 text-left">
                 <label
                   className="relative inline-flex items-center cursor-pointer"
-                  htmlFor="visibleProfile"
+                  htmlFor="publicProfile"
                 >
                   <input
-                    id="visibleProfile"
+                    id="publicProfile"
                     type="checkbox"
                     className="sr-only peer"
-                    checked={userInformation.publicProfile}
-                    onChange={(e) =>
-                      setUserInformation((prevState) => ({
-                        ...prevState,
-                        publicProfile: e.target.checked,
-                      }))
-                    }
+                    {...register('publicProfile')}
                   />
                   <div
                     className="w-11 h-6 bg-placeholder peer-focus:outline-none peer-focus:ring-4
@@ -133,7 +144,6 @@ const Card = ({ user, handleUserUpdate }: any) => {
           <div className="flex flex-col justify-center h-16 my-5">
             <div className="my-10">
               <Button
-                onClick={() => handleUserUpdate(userInformation)}
                 type="submit"
                 text="Oppdater"
                 className="bg-light"
@@ -141,6 +151,7 @@ const Card = ({ user, handleUserUpdate }: any) => {
             </div>
           </div>
         </div>
+        </form>
       </div>
 
       <div className="flex flex-col w-full border rounded-3xl border-stone-300 mt-10">

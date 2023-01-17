@@ -83,11 +83,13 @@ export type SelectProps = {
   }[];
   value: string;
   onChange: React.ChangeEventHandler<HTMLSelectElement>;
+  id?: string;
+  register?: UseFormRegister<FieldValues>;
 };
 
 export type UserType = {
   id: string;
-  firstName?: string;
+  firstName: string;
   lastName: string;
   email: string;
   birthdate: string;
@@ -95,3 +97,12 @@ export type UserType = {
   student: string;
   publicProfile: boolean;
 };
+type UserInformationType = {
+  foodNeeds: string,
+  student: string,
+  publicProfile: boolean,
+}
+type CardProps = {
+  user: UserType;
+  session: Session;
+}

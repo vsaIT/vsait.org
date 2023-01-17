@@ -6,14 +6,13 @@ import Navigation from '@lib/components/Navigation';
 import { SmallHeader } from '@lib/components/Header';
 import Card from '@components/Card';
 import { useEffect, useState } from 'react';
-import { UserType } from '@lib/types';
-import { method } from 'lodash';
+import { UserType, UserInformationType } from '@lib/types';
 
 const Profil: NextPage = () => {
   const { data: session, status } = useSession({
     required: true,
   });
-  const [user, setUser] = useState<any>({
+  const [user, setUser] = useState<UserType>({
     id: '',
     firstName: '',
     lastName: '',
@@ -24,25 +23,27 @@ const Profil: NextPage = () => {
     publicProfile: false,
   });
 
-  const fetchUser = async () => {
-    await fetch(`/api/user/${session?.user.id}`)
-      .then((res) => res.json())
-      .then((data) => setUser((prevState: any) => ({ ...prevState, ...data })));
-  };
-
-  const updateUserData = async (data: any) => {
-    await fetch(`/api/user/${session?.user.id}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-  };
 
   useEffect(() => {
-    fetchUser().catch((error) => console.log(error));
-  }, [session]);
+    if (!session?.user?.id) return;
+    const fetchUser = async () => {
+      await fetch(`/api/user/${session.user.id}`)
+        .then(async (response) => {
+          if (!response.ok) throw new Error(response.statusText);
+          const data: ApiResponseType = await response.json();
+          if (data.statusCode === 200) return data;
+          else throw new Error(data.message);
+        })
+        .then((data) => {
+          const userData: UserType = data;
+          setUser((prevState: UserType) => ({ ...prevState, ...(userData) }))
+        }) 
+        .catch((error) => {
+          window.location.href = "/500";
+        });
+    };
+    fetchUser();
+  }, [session?.user?.id]);
 
   useEffect(() => {
     console.log(user);
@@ -74,7 +75,7 @@ const Profil: NextPage = () => {
             </div>
 
             <div className="my-8 sm:mx-10">
-              <Card user={user} handleUserUpdate={updateUserData} />
+              <Card user={user} session={session} />
             </div>
           </div>
         </div>

@@ -6,6 +6,19 @@ export const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { query, method } = req;
   const userID = query.userid as string;
   const { foodNeeds, student, publicProfile } = req.body;
+  const session = await getSession({ req });
+
+  if (!session || !session?.user)
+    return res.status(401).json({
+      statusCode: 401,
+      message: 'Unauthorized',
+    });
+
+  if (userID !== session?.user?.id || session?.user?.role === "ADMIN")
+    return res.status(200).json({
+      statusCode: 401,
+      message: 'Cannot register event for another user',
+    });
 
   switch (method) {
     case 'GET':
@@ -50,8 +63,11 @@ export const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           statusCode: 200,
           message: 'updated',
         });
-      } catch (e) {
-        console.error(e);
+      } catch (error) {
+        console.error(error);
+        return res
+          .status(500)
+          .json({ statusCode: 500, message: getErrorMessage(error) });
       }
   }
 };
