@@ -7,6 +7,7 @@ import { SmallHeader } from '@lib/components/Header';
 import Card from '@components/Card';
 import { useEffect, useState } from 'react';
 import { UserType } from '@lib/types';
+import { method } from 'lodash';
 
 const Profil: NextPage = () => {
   const { data: session, status } = useSession({
@@ -20,13 +21,23 @@ const Profil: NextPage = () => {
     birthdate: '',
     foodNeeds: '',
     student: '',
-    publicProfile: '',
+    publicProfile: false,
   });
 
   const fetchUser = async () => {
     await fetch(`/api/user/${session?.user.id}`)
       .then((res) => res.json())
       .then((data) => setUser((prevState: any) => ({ ...prevState, ...data })));
+  };
+
+  const updateUserData = async (data: any) => {
+    await fetch(`/api/user/${session?.user.id}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
   };
 
   useEffect(() => {
@@ -63,7 +74,7 @@ const Profil: NextPage = () => {
             </div>
 
             <div className="my-8 sm:mx-10">
-              <Card user={user} />
+              <Card user={user} handleUserUpdate={updateUserData} />
             </div>
           </div>
         </div>

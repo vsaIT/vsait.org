@@ -81,7 +81,7 @@ export type SelectProps = {
     value: string;
     label: string;
   }[];
-  defaultValue: string;
+  value: string;
   onChange: React.ChangeEventHandler<HTMLSelectElement>;
 };
 

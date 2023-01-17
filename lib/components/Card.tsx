@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button } from '@components/Button';
 import { Select } from '@components/Select';
 
-const Card = ({ user }: any) => {
+const Card = ({ user, handleUserUpdate }: any) => {
   const [userInformation, setUserInformation] = useState({
     foodNeeds: user.foodNeeds,
     student: user.student,
@@ -87,11 +87,11 @@ const Card = ({ user }: any) => {
                 <div>
                   <Select
                     options={studentSelectOptions}
-                    defaultValue={userInformation.student}
+                    value={userInformation.student}
                     onChange={(e) =>
                       setUserInformation((prevState) => ({
                         ...prevState,
-                        student: e.currentTarget.value,
+                        student: e.target.value,
                       }))
                     }
                   />
@@ -133,8 +133,7 @@ const Card = ({ user }: any) => {
           <div className="flex flex-col justify-center h-16 my-5">
             <div className="my-10">
               <Button
-                // disabled={isSubmitting}
-                onClick={() => console.log('submit')}
+                onClick={() => handleUserUpdate(userInformation)}
                 type="submit"
                 text="Oppdater"
                 className="bg-light"
