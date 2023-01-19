@@ -25,7 +25,6 @@ const Card = ({ user, session }: CardProps) => {
   // Can wrap with useCallback
   const updateUserData = useCallback(
     async (data: UserFormValues) => {
-      console.log(data);
       await fetch(`/api/user/${session?.user.id}`, {
         method: 'POST',
         headers: {
@@ -40,7 +39,6 @@ const Card = ({ user, session }: CardProps) => {
           else throw new Error(data.message);
         })
         .then((data) => {
-          console.log(data);
           StyledSwal.fire({
             icon: 'success',
             title: 'Brukerinformasjonen ble oppdatert',

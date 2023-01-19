@@ -40,7 +40,6 @@ export const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         });
         return res.status(200).json(user);
       } catch (error) {
-        console.log(123, error);
         console.error(`[api] /api/user`, getErrorMessage(error));
         return res
           .status(500)
