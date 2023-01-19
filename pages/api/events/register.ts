@@ -18,7 +18,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       message: 'Unauthorized',
     });
   if (userId !== session?.user?.id)
-    return res.status(200).json({
+    return res.status(401).json({
       statusCode: 401,
       message: 'Cannot register event for another user',
     });
