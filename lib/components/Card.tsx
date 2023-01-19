@@ -1,8 +1,9 @@
 import { Button } from '@components/Button';
 import { Select } from '@components/Select';
 import { ApiResponseType, CardProps } from '@lib/types';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import StyledSwal from '@components/StyledSwal';
 
 type UserFormValues = {
   foodNeeds: string;
@@ -22,28 +23,40 @@ const Card = ({ user, session }: CardProps) => {
   const { register, handleSubmit, setValue } = useForm<UserFormValues>();
 
   // Can wrap with useCallback
-  const updateUserData = async (data: UserFormValues) => {
-    console.log(data);
-    await fetch(`/api/user/${session?.user.id}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    })
-      .then(async (response) => {
-        if (!response.ok) throw new Error(response.statusText);
-        const data: ApiResponseType = await response.json();
-        if (data.statusCode === 200) return data;
-        else throw new Error(data.message);
+  const updateUserData = useCallback(
+    async (data: UserFormValues) => {
+      console.log(data);
+      await fetch(`/api/user/${session?.user.id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
       })
-      .then((data) => {
-        console.log(data);
-      })
-      .catch((_error) => {
-        window.location.href = '/500';
-      });
-  };
+        .then(async (response) => {
+          if (!response.ok) throw new Error(response.statusText);
+          const data: ApiResponseType = await response.json();
+          if (data.statusCode === 200) return data;
+          else throw new Error(data.message);
+        })
+        .then((data) => {
+          console.log(data);
+          StyledSwal.fire({
+            icon: 'success',
+            title: 'Brukerinformasjonen ble oppdatert',
+          });
+        })
+        .catch((_error) => {
+          window.location.href = '/500';
+          StyledSwal.fire({
+            icon: 'error',
+            title: 'Brukerinformasjon ble ikke oppdatert',
+            text: 'Ser ut som det var noe som gikk galt',
+          });
+        });
+    },
+    [user, session?.user?.id]
+  );
 
   useEffect(() => {
     if (user.id === '') return;
