@@ -1,6 +1,19 @@
-import { Person } from '@lib/icons';
+import {
+  Calendar,
+  CaretLeft,
+  CaretRight,
+  House,
+  Person,
+  PowerOff,
+  SquareCaretLeft,
+  SquareCaretRight,
+  Users,
+  UsersRectangle,
+} from '@lib/icons';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useRouter } from 'next/router';
+import { useAtom } from 'jotai';
+import { sideNavToggleAtom } from '@lib/atoms';
 
 const links = [
   {
@@ -11,17 +24,17 @@ const links = [
   {
     href: '/admin/events',
     text: 'Arrangementer',
-    icon: <Person className="h-4 w-4" color="inherit" />,
+    icon: <Calendar className="h-4 w-4" color="inherit" />,
   },
   {
     href: '/admin/users',
     text: 'Brukere',
-    icon: <Person className="h-4 w-4" color="inherit" />,
+    icon: <Users className="h-4 w-4" color="inherit" />,
   },
   {
     href: '/admin/memberships',
     text: 'Medlemskap',
-    icon: <Person className="h-4 w-4" color="inherit" />,
+    icon: <UsersRectangle className="h-4 w-4" color="inherit" />,
   },
   {
     href: '/admin/statistics',
@@ -31,20 +44,42 @@ const links = [
 ];
 
 const AdminSideNavigation = () => {
-  const [toggled, setToggled] = useState(false);
+  const router = useRouter();
+  const [toggled, setToggled] = useAtom(sideNavToggleAtom);
 
   return (
     <div
       className={`flex w-64 bg-primary rounded-r-xl p-5 h-screen transition-all duration-700 ${
         !toggled ? '!w-20' : ''
       }`}
-      onClick={() => setToggled(!toggled)}
     >
       <div className="flex flex-col gap-2 w-full justify-between">
-        <div className="flex flex-col gap-2 w-full items-start mt-24">
+        <div className="flex flex-col gap-2 w-full items-start">
+          <button
+            className="mb-12 px-2 py-1 transition-all duration-300 hover:bg-[rgba(0,0,0,0.3)] h-10 rounded-md w-full fill-white text-white"
+            onClick={() => setToggled(!toggled)}
+          >
+            <div className="grid items-center text-left grid-cols-sideNavigationButton overflow-hidden">
+              {toggled ? (
+                <SquareCaretRight
+                  className="h-5 w-5 ml-[2px]"
+                  color="inherit"
+                />
+              ) : (
+                <SquareCaretLeft className="h-5 w-5 ml-[2px]" color="inherit" />
+              )}
+              <p className="ml-4 text-sm font-medium [transform:translateY(1.5px)]">
+                Lukk
+              </p>
+            </div>
+          </button>
           {links.map((link) => (
             <Link href={link.href} key={link.href}>
-              <a className="px-3 py-2 transition-all duration-300 hover:bg-[rgba(0,0,0,0.3)] h-10 rounded-md w-full fill-white text-white">
+              <a
+                className={`px-3 py-2 transition-all duration-300 hover:bg-[rgba(0,0,0,0.3)] h-10 rounded-md w-full fill-white text-white ${
+                  router.pathname === link.href ? 'bg-[rgba(0,0,0,0.3)]' : ''
+                }`}
+              >
                 <div className="grid items-center text-left grid-cols-sideNavigationButton overflow-hidden">
                   {link.icon}
                   <p className="ml-2 text-sm font-medium [transform:translateY(1.5px)]">
@@ -58,9 +93,9 @@ const AdminSideNavigation = () => {
         <div className="flex flex-col gap-2 w-full items-start">
           <button className="px-3 py-2 transition-all duration-300 hover:bg-[rgba(0,0,0,0.3)] h-10 rounded-md w-full fill-white text-white">
             <div className="grid items-center text-left grid-cols-sideNavigationButton overflow-hidden">
-              <Person className="h-4 w-4" color="inherit" />
-              <p className="ml-2 text-sm font-medium [transform:translateY(1.5px)]">
-                Log ut
+              <House className="h-4 w-4" color="inherit" />
+              <p className="ml-4 text-sm font-medium [transform:translateY(1.5px)]">
+                Til nettsiden
               </p>
             </div>
           </button>
