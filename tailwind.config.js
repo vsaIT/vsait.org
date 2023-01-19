@@ -33,6 +33,9 @@ module.exports = {
         10: '.10',
         20: '.20',
       },
+      transitionDuration: {
+        1200: '1200ms',
+      },
     },
   },
   plugins: [],
