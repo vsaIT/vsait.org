@@ -7,3 +7,22 @@ export const getMembershipYear = () => {
   const date = new Date();
   return date.getMonth() <= 8 ? date.getFullYear() - 1 : date.getFullYear();
 };
+
+const MONTH = [
+  'jan.',
+  'feb.',
+  'mar.',
+  'apr.',
+  'mai',
+  'jun.',
+  'jul.',
+  'aug.',
+  'sep.',
+  'okt.',
+  'nov.',
+  'des.',
+];
+export const getLocaleDateString = (cdate: Date) => {
+  const date = new Date(cdate);
+  return `${date.getDate()}. ${MONTH[date.getMonth()]} ${date.getFullYear()}`;
+};

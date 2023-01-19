@@ -68,7 +68,7 @@ const AdminSideNavigation = () => {
               ) : (
                 <SquareCaretLeft className="h-5 w-5 ml-[2px]" color="inherit" />
               )}
-              <p className="ml-4 text-sm font-medium [transform:translateY(1.5px)]">
+              <p className="ml-4 text-sm font-medium [transform:translateY(0.5px)]">
                 Lukk
               </p>
             </div>
@@ -95,7 +95,7 @@ const AdminSideNavigation = () => {
             <a className="px-3 py-2 transition-all duration-300 hover:bg-[rgba(0,0,0,0.3)] h-10 rounded-md w-full fill-white text-white">
               <div className="grid items-center text-left grid-cols-sideNavigationButton overflow-hidden">
                 <House className="h-4 w-4" color="inherit" />
-                <p className="ml-2 text-sm font-medium [transform:translateY(1.5px)]">
+                <p className="ml-2 text-sm font-medium [transform:translateY(2px)]">
                   Til nettsiden
                 </p>
               </div>

@@ -66,6 +66,7 @@ export type EventType = {
   eventType: EventTypeType;
   startTime: Date;
   endTime: Date;
+  updatedAt: Date;
   registrationDeadline: Date;
   cancellationDeadline: Date;
   registrationList: string[];
