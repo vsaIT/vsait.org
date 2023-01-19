@@ -91,14 +91,16 @@ const AdminSideNavigation = () => {
           ))}
         </div>
         <div className="flex flex-col gap-2 w-full items-start">
-          <button className="px-3 py-2 transition-all duration-300 hover:bg-[rgba(0,0,0,0.3)] h-10 rounded-md w-full fill-white text-white">
-            <div className="grid items-center text-left grid-cols-sideNavigationButton overflow-hidden">
-              <House className="h-4 w-4" color="inherit" />
-              <p className="ml-4 text-sm font-medium [transform:translateY(1.5px)]">
-                Til nettsiden
-              </p>
-            </div>
-          </button>
+          <Link href="/">
+            <a className="px-3 py-2 transition-all duration-300 hover:bg-[rgba(0,0,0,0.3)] h-10 rounded-md w-full fill-white text-white">
+              <div className="grid items-center text-left grid-cols-sideNavigationButton overflow-hidden">
+                <House className="h-4 w-4" color="inherit" />
+                <p className="ml-2 text-sm font-medium [transform:translateY(1.5px)]">
+                  Til nettsiden
+                </p>
+              </div>
+            </a>
+          </Link>
         </div>
       </div>
     </div>
