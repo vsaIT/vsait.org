@@ -20,6 +20,7 @@ import { EventType } from '@lib/types';
 import { getLocaleDateString } from '@lib/utils';
 import { Button } from '@lib/components/Button';
 import { useEffect } from 'react';
+import { CaretLeft, CaretRight } from '@lib/icons';
 
 const AdminEvents: NextPage = () => {
   const { isLoading, error, isFetching, data } = useQuery({
@@ -33,27 +34,31 @@ const AdminEvents: NextPage = () => {
   const columnHelper = createColumnHelper<EventType>();
   const columns = [
     columnHelper.accessor('title', {
+      id: 'title',
       header: () => 'Tittel',
       cell: (info) => info.getValue(),
       footer: (info) => info.column.id,
     }),
     columnHelper.accessor('startTime', {
+      id: 'startTime',
       header: () => 'Starttid',
       cell: (info) => <span>{getLocaleDateString(info.getValue())}</span>,
       footer: (info) => info.column.id,
     }),
     columnHelper.accessor('endTime', {
+      id: 'endTime',
       header: () => 'Sluttid',
       cell: (info) => <span>{getLocaleDateString(info.getValue())}</span>,
       footer: (info) => info.column.id,
     }),
     columnHelper.accessor('updatedAt', {
+      id: 'lastEdited',
       header: () => <span>Sist endret</span>,
       cell: (info) => <span>{getLocaleDateString(info.getValue())}</span>,
       footer: (info) => info.column.id,
     }),
     columnHelper.accessor('startTime', {
-      id: 'Kommende',
+      id: 'upcoming',
       header: () => 'Kommende',
       cell: (info) => (
         <span>{new Date(info.getValue()) > new Date() ? 'yes' : 'no'}</span>
@@ -65,7 +70,7 @@ const AdminEvents: NextPage = () => {
         return { startTime: row.startTime, endTime: row.endTime };
       },
       {
-        id: 'Gående',
+        id: 'ongoing',
         header: () => 'Gående',
         cell: (info) => (
           <span>
@@ -79,6 +84,7 @@ const AdminEvents: NextPage = () => {
       }
     ),
     columnHelper.accessor('isDraft', {
+      id: 'draft',
       header: () => 'Utkast',
       cell: (info) => <span>{info.getValue() ? 'yes' : 'no'}</span>,
       footer: (info) => info.column.id,
@@ -98,7 +104,6 @@ const AdminEvents: NextPage = () => {
 
   const events: EventType[] = data?.events;
   const loading = isLoading || isFetching;
-  console.log(events);
 
   // Redirect to 404 if event not found
   if (!loading && events.length === 0) window.location.href = '/404';
@@ -144,7 +149,7 @@ const AdminEvents: NextPage = () => {
                 </div>
                 <div className="grid [grid-template-rows:minmax(409px,1fr)_50px]">
                   <div className="rounded-lg border border-neutral-300 overflow-hidden">
-                    <table className="w-full rounded-xl text-xs">
+                    <table className="w-full rounded-xl text-sm">
                       <thead className="bg-neutral-100 text-left">
                         {table.getHeaderGroups().map((headerGroup) => (
                           <tr
@@ -156,7 +161,7 @@ const AdminEvents: NextPage = () => {
                                 <th
                                   key={header.id}
                                   colSpan={header.colSpan}
-                                  className="font-medium p-3"
+                                  className="font-medium p-[0.625rem]"
                                 >
                                   {header.isPlaceholder ? null : (
                                     <div>
@@ -181,7 +186,7 @@ const AdminEvents: NextPage = () => {
                             >
                               {row.getVisibleCells().map((cell) => {
                                 return (
-                                  <td key={cell.id} className="p-3">
+                                  <td key={cell.id} className="p-[0.625rem]">
                                     {flexRender(
                                       cell.column.columnDef.cell,
                                       cell.getContext()
@@ -196,43 +201,70 @@ const AdminEvents: NextPage = () => {
                     </table>
                   </div>
                   <div className="flex justify-between items-end gap-2">
-                    <span className="flex items-center gap-1">
-                      <div>Page</div>
+                    <p className="flex items-center gap-1 text-sm">
+                      Viser
                       <strong>
-                        {table.getState().pagination.pageIndex + 1} of{' '}
-                        {table.getPageCount()}
+                        {1 +
+                          table.getState().pagination.pageIndex *
+                            table.getState().pagination.pageSize}{' '}
+                        -{' '}
+                        {table.getState().pagination.pageIndex + 1 ==
+                        table.getPageCount()
+                          ? events.length
+                          : (table.getState().pagination.pageIndex + 1) *
+                            table.getState().pagination.pageSize}{' '}
+                        av {events.length}
                       </strong>
-                    </span>
-                    <div>
+                      arrangementer
+                    </p>
+                    <div className="flex items-center gap-2">
                       <button
-                        className="border rounded p-1"
-                        onClick={() => table.setPageIndex(0)}
-                        disabled={!table.getCanPreviousPage()}
-                      >
-                        {'<<'}
-                      </button>
-                      <button
-                        className="border rounded p-1"
+                        className="inline-flex justify-center items-center text-black rounded-md p-2 h-7 w-7 bg-neutral-100 hover:bg-neutral-200"
                         onClick={() => table.previousPage()}
                         disabled={!table.getCanPreviousPage()}
                       >
-                        {'<'}
+                        <CaretLeft className="h-4 w-4" />
                       </button>
+                      {/* table.getPageCount() */}
+                      {new Array(5)
+                        .fill(
+                          Math.max(
+                            table.getPageCount() -
+                              table.getState().pagination.pageIndex >
+                              2
+                              ? table.getState().pagination.pageIndex - 2
+                              : table.getState().pagination.pageIndex -
+                                  (5 -
+                                    table.getPageCount() +
+                                    table.getState().pagination.pageIndex),
+                            0
+                          )
+                        )
+                        .map((page, i) =>
+                          page + i < table.getPageCount() ? (
+                            <button
+                              key={'btn' + i}
+                              className={`inline-flex justify-center items-center text-black rounded-md p-2 h-7 w-7 bg-neutral-100 ${
+                                page + i ===
+                                table.getState().pagination.pageIndex
+                                  ? 'bg-neutral-600 !text-white'
+                                  : 'hover:bg-neutral-200'
+                              }`}
+                              onClick={() => table.setPageIndex(page + i)}
+                              disabled={page + i >= table.getPageCount()}
+                            >
+                              {page + 1 + i}
+                            </button>
+                          ) : (
+                            <></>
+                          )
+                        )}
                       <button
-                        className="border rounded p-1"
+                        className="inline-flex justify-center items-center text-black rounded-md p-2 h-7 w-7 bg-neutral-100 hover:bg-neutral-200"
                         onClick={() => table.nextPage()}
                         disabled={!table.getCanNextPage()}
                       >
-                        {'>'}
-                      </button>
-                      <button
-                        className="border rounded p-1"
-                        onClick={() =>
-                          table.setPageIndex(table.getPageCount() - 1)
-                        }
-                        disabled={!table.getCanNextPage()}
-                      >
-                        {'>>'}
+                        <CaretRight className="h-4 w-4" />
                       </button>
                     </div>
                   </div>
