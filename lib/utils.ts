@@ -24,5 +24,9 @@ const MONTH = [
 ];
 export const getLocaleDateString = (cdate: Date) => {
   const date = new Date(cdate);
-  return `${date.getDate()}. ${MONTH[date.getMonth()]} ${date.getFullYear()}`;
+  return `${date.getDate()}. ${
+    MONTH[date.getMonth()]
+  } ${date.getFullYear()}, ${String(date.getHours()).padStart(2, '0')}:${String(
+    date.getMinutes()
+  ).padStart(2, '0')}`;
 };

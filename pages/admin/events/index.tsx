@@ -110,6 +110,10 @@ const AdminEvents: NextPage = () => {
   // Redirect to 500 if error
   if (error) window.location.href = '/500';
 
+  const pageCount = table.getPageCount();
+  const pageIndex = table.getState().pagination.pageIndex;
+  const pageSize = table.getState().pagination.pageSize;
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
       <Head>
@@ -204,15 +208,10 @@ const AdminEvents: NextPage = () => {
                     <p className="flex items-center gap-1 text-sm">
                       Viser
                       <strong>
-                        {1 +
-                          table.getState().pagination.pageIndex *
-                            table.getState().pagination.pageSize}{' '}
-                        -{' '}
-                        {table.getState().pagination.pageIndex + 1 ==
-                        table.getPageCount()
+                        {1 + pageIndex * pageSize} -{' '}
+                        {pageIndex + 1 == pageCount
                           ? events?.length
-                          : (table.getState().pagination.pageIndex + 1) *
-                            table.getState().pagination.pageSize}{' '}
+                          : (pageIndex + 1) * pageSize}{' '}
                         av {events?.length}
                       </strong>
                       arrangementer
@@ -225,33 +224,26 @@ const AdminEvents: NextPage = () => {
                       >
                         <CaretLeft className="h-4 w-4" />
                       </button>
-                      {/* table.getPageCount() */}
                       {new Array(5)
                         .fill(
                           Math.max(
-                            table.getPageCount() -
-                              table.getState().pagination.pageIndex >
-                              2
-                              ? table.getState().pagination.pageIndex - 2
-                              : table.getState().pagination.pageIndex -
-                                  (5 -
-                                    table.getPageCount() +
-                                    table.getState().pagination.pageIndex),
+                            pageCount - pageIndex > 2
+                              ? pageIndex - 2
+                              : pageIndex - (5 - pageCount + pageIndex),
                             0
                           )
                         )
                         .map((page, i) =>
-                          page + i < table.getPageCount() ? (
+                          page + i < pageCount ? (
                             <button
                               key={'btn' + i}
                               className={`inline-flex justify-center items-center text-black rounded-md p-2 h-7 w-7 bg-neutral-100 ${
-                                page + i ===
-                                table.getState().pagination.pageIndex
+                                page + i === pageIndex
                                   ? 'bg-neutral-600 !text-white'
                                   : 'hover:bg-neutral-200'
                               }`}
                               onClick={() => table.setPageIndex(page + i)}
-                              disabled={page + i >= table.getPageCount()}
+                              disabled={page + i >= pageCount}
                             >
                               {page + 1 + i}
                             </button>
