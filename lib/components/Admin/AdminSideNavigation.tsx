@@ -2,11 +2,13 @@ import {
   Calendar,
   CaretLeft,
   CaretRight,
+  Chart,
   House,
   Person,
   PowerOff,
   SquareCaretLeft,
   SquareCaretRight,
+  Table,
   Users,
   UsersRectangle,
 } from '@lib/icons';
@@ -19,7 +21,7 @@ const links = [
   {
     href: '/admin',
     text: 'Dashbord',
-    icon: <Person className="h-4 w-4" color="inherit" />,
+    icon: <Table className="h-4 w-4" color="inherit" />,
   },
   {
     href: '/admin/events',
@@ -39,7 +41,7 @@ const links = [
   {
     href: '/admin/statistics',
     text: 'Statistikk',
-    icon: <Person className="h-4 w-4" color="inherit" />,
+    icon: <Chart className="h-4 w-4" color="inherit" />,
   },
 ];
 

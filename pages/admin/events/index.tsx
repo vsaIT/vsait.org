@@ -210,10 +210,10 @@ const AdminEvents: NextPage = () => {
                         -{' '}
                         {table.getState().pagination.pageIndex + 1 ==
                         table.getPageCount()
-                          ? events.length
+                          ? events?.length
                           : (table.getState().pagination.pageIndex + 1) *
                             table.getState().pagination.pageSize}{' '}
-                        av {events.length}
+                        av {events?.length}
                       </strong>
                       arrangementer
                     </p>

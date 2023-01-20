@@ -7,8 +7,10 @@ export { default as Envelope } from './Envelope';
 export { default as Lock } from './Lock';
 
 // Admin
+export { default as Table } from './Table';
 export { default as Users } from './Users';
 export { default as UsersRectangle } from './UsersRectangle';
+export { default as Chart } from './Chart';
 export { default as PowerOff } from './PowerOff';
 export { default as House } from './House';
 
