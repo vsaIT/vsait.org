@@ -8,7 +8,7 @@ import Card from '@components/Card';
 import { useEffect, useState } from 'react';
 import { UserType, UserInformationType, ApiResponseType } from '@lib/types';
 
-const Profil: NextPage = () => {
+const Profile: NextPage = () => {
   const { data: session, status } = useSession({
     required: true,
   });
@@ -47,10 +47,6 @@ const Profil: NextPage = () => {
     fetchUser();
   }, [session?.user?.id, setFetching]);
 
-  useEffect(() => {
-    console.log(user, fetching);
-  }, [user, fetching]);
-
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
       <Head>
@@ -88,4 +84,4 @@ const Profil: NextPage = () => {
   );
 };
 
-export default Profil;
+export default Profile;

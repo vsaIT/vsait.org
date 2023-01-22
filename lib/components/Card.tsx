@@ -22,7 +22,6 @@ const studentSelectOptions = [
 const Card = ({ user, session }: CardProps) => {
   const { register, handleSubmit, setValue } = useForm<UserFormValues>();
 
-  // Can wrap with useCallback
   const updateUserData = useCallback(
     async (data: UserFormValues) => {
       await fetch(`/api/user/${session?.user.id}`, {
@@ -42,15 +41,20 @@ const Card = ({ user, session }: CardProps) => {
           StyledSwal.fire({
             icon: 'success',
             title: 'Brukerinformasjonen ble oppdatert',
+            showConfirmButton: false,
+            timer: 2000,
           });
+          if (!data) {
+            StyledSwal.fire({
+              icon: 'error',
+              title: 'Brukerinformasjon ble ikke oppdatert',
+              text: 'Ser ut som det var noe som gikk galt',
+              timer: 2000,
+            });
+          }
         })
         .catch((_error) => {
           window.location.href = '/500';
-          StyledSwal.fire({
-            icon: 'error',
-            title: 'Brukerinformasjon ble ikke oppdatert',
-            text: 'Ser ut som det var noe som gikk galt',
-          });
         });
     },
     [user, session?.user?.id]
@@ -61,7 +65,7 @@ const Card = ({ user, session }: CardProps) => {
     setValue('foodNeeds', user.foodNeeds);
     setValue('student', user.student);
     setValue('publicProfile', user.publicProfile);
-  }, [user]);
+  }, [user, setValue]);
 
   return (
     <>
