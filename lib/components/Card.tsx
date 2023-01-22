@@ -44,17 +44,16 @@ const Card = ({ user, session }: CardProps) => {
             showConfirmButton: false,
             timer: 2000,
           });
-          if (!data) {
-            StyledSwal.fire({
-              icon: 'error',
-              title: 'Brukerinformasjon ble ikke oppdatert',
-              text: 'Ser ut som det var noe som gikk galt',
-              timer: 2000,
-            });
-          }
         })
         .catch((_error) => {
-          window.location.href = '/500';
+          StyledSwal.fire({
+            icon: 'error',
+            title: 'Brukerinformasjon ble ikke oppdatert',
+            text: 'Ser ut som det var noe som gikk galt',
+            timer: 2000,
+          }).then(() => {
+            window.location.href = '/500';
+          });
         });
     },
     [user, session?.user?.id]
