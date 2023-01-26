@@ -66,6 +66,21 @@ const Card = ({ user, session }: CardProps) => {
     setValue('publicProfile', user.publicProfile);
   }, [user, setValue]);
 
+  /* const showActiveMembership = () => {
+    if (latestyeardb == year.now or latestyeardb-1 == year.now) {
+      // høst
+      if (nextyearexistindb) return thisyear / nextyear;
+      // vår
+      if (haslastyearmembership) {
+        return lastyear / thisyear;
+      } else {
+        return this year;
+      }
+    } else {
+      return ikke aktivt medlemskap
+    }
+  };*/
+
   return (
     <>
       <div className="w-full border rounded-3xl border-stone-300">
@@ -179,7 +194,9 @@ const Card = ({ user, session }: CardProps) => {
           </div>
           <div className="flex flex-col text-left pl-4 py-5 h-fit sm:w-full">
             <p className="text-stone-500">Tidligere medlemskap:</p>
-            <p>2022</p>
+            {user.membership.map((membership) => (
+              <p>{membership.year}</p>
+            ))}
           </div>
         </div>
       </div>

@@ -95,6 +95,9 @@ export type UserType = {
   foodNeeds: string;
   student: string;
   publicProfile: boolean;
+  membership: {
+    year: number;
+  }[];
 };
 export type UserInformationType = {
   foodNeeds: string;

@@ -22,6 +22,7 @@ const Profile: NextPage = () => {
     foodNeeds: '',
     student: '',
     publicProfile: false,
+    membership: [],
   });
 
   useEffect(() => {
@@ -34,6 +35,7 @@ const Profile: NextPage = () => {
           return await response.json();
         })
         .then((data: UserType) => {
+          console.log(data);
           setUser((prevState) => ({ ...prevState, ...data }));
         })
         .catch((error) => {
