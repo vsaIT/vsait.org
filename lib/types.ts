@@ -2,6 +2,7 @@ import { Session } from 'next-auth';
 import { AppProps } from 'next/app';
 import { EventType as EventTypeType } from '@prisma/client';
 import { Component } from 'react';
+import { UseFormRegister } from 'react-hook-form';
 
 export type AuthenticatedPage = {
   role?: string;
@@ -74,4 +75,33 @@ export type EventType = {
   checkinId: string;
   checkinList: string[];
   isDraft: boolean;
+};
+
+export type SelectProps = {
+  options: {
+    value: string;
+    label: string;
+  }[];
+  id?: string;
+  register?: UseFormRegister<any>;
+};
+
+export type UserType = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  birthdate: string;
+  foodNeeds: string;
+  student: string;
+  publicProfile: boolean;
+};
+export type UserInformationType = {
+  foodNeeds: string;
+  student: string;
+  publicProfile: boolean;
+};
+export type CardProps = {
+  user: UserType;
+  session: Session | null;
 };
