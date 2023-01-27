@@ -104,9 +104,15 @@ const AdminEvents: NextPage = () => {
         cell: (info) => (
           <span>
             {new Date(info.getValue()) > new Date() ? (
-              <CircleCheck className="w-4 h-4 fill-[#70BF2B]" color="inherit" />
+              <CircleCheck
+                className="w-[14px] h-[14px] fill-[#70BF2B]"
+                color="inherit"
+              />
             ) : (
-              <CircleXMark className="w-4 h-4 fill-[#D5564D]" color="inherit" />
+              <CircleXMark
+                className="w-[14px] h-[14px] fill-[#D5564D]"
+                color="inherit"
+              />
             )}
           </span>
         ),
@@ -124,12 +130,12 @@ const AdminEvents: NextPage = () => {
               {new Date(info.getValue().startTime) <= new Date() &&
               new Date(info.getValue().endTime) > new Date() ? (
                 <CircleCheck
-                  className="w-4 h-4 fill-[#70BF2B]"
+                  className="w-[14px] h-[14px] fill-[#70BF2B]"
                   color="inherit"
                 />
               ) : (
                 <CircleXMark
-                  className="w-4 h-4 fill-[#D5564D]"
+                  className="w-[14px] h-[14px] fill-[#D5564D]"
                   color="inherit"
                 />
               )}
