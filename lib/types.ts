@@ -33,12 +33,11 @@ export type HeaderProps = {
 export type ButtonProps = {
   children?: JSX.Element;
   onClick?: () => void;
-  disabled?: boolean;
-  type?: 'button' | 'submit' | 'reset';
   text?: string;
-  className?: string;
+  type?: 'button' | 'submit' | 'reset';
   inverted?: boolean;
-};
+} & Omit<React.HTMLProps<HTMLButtonElement>, 'onClick'>;
+
 export type ApiResponseType = {
   statusCode: number;
   message: string;
