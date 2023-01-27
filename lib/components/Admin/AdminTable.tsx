@@ -68,7 +68,9 @@ const AdminTable = <T extends object>({ table }: AdminTableProps<T>) => {
           return (
             <tr
               key={row.id}
-              className="border-t-[1px] border-neutral-300 border-collapse"
+              className={`border-t-[1px] border-neutral-300 border-collapse ${
+                row.getIsSelected() ? 'bg-secondary bg-opacity-25' : ''
+              }`}
             >
               {row.getVisibleCells().map((cell) => {
                 return (

@@ -24,7 +24,7 @@ import {
   IndeterminateCheckbox,
 } from '@lib/components/Input';
 import React, { useMemo, useState } from 'react';
-import { Search } from '@lib/icons';
+import { CircleCheck, CircleXMark, Search } from '@lib/icons';
 
 const AdminEvents: NextPage = () => {
   const { isLoading, error, isFetching, data } = useQuery({
@@ -54,6 +54,7 @@ const AdminEvents: NextPage = () => {
                 checked: table.getIsAllRowsSelected(),
                 indeterminate: table.getIsSomeRowsSelected(),
                 onChange: table.getToggleAllRowsSelectedHandler(),
+                className: '[filter:hue-rotate(140deg)_saturate(0.85)]',
               }}
             />
           </div>
@@ -65,6 +66,7 @@ const AdminEvents: NextPage = () => {
                 checked: row.getIsSelected(),
                 indeterminate: row.getIsSomeSelected(),
                 onChange: row.getToggleSelectedHandler(),
+                className: '[filter:hue-rotate(140deg)_saturate(0.85)]',
               }}
             />
           </div>
@@ -100,7 +102,13 @@ const AdminEvents: NextPage = () => {
         id: 'upcoming',
         header: () => 'Kommende',
         cell: (info) => (
-          <span>{new Date(info.getValue()) > new Date() ? 'yes' : 'no'}</span>
+          <span>
+            {new Date(info.getValue()) > new Date() ? (
+              <CircleCheck className="w-4 h-4 fill-[#70BF2B]" color="inherit" />
+            ) : (
+              <CircleXMark className="w-4 h-4 fill-[#D5564D]" color="inherit" />
+            )}
+          </span>
         ),
         footer: (info) => info.column.id,
       }),
@@ -114,9 +122,17 @@ const AdminEvents: NextPage = () => {
           cell: (info) => (
             <span>
               {new Date(info.getValue().startTime) <= new Date() &&
-              new Date(info.getValue().endTime) > new Date()
-                ? 'yes'
-                : 'no'}
+              new Date(info.getValue().endTime) > new Date() ? (
+                <CircleCheck
+                  className="w-4 h-4 fill-[#70BF2B]"
+                  color="inherit"
+                />
+              ) : (
+                <CircleXMark
+                  className="w-4 h-4 fill-[#D5564D]"
+                  color="inherit"
+                />
+              )}
             </span>
           ),
           footer: (info) => info.column.id,

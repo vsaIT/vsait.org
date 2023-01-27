@@ -14,6 +14,9 @@ export { default as Chart } from './Chart';
 export { default as PowerOff } from './PowerOff';
 export { default as House } from './House';
 export { default as Search } from './Search';
+export { default as CircleXMark } from './CircleXMark';
+export { default as CircleCheck } from './CircleCheck';
+export { default as CircleExclamation } from './CircleExclamation';
 
 // Arrows
 export { default as CaretUp } from './CaretUp';
