@@ -51,7 +51,7 @@ const AdminSideNavigation = () => {
 
   return (
     <div
-      className={`flex w-64 bg-primary rounded-r-xl p-5 h-screen transition-all duration-700 ${
+      className={`flex w-64 bg-primary rounded-r-xl p-5 h-screen transition-all [transition-property:width] duration-700 ${
         !toggled ? '!w-20' : ''
       }`}
     >

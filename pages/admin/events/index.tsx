@@ -3,15 +3,10 @@ import Head from 'next/head';
 import { Navigation } from '@lib/components/Navigation';
 import { AdminLayout } from '@lib/components/Admin';
 import {
-  Column,
-  Table as ReactTable,
-  PaginationState,
   useReactTable,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
-  ColumnDef,
-  OnChangeFn,
   SortingState,
   flexRender,
   createColumnHelper,
@@ -25,8 +20,8 @@ import {
   DebouncedInput,
   IndeterminateCheckbox,
 } from '@lib/components/Input';
-import React, { HTMLProps, useEffect, useMemo } from 'react';
-import { CaretLeft, CaretRight } from '@lib/icons';
+import React, { useMemo } from 'react';
+import { CaretDown, CaretLeft, CaretRight, CaretUp, Search } from '@lib/icons';
 
 const AdminEvents: NextPage = () => {
   const { isLoading, error, isFetching, data } = useQuery({
@@ -48,16 +43,18 @@ const AdminEvents: NextPage = () => {
       columnHelper.display({
         id: 'select',
         header: () => (
-          <IndeterminateCheckbox
-            {...{
-              checked: table.getIsAllRowsSelected(),
-              indeterminate: table.getIsSomeRowsSelected(),
-              onChange: table.getToggleAllRowsSelectedHandler(),
-            }}
-          />
+          <div className="w-full h-full flex justify-center items-center">
+            <IndeterminateCheckbox
+              {...{
+                checked: table.getIsAllRowsSelected(),
+                indeterminate: table.getIsSomeRowsSelected(),
+                onChange: table.getToggleAllRowsSelectedHandler(),
+              }}
+            />
+          </div>
         ),
         cell: ({ row }) => (
-          <div className="px-1">
+          <div className="w-full h-full flex justify-center items-center">
             <IndeterminateCheckbox
               {...{
                 checked: row.getIsSelected(),
@@ -181,13 +178,17 @@ const AdminEvents: NextPage = () => {
                   <p className="text-sm">Se og endre arrangementer her</p>
                 </div>
                 <div className="relative w-96">
-                  <div className="mt-1">
+                  <div className="mt-1 relative fill-stone-400">
                     <DebouncedInput
                       type="text"
                       value={globalFilter ?? ''}
                       onChange={(value) => setGlobalFilter(String(value))}
                       placeholder="Søk etter arrangementer"
-                      className="w-full py-2 px-4 border-2 border-stone-300 outline-none text-sm text-left leading-6 bg-transparent rounded-xl transition duration-150 ease-in-out"
+                      className="w-full py-2 px-4 pl-10 border-2 border-stone-300 outline-none text-sm text-left leading-6 bg-transparent rounded-xl transition duration-150 ease-in-out"
+                    />
+                    <Search
+                      className="w-4 h-4 absolute top-[13px] left-4"
+                      color="inherit"
                     />
                   </div>
                 </div>
@@ -196,10 +197,15 @@ const AdminEvents: NextPage = () => {
               <div className="bg-white rounded-xl w-full h-full p-6">
                 <div className="flex justify-between items-center pb-6">
                   <div>
-                    <p>
-                      {Object.keys(rowSelection).length} of{' '}
-                      {table.getPreFilteredRowModel().rows.length} Total Rows
-                      Selected
+                    <p
+                      className={`text-sm text-neutral-500 transition-all duration-500 ${
+                        Object.keys(rowSelection).length > 0
+                          ? 'opacity-100'
+                          : 'opacity-0'
+                      }`}
+                    >
+                      {Object.keys(rowSelection).length} av{' '}
+                      {table.getPreFilteredRowModel().rows.length} valgt
                     </p>
                   </div>
                   <Button
@@ -221,28 +227,53 @@ const AdminEvents: NextPage = () => {
                                 <th
                                   key={header.id}
                                   colSpan={header.colSpan}
-                                  className="font-medium p-[0.625rem]"
+                                  className={`font-medium p-[0.625rem] transition-all ${
+                                    ['asc', 'desc'].includes(
+                                      header.column.getIsSorted() as string
+                                    )
+                                      ? 'bg-neutral-200 bg-opacity-80'
+                                      : ''
+                                  }`}
                                 >
                                   {header.isPlaceholder ? null : (
                                     <div
-                                      {...{
-                                        className: header.column.getCanSort()
+                                      className={`flex justify-between items-center fill-neutral-700 ${
+                                        header.column.getCanSort()
                                           ? 'cursor-pointer select-none'
-                                          : '',
-                                        onClick:
-                                          header.column.getToggleSortingHandler(),
-                                      }}
+                                          : ''
+                                      }`}
+                                      onClick={header.column.getToggleSortingHandler()}
                                     >
                                       {flexRender(
                                         header.column.columnDef.header,
                                         header.getContext()
                                       )}
-                                      {{
-                                        asc: ' 🔼',
-                                        desc: ' 🔽',
-                                      }[
-                                        header.column.getIsSorted() as string
-                                      ] ?? null}
+                                      {header.column.getCanSort() ? (
+                                        header.column.getIsSorted() ===
+                                        'asc' ? (
+                                          <CaretUp
+                                            className="h-3 w-3"
+                                            color="inherit"
+                                          />
+                                        ) : header.column.getIsSorted() ===
+                                          'desc' ? (
+                                          <CaretDown
+                                            className="h-3 w-3"
+                                            color="inherit"
+                                          />
+                                        ) : (
+                                          <div className="flex flex-col fill-neutral-400">
+                                            <CaretUp
+                                              className="h-3 w-3 -mb-[2.5px]"
+                                              color="inherit"
+                                            />
+                                            <CaretDown
+                                              className="h-3 w-3 -mt-[2.5px]"
+                                              color="inherit"
+                                            />
+                                          </div>
+                                        )
+                                      ) : null}
                                     </div>
                                   )}
                                 </th>
@@ -288,7 +319,7 @@ const AdminEvents: NextPage = () => {
                     </p>
                     <div className="flex items-center gap-2">
                       <button
-                        className="inline-flex justify-center items-center text-black rounded-md p-2 h-7 w-7 bg-neutral-100 hover:bg-neutral-200"
+                        className="inline-flex justify-center items-center text-black rounded-md p-2 h-7 w-7 bg-neutral-100 hover:bg-neutral-200 disabled:opacity-20 transition-all duration-300"
                         onClick={() => table.setPageIndex(0)}
                         disabled={!table.getCanPreviousPage()}
                       >
@@ -307,7 +338,7 @@ const AdminEvents: NextPage = () => {
                           page + i < pageCount ? (
                             <button
                               key={'pagination' + i}
-                              className={`inline-flex justify-center items-center text-black rounded-md p-2 h-7 w-7 bg-neutral-100 ${
+                              className={`inline-flex justify-center items-center text-black rounded-md p-2 h-7 w-7 bg-neutral-100 transition-all duration-300 ${
                                 page + i === pageIndex
                                   ? 'bg-neutral-600 !text-white'
                                   : 'hover:bg-neutral-200'
@@ -320,7 +351,7 @@ const AdminEvents: NextPage = () => {
                           ) : null
                         )}
                       <button
-                        className="inline-flex justify-center items-center text-black rounded-md p-2 h-7 w-7 bg-neutral-100 hover:bg-neutral-200"
+                        className="inline-flex justify-center items-center text-black rounded-md p-2 h-7 w-7 bg-neutral-100 hover:bg-neutral-200 disabled:opacity-20 transition-all duration-300"
                         onClick={() =>
                           table.setPageIndex(table.getPageCount() - 1)
                         }

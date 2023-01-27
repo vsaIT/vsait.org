@@ -13,6 +13,7 @@ export { default as UsersRectangle } from './UsersRectangle';
 export { default as Chart } from './Chart';
 export { default as PowerOff } from './PowerOff';
 export { default as House } from './House';
+export { default as Search } from './Search';
 
 // Arrows
 export { default as CaretUp } from './CaretUp';
