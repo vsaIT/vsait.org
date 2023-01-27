@@ -1,14 +1,17 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { Navigation } from '@lib/components/Navigation';
-import { AdminLayout } from '@lib/components/Admin';
+import {
+  AdminLayout,
+  AdminTable,
+  AdminTablePagination,
+} from '@lib/components/Admin';
 import {
   useReactTable,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   SortingState,
-  flexRender,
   createColumnHelper,
   getSortedRowModel,
 } from '@tanstack/react-table';
@@ -20,8 +23,8 @@ import {
   DebouncedInput,
   IndeterminateCheckbox,
 } from '@lib/components/Input';
-import React, { useMemo } from 'react';
-import { CaretDown, CaretLeft, CaretRight, CaretUp, Search } from '@lib/icons';
+import React, { useMemo, useState } from 'react';
+import { Search } from '@lib/icons';
 
 const AdminEvents: NextPage = () => {
   const { isLoading, error, isFetching, data } = useQuery({
@@ -32,11 +35,13 @@ const AdminEvents: NextPage = () => {
     refetchOnReconnect: false,
     staleTime: 60000,
   });
-  const [globalFilter, setGlobalFilter] = React.useState('');
-  const [rowSelection, setRowSelection] = React.useState({});
-  const [sorting, setSorting] = React.useState<SortingState>([
+  // Selection, filter and sorting states
+  const [globalFilter, setGlobalFilter] = useState('');
+  const [rowSelection, setRowSelection] = useState({});
+  const [sorting, setSorting] = useState<SortingState>([
     { id: 'startTime', desc: true },
   ]);
+  // Column creation through tanstack column helper for strictly typing header and cells
   const columnHelper = createColumnHelper<EventType>();
   const columns = useMemo(
     () => [
@@ -127,9 +132,12 @@ const AdminEvents: NextPage = () => {
     []
   );
 
+  // Create table
   const table = useReactTable({
     data: data?.events || [],
     columns: columns,
+    // States
+    initialState: { pagination: { pageIndex: 0, pageSize: 9 } },
     state: {
       rowSelection,
       sorting,
@@ -144,20 +152,19 @@ const AdminEvents: NextPage = () => {
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     debugTable: false,
-    initialState: { pagination: { pageIndex: 0, pageSize: 9 } },
   });
 
+  // Variables for reusability
   const events: EventType[] = data?.events;
   const loading = isLoading || isFetching;
+  const pageCount = table.getPageCount();
+  const pageIndex = table.getState().pagination.pageIndex;
+  const pageSize = table.getState().pagination.pageSize;
 
   // Redirect to 404 if event not found
   if (!loading && events.length === 0) window.location.href = '/404';
   // Redirect to 500 if error
   if (error) window.location.href = '/500';
-
-  const pageCount = table.getPageCount();
-  const pageIndex = table.getState().pagination.pageIndex;
-  const pageSize = table.getState().pagination.pageSize;
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
@@ -208,102 +215,15 @@ const AdminEvents: NextPage = () => {
                       {table.getPreFilteredRowModel().rows.length} valgt
                     </p>
                   </div>
+                  {/* TODO */}
                   <Button
                     text="Legg til nytt arrangement"
                     className="text-xs py-3 px-8"
-                  ></Button>
+                  />
                 </div>
                 <div className="grid [grid-template-rows:minmax(409px,1fr)_50px]">
                   <div className="rounded-lg border border-neutral-300 overflow-hidden">
-                    <table className="w-full rounded-xl text-sm">
-                      <thead className="bg-neutral-100 text-left">
-                        {table.getHeaderGroups().map((headerGroup) => (
-                          <tr
-                            key={headerGroup.id}
-                            className="border-neutral-300 box-border border-collapse"
-                          >
-                            {headerGroup.headers.map((header) => {
-                              return (
-                                <th
-                                  key={header.id}
-                                  colSpan={header.colSpan}
-                                  className={`font-medium p-[0.625rem] transition-all ${
-                                    ['asc', 'desc'].includes(
-                                      header.column.getIsSorted() as string
-                                    )
-                                      ? 'bg-neutral-200 bg-opacity-80'
-                                      : ''
-                                  }`}
-                                >
-                                  {header.isPlaceholder ? null : (
-                                    <div
-                                      className={`flex justify-between items-center fill-neutral-700 ${
-                                        header.column.getCanSort()
-                                          ? 'cursor-pointer select-none'
-                                          : ''
-                                      }`}
-                                      onClick={header.column.getToggleSortingHandler()}
-                                    >
-                                      {flexRender(
-                                        header.column.columnDef.header,
-                                        header.getContext()
-                                      )}
-                                      {header.column.getCanSort() ? (
-                                        header.column.getIsSorted() ===
-                                        'asc' ? (
-                                          <CaretUp
-                                            className="h-3 w-3"
-                                            color="inherit"
-                                          />
-                                        ) : header.column.getIsSorted() ===
-                                          'desc' ? (
-                                          <CaretDown
-                                            className="h-3 w-3"
-                                            color="inherit"
-                                          />
-                                        ) : (
-                                          <div className="flex flex-col fill-neutral-400">
-                                            <CaretUp
-                                              className="h-3 w-3 -mb-[2.5px]"
-                                              color="inherit"
-                                            />
-                                            <CaretDown
-                                              className="h-3 w-3 -mt-[2.5px]"
-                                              color="inherit"
-                                            />
-                                          </div>
-                                        )
-                                      ) : null}
-                                    </div>
-                                  )}
-                                </th>
-                              );
-                            })}
-                          </tr>
-                        ))}
-                      </thead>
-                      <tbody>
-                        {table.getRowModel().rows.map((row) => {
-                          return (
-                            <tr
-                              key={row.id}
-                              className="border-t-[1px] border-neutral-300 border-collapse"
-                            >
-                              {row.getVisibleCells().map((cell) => {
-                                return (
-                                  <td key={cell.id} className="p-[0.625rem]">
-                                    {flexRender(
-                                      cell.column.columnDef.cell,
-                                      cell.getContext()
-                                    )}
-                                  </td>
-                                );
-                              })}
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
+                    <AdminTable table={table} />
                   </div>
                   <div className="flex justify-between items-end gap-2">
                     <p className="flex items-center gap-1 text-sm">
@@ -317,49 +237,7 @@ const AdminEvents: NextPage = () => {
                       </strong>
                       arrangementer
                     </p>
-                    <div className="flex items-center gap-2">
-                      <button
-                        className="inline-flex justify-center items-center text-black rounded-md p-2 h-7 w-7 bg-neutral-100 hover:bg-neutral-200 disabled:opacity-20 transition-all duration-300"
-                        onClick={() => table.setPageIndex(0)}
-                        disabled={!table.getCanPreviousPage()}
-                      >
-                        <CaretLeft className="h-4 w-4" />
-                      </button>
-                      {new Array(5)
-                        .fill(
-                          Math.max(
-                            pageCount - pageIndex > 2
-                              ? pageIndex - 2
-                              : pageIndex - (5 - pageCount + pageIndex),
-                            0
-                          )
-                        )
-                        .map((page, i) =>
-                          page + i < pageCount ? (
-                            <button
-                              key={'pagination' + i}
-                              className={`inline-flex justify-center items-center text-black rounded-md p-2 h-7 w-7 bg-neutral-100 transition-all duration-300 ${
-                                page + i === pageIndex
-                                  ? 'bg-neutral-600 !text-white'
-                                  : 'hover:bg-neutral-200'
-                              }`}
-                              onClick={() => table.setPageIndex(page + i)}
-                              disabled={page + i >= pageCount}
-                            >
-                              {page + 1 + i}
-                            </button>
-                          ) : null
-                        )}
-                      <button
-                        className="inline-flex justify-center items-center text-black rounded-md p-2 h-7 w-7 bg-neutral-100 hover:bg-neutral-200 disabled:opacity-20 transition-all duration-300"
-                        onClick={() =>
-                          table.setPageIndex(table.getPageCount() - 1)
-                        }
-                        disabled={!table.getCanNextPage()}
-                      >
-                        <CaretRight className="h-4 w-4" />
-                      </button>
-                    </div>
+                    <AdminTablePagination table={table} />
                   </div>
                 </div>
               </div>

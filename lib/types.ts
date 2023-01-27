@@ -2,6 +2,7 @@ import { Session } from 'next-auth';
 import { AppProps } from 'next/app';
 import { EventType as EventTypeType } from '@prisma/client';
 import { Component } from 'react';
+import { Table } from '@tanstack/react-table';
 
 export type AuthenticatedPage = {
   role?: string;
@@ -37,6 +38,10 @@ export type ButtonProps = {
   type?: 'button' | 'submit' | 'reset';
   inverted?: boolean;
 } & Omit<React.HTMLProps<HTMLButtonElement>, 'onClick'>;
+
+export type AdminTableProps<T> = {
+  table: Table<T>;
+};
 
 export type ApiResponseType = {
   statusCode: number;

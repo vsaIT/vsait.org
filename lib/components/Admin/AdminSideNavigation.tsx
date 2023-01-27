@@ -1,11 +1,7 @@
 import {
   Calendar,
-  CaretLeft,
-  CaretRight,
   Chart,
   House,
-  Person,
-  PowerOff,
   SquareCaretLeft,
   SquareCaretRight,
   Table,
