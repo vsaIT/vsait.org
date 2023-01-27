@@ -3,6 +3,7 @@ import { AppProps } from 'next/app';
 import { EventType as EventTypeType } from '@prisma/client';
 import { Component } from 'react';
 import { Table } from '@tanstack/react-table';
+import { FieldValues, Path, UseFormRegister } from 'react-hook-form';
 
 export type AuthenticatedPage = {
   role?: string;
@@ -79,4 +80,33 @@ export type EventType = {
   checkinList: string[];
   isDraft: boolean;
   isCancelled: boolean;
+};
+
+export type SelectProps<T extends FieldValues> = {
+  options: {
+    value: string;
+    label: string;
+  }[];
+  id?: Path<T>;
+  register?: UseFormRegister<T>;
+};
+
+export type UserType = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  birthdate: string;
+  foodNeeds: string;
+  student: string;
+  publicProfile: boolean;
+};
+export type UserInformationType = {
+  foodNeeds: string;
+  student: string;
+  publicProfile: boolean;
+};
+export type CardProps = {
+  user: UserType;
+  session: Session | null;
 };
