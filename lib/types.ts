@@ -78,4 +78,5 @@ export type EventType = {
   checkinId: string;
   checkinList: string[];
   isDraft: boolean;
+  isCancelled: boolean;
 };

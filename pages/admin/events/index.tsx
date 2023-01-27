@@ -122,12 +122,25 @@ const AdminEvents: NextPage = () => {
           footer: (info) => info.column.id,
         }
       ),
-      columnHelper.accessor('isDraft', {
-        id: 'draft',
-        header: () => 'Utkast',
-        cell: (info) => <span>{info.getValue() ? 'yes' : 'no'}</span>,
-        footer: (info) => info.column.id,
-      }),
+      columnHelper.accessor(
+        (row) => {
+          return { isDraft: row.isDraft, isCancelled: row.isCancelled };
+        },
+        {
+          id: 'status',
+          header: () => 'Status',
+          cell: (info) => (
+            <span>
+              {info.getValue().isDraft
+                ? 'utkast'
+                : info.getValue().isCancelled
+                ? 'avlyst'
+                : 'åpen'}
+            </span>
+          ),
+          footer: (info) => info.column.id,
+        }
+      ),
     ],
     []
   );
