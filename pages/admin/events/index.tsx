@@ -12,14 +12,16 @@ import {
   getPaginationRowModel,
   ColumnDef,
   OnChangeFn,
+  SortingState,
   flexRender,
   createColumnHelper,
+  getSortedRowModel,
 } from '@tanstack/react-table';
 import { useQuery } from '@tanstack/react-query';
 import { EventType } from '@lib/types';
 import { getLocaleDateString } from '@lib/utils';
-import { Button } from '@lib/components/Button';
-import { useEffect } from 'react';
+import { Button, IndeterminateCheckbox } from '@lib/components/Input';
+import React, { HTMLProps, useEffect } from 'react';
 import { CaretLeft, CaretRight } from '@lib/icons';
 
 const AdminEvents: NextPage = () => {
@@ -31,8 +33,34 @@ const AdminEvents: NextPage = () => {
     refetchOnReconnect: false,
     staleTime: 60000,
   });
+  const [rowSelection, setRowSelection] = React.useState({});
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+
   const columnHelper = createColumnHelper<EventType>();
   const columns = [
+    columnHelper.accessor('id', {
+      id: 'select',
+      header: () => (
+        <IndeterminateCheckbox
+          {...{
+            checked: table.getIsAllRowsSelected(),
+            indeterminate: table.getIsSomeRowsSelected(),
+            onChange: table.getToggleAllRowsSelectedHandler(),
+          }}
+        />
+      ),
+      cell: ({ row }) => (
+        <div className="px-1">
+          <IndeterminateCheckbox
+            {...{
+              checked: row.getIsSelected(),
+              indeterminate: row.getIsSomeSelected(),
+              onChange: row.getToggleSelectedHandler(),
+            }}
+          />
+        </div>
+      ),
+    }),
     columnHelper.accessor('title', {
       id: 'title',
       header: () => 'Tittel',
@@ -94,10 +122,17 @@ const AdminEvents: NextPage = () => {
   const table = useReactTable({
     data: data?.events || [],
     columns: columns,
+    state: {
+      rowSelection,
+      sorting,
+    },
+    onRowSelectionChange: setRowSelection,
+    onSortingChange: setSorting,
     // Pipeline
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
     debugTable: false,
     initialState: { pagination: { pageIndex: 0, pageSize: 9 } },
   });
@@ -145,6 +180,11 @@ const AdminEvents: NextPage = () => {
               </div>
 
               <div className="bg-white rounded-xl w-full h-full p-6">
+                <div>
+                  {Object.keys(rowSelection).length} of{' '}
+                  {table.getPreFilteredRowModel().rows.length} Total Rows
+                  Selected
+                </div>
                 <div className="flex justify-end pb-6">
                   <Button
                     text="Legg til nytt arrangement"
@@ -168,11 +208,25 @@ const AdminEvents: NextPage = () => {
                                   className="font-medium p-[0.625rem]"
                                 >
                                   {header.isPlaceholder ? null : (
-                                    <div>
+                                    <div
+                                      {...{
+                                        className: header.column.getCanSort()
+                                          ? 'cursor-pointer select-none'
+                                          : '',
+                                        onClick:
+                                          header.column.getToggleSortingHandler(),
+                                      }}
+                                    >
                                       {flexRender(
                                         header.column.columnDef.header,
                                         header.getContext()
                                       )}
+                                      {{
+                                        asc: ' 🔼',
+                                        desc: ' 🔽',
+                                      }[
+                                        header.column.getIsSorted() as string
+                                      ] ?? null}
                                     </div>
                                   )}
                                 </th>
@@ -219,7 +273,7 @@ const AdminEvents: NextPage = () => {
                     <div className="flex items-center gap-2">
                       <button
                         className="inline-flex justify-center items-center text-black rounded-md p-2 h-7 w-7 bg-neutral-100 hover:bg-neutral-200"
-                        onClick={() => table.previousPage()}
+                        onClick={() => table.setPageIndex(0)}
                         disabled={!table.getCanPreviousPage()}
                       >
                         <CaretLeft className="h-4 w-4" />
@@ -253,7 +307,9 @@ const AdminEvents: NextPage = () => {
                         )}
                       <button
                         className="inline-flex justify-center items-center text-black rounded-md p-2 h-7 w-7 bg-neutral-100 hover:bg-neutral-200"
-                        onClick={() => table.nextPage()}
+                        onClick={() =>
+                          table.setPageIndex(table.getPageCount() - 1)
+                        }
                         disabled={!table.getCanNextPage()}
                       >
                         <CaretRight className="h-4 w-4" />

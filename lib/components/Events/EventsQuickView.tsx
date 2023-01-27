@@ -1,4 +1,4 @@
-import { Button } from '@components/Button';
+import { Button } from '@components/Input';
 import { ExtendedComponentProps, EventType } from '@lib/types';
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';

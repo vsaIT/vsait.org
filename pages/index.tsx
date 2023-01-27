@@ -4,7 +4,7 @@ import Head from 'next/head';
 import Footer from '@components/Footer';
 import { Navigation } from '@lib/components/Navigation';
 import { LargeHeader } from '@components/Header';
-import { Button } from '@components/Button';
+import { Button } from '@components/Input';
 import Wave from '@components/Wave';
 import { EventsQuickView } from '@components/Events';
 import { useInView } from 'react-intersection-observer';

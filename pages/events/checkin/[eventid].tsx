@@ -6,7 +6,7 @@ import { ApiResponseType, AttendingUserType, EventType } from '@lib/types';
 import { SmallHeader } from '@lib/components/Header';
 import { Navigation } from '@lib/components/Navigation';
 import Image from 'next/image';
-import { Button } from '@lib/components/Button';
+import { Button } from '@lib/components/Input';
 import { useSession } from 'next-auth/react';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useState } from 'react';

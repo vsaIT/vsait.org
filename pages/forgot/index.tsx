@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { MINIMUM_ACTIVITY_TIMEOUT } from '@lib/constants';
 import { Lock } from '@lib/icons';
-import { Button } from '@lib/components/Button';
+import { Button } from '@lib/components/Input';
 import { ApiResponseType } from '@lib/types';
 import StyledSwal from '@lib/components/StyledSwal';
 import { getErrorMessage } from '@lib/utils';
