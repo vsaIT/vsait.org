@@ -75,7 +75,7 @@ const AdminSideNavigation = () => {
               </p>
             </div>
           </button>
-          {links.map((link) => (
+          {links.map((link, i) => (
             <Link href={link.href} key={link.href}>
               <a
                 className={`px-3 py-2 transition-all duration-300 hover:bg-[rgba(0,0,0,0.3)] h-10 rounded-md w-full fill-white text-white ${

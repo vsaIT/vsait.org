@@ -20,8 +20,12 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { EventType } from '@lib/types';
 import { getLocaleDateString } from '@lib/utils';
-import { Button, IndeterminateCheckbox } from '@lib/components/Input';
-import React, { HTMLProps, useEffect } from 'react';
+import {
+  Button,
+  DebouncedInput,
+  IndeterminateCheckbox,
+} from '@lib/components/Input';
+import React, { HTMLProps, useEffect, useMemo } from 'react';
 import { CaretLeft, CaretRight } from '@lib/icons';
 
 const AdminEvents: NextPage = () => {
@@ -33,91 +37,98 @@ const AdminEvents: NextPage = () => {
     refetchOnReconnect: false,
     staleTime: 60000,
   });
+  const [globalFilter, setGlobalFilter] = React.useState('');
   const [rowSelection, setRowSelection] = React.useState({});
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-
+  const [sorting, setSorting] = React.useState<SortingState>([
+    { id: 'startTime', desc: true },
+  ]);
   const columnHelper = createColumnHelper<EventType>();
-  const columns = [
-    columnHelper.accessor('id', {
-      id: 'select',
-      header: () => (
-        <IndeterminateCheckbox
-          {...{
-            checked: table.getIsAllRowsSelected(),
-            indeterminate: table.getIsSomeRowsSelected(),
-            onChange: table.getToggleAllRowsSelectedHandler(),
-          }}
-        />
-      ),
-      cell: ({ row }) => (
-        <div className="px-1">
+  const columns = useMemo(
+    () => [
+      columnHelper.display({
+        id: 'select',
+        header: () => (
           <IndeterminateCheckbox
             {...{
-              checked: row.getIsSelected(),
-              indeterminate: row.getIsSomeSelected(),
-              onChange: row.getToggleSelectedHandler(),
+              checked: table.getIsAllRowsSelected(),
+              indeterminate: table.getIsSomeRowsSelected(),
+              onChange: table.getToggleAllRowsSelectedHandler(),
             }}
           />
-        </div>
-      ),
-    }),
-    columnHelper.accessor('title', {
-      id: 'title',
-      header: () => 'Tittel',
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor('startTime', {
-      id: 'startTime',
-      header: () => 'Starttid',
-      cell: (info) => <span>{getLocaleDateString(info.getValue())}</span>,
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor('endTime', {
-      id: 'endTime',
-      header: () => 'Sluttid',
-      cell: (info) => <span>{getLocaleDateString(info.getValue())}</span>,
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor('updatedAt', {
-      id: 'lastEdited',
-      header: () => <span>Sist endret</span>,
-      cell: (info) => <span>{getLocaleDateString(info.getValue())}</span>,
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor('startTime', {
-      id: 'upcoming',
-      header: () => 'Kommende',
-      cell: (info) => (
-        <span>{new Date(info.getValue()) > new Date() ? 'yes' : 'no'}</span>
-      ),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor(
-      (row) => {
-        return { startTime: row.startTime, endTime: row.endTime };
-      },
-      {
-        id: 'ongoing',
-        header: () => 'Gående',
+        ),
+        cell: ({ row }) => (
+          <div className="px-1">
+            <IndeterminateCheckbox
+              {...{
+                checked: row.getIsSelected(),
+                indeterminate: row.getIsSomeSelected(),
+                onChange: row.getToggleSelectedHandler(),
+              }}
+            />
+          </div>
+        ),
+      }),
+      columnHelper.accessor('title', {
+        id: 'title',
+        header: () => 'Tittel',
         cell: (info) => (
-          <span>
-            {new Date(info.getValue().startTime) <= new Date() &&
-            new Date(info.getValue().endTime) > new Date()
-              ? 'yes'
-              : 'no'}
-          </span>
+          <span className="inline-block min-w-[180px]">{info.getValue()}</span>
         ),
         footer: (info) => info.column.id,
-      }
-    ),
-    columnHelper.accessor('isDraft', {
-      id: 'draft',
-      header: () => 'Utkast',
-      cell: (info) => <span>{info.getValue() ? 'yes' : 'no'}</span>,
-      footer: (info) => info.column.id,
-    }),
-  ];
+      }),
+      columnHelper.accessor('startTime', {
+        id: 'startTime',
+        header: () => 'Starttid',
+        cell: (info) => <span>{getLocaleDateString(info.getValue())}</span>,
+        footer: (info) => info.column.id,
+      }),
+      columnHelper.accessor('endTime', {
+        id: 'endTime',
+        header: () => 'Sluttid',
+        cell: (info) => <span>{getLocaleDateString(info.getValue())}</span>,
+        footer: (info) => info.column.id,
+      }),
+      columnHelper.accessor('updatedAt', {
+        id: 'lastEdited',
+        header: () => <span>Sist endret</span>,
+        cell: (info) => <span>{getLocaleDateString(info.getValue())}</span>,
+        footer: (info) => info.column.id,
+      }),
+      columnHelper.accessor('startTime', {
+        id: 'upcoming',
+        header: () => 'Kommende',
+        cell: (info) => (
+          <span>{new Date(info.getValue()) > new Date() ? 'yes' : 'no'}</span>
+        ),
+        footer: (info) => info.column.id,
+      }),
+      columnHelper.accessor(
+        (row) => {
+          return { startTime: row.startTime, endTime: row.endTime };
+        },
+        {
+          id: 'ongoing',
+          header: () => 'Gående',
+          cell: (info) => (
+            <span>
+              {new Date(info.getValue().startTime) <= new Date() &&
+              new Date(info.getValue().endTime) > new Date()
+                ? 'yes'
+                : 'no'}
+            </span>
+          ),
+          footer: (info) => info.column.id,
+        }
+      ),
+      columnHelper.accessor('isDraft', {
+        id: 'draft',
+        header: () => 'Utkast',
+        cell: (info) => <span>{info.getValue() ? 'yes' : 'no'}</span>,
+        footer: (info) => info.column.id,
+      }),
+    ],
+    []
+  );
 
   const table = useReactTable({
     data: data?.events || [],
@@ -125,9 +136,11 @@ const AdminEvents: NextPage = () => {
     state: {
       rowSelection,
       sorting,
+      globalFilter,
     },
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
+    onGlobalFilterChange: setGlobalFilter,
     // Pipeline
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -169,9 +182,10 @@ const AdminEvents: NextPage = () => {
                 </div>
                 <div className="relative w-96">
                   <div className="mt-1">
-                    <input
-                      id="search"
+                    <DebouncedInput
                       type="text"
+                      value={globalFilter ?? ''}
+                      onChange={(value) => setGlobalFilter(String(value))}
                       placeholder="Søk etter arrangementer"
                       className="w-full py-2 px-4 border-2 border-stone-300 outline-none text-sm text-left leading-6 bg-transparent rounded-xl transition duration-150 ease-in-out"
                     />
@@ -180,12 +194,14 @@ const AdminEvents: NextPage = () => {
               </div>
 
               <div className="bg-white rounded-xl w-full h-full p-6">
-                <div>
-                  {Object.keys(rowSelection).length} of{' '}
-                  {table.getPreFilteredRowModel().rows.length} Total Rows
-                  Selected
-                </div>
-                <div className="flex justify-end pb-6">
+                <div className="flex justify-between items-center pb-6">
+                  <div>
+                    <p>
+                      {Object.keys(rowSelection).length} of{' '}
+                      {table.getPreFilteredRowModel().rows.length} Total Rows
+                      Selected
+                    </p>
+                  </div>
                   <Button
                     text="Legg til nytt arrangement"
                     className="text-xs py-3 px-8"
@@ -290,7 +306,7 @@ const AdminEvents: NextPage = () => {
                         .map((page, i) =>
                           page + i < pageCount ? (
                             <button
-                              key={'btn' + i}
+                              key={'pagination' + i}
                               className={`inline-flex justify-center items-center text-black rounded-md p-2 h-7 w-7 bg-neutral-100 ${
                                 page + i === pageIndex
                                   ? 'bg-neutral-600 !text-white'
@@ -301,9 +317,7 @@ const AdminEvents: NextPage = () => {
                             >
                               {page + 1 + i}
                             </button>
-                          ) : (
-                            <></>
-                          )
+                          ) : null
                         )}
                       <button
                         className="inline-flex justify-center items-center text-black rounded-md p-2 h-7 w-7 bg-neutral-100 hover:bg-neutral-200"
