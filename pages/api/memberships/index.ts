@@ -20,6 +20,13 @@ export const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           orderBy: {
             year: 'desc',
           },
+          include: {
+            users: {
+              select: {
+                id: true,
+              },
+            },
+          },
         });
         return res.status(200).json(memberships);
       } catch (error) {

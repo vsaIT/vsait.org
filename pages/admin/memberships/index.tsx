@@ -36,7 +36,9 @@ const AdminMemberships: NextPage = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
 
   // Column creation through tanstack column helper for strictly typing header and cells
-  const columnHelper = createColumnHelper<Membership>();
+  const columnHelper = createColumnHelper<
+    Membership & { users: { id: string }[] }
+  >();
   const columns = useMemo(
     () => [
       columnHelper.display({
@@ -78,6 +80,13 @@ const AdminMemberships: NextPage = () => {
         ),
         footer: (info) => info.column.id,
       }),
+      columnHelper.accessor((row) => row.users.length, {
+        id: 'total-members',
+        header: () => 'Registrerte',
+        cell: (info) => <span>{info.getValue()}</span>,
+        size: 40,
+        footer: (info) => info.column.id,
+      }),
     ],
     []
   );
@@ -105,7 +114,7 @@ const AdminMemberships: NextPage = () => {
   });
 
   // Variables for reusability
-  const memberships: Membership[] = data;
+  const memberships: (Membership & { users: { id: string }[] })[] = data;
   const loading = isLoading || isFetching;
   const pageCount = table.getPageCount();
   const pageIndex = table.getState().pagination.pageIndex;
@@ -115,6 +124,8 @@ const AdminMemberships: NextPage = () => {
   if (!loading && memberships.length === 0) window.location.href = '/404';
   // Redirect to 500 if error
   if (error) window.location.href = '/500';
+
+  console.log(memberships);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">

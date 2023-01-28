@@ -23,6 +23,9 @@ const AdminTable = <T extends object>({ table }: AdminTableProps<T>) => {
                       ? 'bg-neutral-200 bg-opacity-80'
                       : ''
                   } ${i === 0 ? 'w-12' : ''}`}
+                  style={{
+                    maxWidth: header.getSize(),
+                  }}
                 >
                   {header.isPlaceholder ? null : (
                     <div
