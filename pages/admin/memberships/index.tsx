@@ -26,7 +26,6 @@ const AdminMemberships: NextPage = () => {
   const { isLoading, error, isFetching, data } = useQuery({
     queryKey: ['memberships'],
     queryFn: () => fetch('/api/memberships').then((res) => res.json()),
-    keepPreviousData: true,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     staleTime: 60000,
@@ -69,7 +68,7 @@ const AdminMemberships: NextPage = () => {
       }),
       columnHelper.accessor((row) => String(row.year), {
         id: 'year',
-        header: () => 'Medlemskapsår',
+        header: () => 'Medlemskap',
         cell: (info) => (
           <Link href={`/admin/memberships/${info.getValue()}`}>
             <a className="inline-block min-w-[180px] font-medium text-primary hover:brightness-75 transition-all">
@@ -117,8 +116,6 @@ const AdminMemberships: NextPage = () => {
   // Redirect to 500 if error
   if (error) window.location.href = '/500';
 
-  console.log(memberships);
-
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
       <Head>
@@ -155,7 +152,7 @@ const AdminMemberships: NextPage = () => {
               </div>
 
               <div className="bg-white rounded-xl w-full h-full p-6">
-                <div className="flex justify-between items-center pb-6">
+                <div className="flex justify-between items-center pb-6 h-16">
                   <div>
                     <p
                       className={`text-sm text-neutral-500 transition-all duration-500 ${
