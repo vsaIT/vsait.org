@@ -221,6 +221,11 @@ const Card = ({ user, session }: CardProps) => {
           </div>
           <div className="flex flex-col text-left pl-4 py-5 h-fit sm:w-full">
             <p className="text-stone-500">Tidligere medlemskap:</p>
+            {user.membership.map((membership) =>
+              membership.year !== new Date().getFullYear() ? (
+                <p key={membership.year}>{membership.year}</p>
+              ) : null
+            )}
           </div>
         </div>
       </div>
