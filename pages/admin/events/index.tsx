@@ -14,6 +14,7 @@ import {
   SortingState,
   createColumnHelper,
   getSortedRowModel,
+  ColumnFiltersState,
 } from '@tanstack/react-table';
 import { useQuery } from '@tanstack/react-query';
 import { EventType } from '@lib/types';
@@ -25,6 +26,7 @@ import {
 } from '@lib/components/Input';
 import React, { useMemo, useState } from 'react';
 import { CircleCheck, CircleXMark, Search } from '@lib/icons';
+import Link from 'next/link';
 
 const AdminEvents: NextPage = () => {
   const { isLoading, error, isFetching, data } = useQuery({
@@ -36,7 +38,7 @@ const AdminEvents: NextPage = () => {
     staleTime: 60000,
   });
   // Selection, filter and sorting states
-  const [globalFilter, setGlobalFilter] = useState('');
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [rowSelection, setRowSelection] = useState({});
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'startTime', desc: true },
@@ -72,14 +74,23 @@ const AdminEvents: NextPage = () => {
           </div>
         ),
       }),
-      columnHelper.accessor('title', {
-        id: 'title',
-        header: () => 'Tittel',
-        cell: (info) => (
-          <span className="inline-block min-w-[180px]">{info.getValue()}</span>
-        ),
-        footer: (info) => info.column.id,
-      }),
+      columnHelper.accessor(
+        (row) => {
+          return { id: row.id, title: row.title };
+        },
+        {
+          id: 'title',
+          header: () => 'Tittel',
+          cell: (info) => (
+            <Link href={`/admin/events/${info.getValue().id}`}>
+              <a className="inline-block min-w-[180px] font-medium text-primary hover:brightness-75 transition-all">
+                {info.getValue().title}
+              </a>
+            </Link>
+          ),
+          footer: (info) => info.column.id,
+        }
+      ),
       columnHelper.accessor('startTime', {
         id: 'startTime',
         header: () => 'Starttid',
@@ -176,11 +187,11 @@ const AdminEvents: NextPage = () => {
     state: {
       rowSelection,
       sorting,
-      globalFilter,
+      columnFilters,
     },
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
-    onGlobalFilterChange: setGlobalFilter,
+    onColumnFiltersChange: setColumnFilters,
     // Pipeline
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -223,8 +234,13 @@ const AdminEvents: NextPage = () => {
                   <div className="mt-1 relative fill-stone-400">
                     <DebouncedInput
                       type="text"
-                      value={globalFilter ?? ''}
-                      onChange={(value) => setGlobalFilter(String(value))}
+                      value={
+                        (table.getColumn('title').getFilterValue() as string) ??
+                        ''
+                      }
+                      onChange={(value) =>
+                        table.getColumn('title').setFilterValue(String(value))
+                      }
                       placeholder="Søk etter arrangementer"
                       className="w-full py-2 px-4 pl-10 border-2 border-stone-300 outline-none text-sm text-left leading-6 bg-transparent rounded-xl transition duration-150 ease-in-out"
                     />
@@ -250,11 +266,14 @@ const AdminEvents: NextPage = () => {
                       {table.getPreFilteredRowModel().rows.length} valgt
                     </p>
                   </div>
-                  {/* TODO */}
-                  <Button
-                    text="Legg til nytt arrangement"
-                    className="text-xs py-3 px-8"
-                  />
+                  <Link href="/admin/events/new">
+                    <a>
+                      <Button
+                        text="Legg til nytt arrangement"
+                        className="text-xs py-3 px-8"
+                      />
+                    </a>
+                  </Link>
                 </div>
                 <div className="grid [grid-template-rows:minmax(409px,1fr)_50px]">
                   <div className="rounded-lg border border-neutral-300 overflow-hidden">
