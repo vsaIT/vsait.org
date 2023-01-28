@@ -6,7 +6,7 @@ import Navigation from '@lib/components/Navigation';
 import { SmallHeader } from '@lib/components/Header';
 import Card from '@components/Card';
 import { useEffect, useState } from 'react';
-import { UserType, UserInformationType, ApiResponseType } from '@lib/types';
+import { UserType } from '@lib/types';
 
 const Profile: NextPage = () => {
   const { data: session, status } = useSession({

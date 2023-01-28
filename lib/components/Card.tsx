@@ -1,7 +1,7 @@
 import { Button } from '@components/Button';
 import { Select } from '@components/Select';
 import { ApiResponseType, CardProps } from '@lib/types';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import StyledSwal from '@components/StyledSwal';
 
@@ -66,20 +66,42 @@ const Card = ({ user, session }: CardProps) => {
     setValue('publicProfile', user.publicProfile);
   }, [user, setValue]);
 
-  /* const showActiveMembership = () => {
-    if (latestyeardb == year.now or latestyeardb-1 == year.now) {
-      // høst
-      if (nextyearexistindb) return thisyear / nextyear;
-      // vår
-      if (haslastyearmembership) {
-        return lastyear / thisyear;
+  const [membershipStatus, setMembershipStatus] = useState('');
+  const showActiveMembership = () => {
+    const yearNow: number = new Date().getFullYear();
+    const userMemberships = user.membership.reverse();
+
+    if (
+      userMemberships[0]?.year == yearNow ||
+      userMemberships[0]?.year - 1 == yearNow
+    ) {
+      // check if user has an autumn membership
+      if (
+        userMemberships[0]?.year - 1 == yearNow &&
+        userMemberships[1]?.year == yearNow
+      )
+        return setMembershipStatus(
+          `${userMemberships[1]?.year}/${userMemberships[0]?.year}`
+        );
+      // check if user has a spring membership
+      else if (
+        userMemberships[0]?.year == yearNow &&
+        userMemberships[1]?.year == yearNow - 1
+      ) {
+        return setMembershipStatus(
+          `${userMemberships[1]?.year}/${userMemberships[0]?.year}`
+        );
       } else {
-        return this year;
+        return setMembershipStatus(`${userMemberships[0]?.year}`);
       }
     } else {
-      return ikke aktivt medlemskap
+      return setMembershipStatus('Ingen medlemskap');
     }
-  };*/
+  };
+
+  useEffect(() => {
+    showActiveMembership();
+  }, [user]);
 
   return (
     <>
@@ -190,13 +212,15 @@ const Card = ({ user, session }: CardProps) => {
         <div className="flex flex-col sm:flex-row">
           <div className="flex flex-col sm:border-r sm:border-b-0 border-b border-stone-300 text-left pl-4 py-5 h-fit sm:w-full">
             <p className="text-stone-500">Status:</p>
-            <p>Medlemskap bekreftet for 2022</p>
+            <p>
+              {' '}
+              {membershipStatus == 'Ingen medlemskap'
+                ? membershipStatus
+                : 'Medlemskap bekreftet for ' + membershipStatus}
+            </p>
           </div>
           <div className="flex flex-col text-left pl-4 py-5 h-fit sm:w-full">
             <p className="text-stone-500">Tidligere medlemskap:</p>
-            {user.membership.map((membership) => (
-              <p>{membership.year}</p>
-            ))}
           </div>
         </div>
       </div>
