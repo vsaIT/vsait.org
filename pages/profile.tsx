@@ -13,7 +13,7 @@ import Image from 'next/image';
 import { generateSalt } from '@lib/auth/passwords';
 import StyledSwal from '@lib/components/StyledSwal';
 import Swal from 'sweetalert2';
-import { profileIconAtom } from '@lib/atoms';
+import { profileIconAtom, userAtom } from '@lib/atoms';
 import { useAtom } from 'jotai';
 import { Button } from '@lib/components/Button';
 import { getErrorMessage } from '@lib/utils';
@@ -22,19 +22,10 @@ const Profile: NextPage = () => {
   const { data: session, status } = useSession({
     required: true,
   });
-  const [profileIcon, setProfileIcon] = useAtom(profileIconAtom);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [fetching, setFetching] = useState(true);
-  const [user, setUser] = useState<UserType>({
-    id: '',
-    firstName: '',
-    lastName: '',
-    email: '',
-    birthdate: '',
-    foodNeeds: '',
-    student: '',
-    publicProfile: false,
-  });
+  const [profileIcon, setProfileIcon] = useAtom(profileIconAtom);
+  const [user, setUser] = useAtom(userAtom);
 
   const avatar = createAvatar(bigSmile, {
     seed: profileIcon.seed,
@@ -48,7 +39,7 @@ const Profile: NextPage = () => {
     // Disable registration spamming
     setIsModalOpen(true);
     StyledSwal.fire({
-      title: <p>Generer nytt profil ikon</p>,
+      title: <p></p>,
       html: (
         <>
           <div
@@ -198,7 +189,11 @@ const Profile: NextPage = () => {
                   className="flex items-center justify-center p-1 cursor-pointer"
                   onClick={updateProfileIcon}
                 >
-                  <div className="relative w-28 h-28">
+                  <div
+                    className={`relative w-28 h-28 transition-all duration-700 ${
+                      !profileIcon.initial ? 'opacity-0' : ''
+                    }`}
+                  >
                     <Image
                       src={avatar.toDataUriSync()}
                       alt="Profile icon"

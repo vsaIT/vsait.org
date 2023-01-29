@@ -36,6 +36,7 @@ export const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             foodNeeds: true,
             student: true,
             publicProfile: true,
+            profileIconSeed: true,
           },
         });
         return res.status(200).json(user);
