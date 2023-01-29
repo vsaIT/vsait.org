@@ -59,6 +59,8 @@ model User {
   sessions              Session[]
   membership            Membership[]
 
+  profileIconSeed       String    @default(cuid())
+
   userRegistrationList  Registrations[]
   userWaitingList       Waiting[]
   userAttendanceList    Attendances[]
