@@ -27,6 +27,7 @@ const Navigation = () => {
 
   const avatar = createAvatar(bigSmile, {
     seed: profileIcon.seed,
+    flip: true,
   });
 
   useEffect(() => {

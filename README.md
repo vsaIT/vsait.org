@@ -30,3 +30,7 @@ TBA
 - https://dev.to/franciscomendes10866/nextjs-authentication-with-next-auth-trpc-and-prisma-kgl
 - https://planetscale.com/blog/how-to-setup-next-js-with-prisma-and-planetscale
 - https://blog.openreplay.com/authentication-and-db-access-with-next-prisma-and-mongodb/
+
+### 💡 Misc
+
+- The avatar style Big Smile is based on: Custom Avatar by Ashley Seo, licensed under CC BY 4.0 . / Remix of the original.
