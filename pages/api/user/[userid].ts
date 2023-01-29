@@ -79,7 +79,7 @@ export const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             id: userID,
           },
           data: {
-            profileIconSeed: seed,
+            profileIconSeed: String(seed),
           },
         });
         return res.status(200).json({
