@@ -11,7 +11,7 @@ const AdminTable = <T extends object>({ table }: AdminTableProps<T>) => {
             key={headerGroup.id}
             className="border-neutral-300 box-border border-collapse"
           >
-            {headerGroup.headers.map((header) => {
+            {headerGroup.headers.map((header, i) => {
               return (
                 <th
                   key={header.id}
@@ -22,7 +22,10 @@ const AdminTable = <T extends object>({ table }: AdminTableProps<T>) => {
                     )
                       ? 'bg-neutral-200 bg-opacity-80'
                       : ''
-                  }`}
+                  } ${i === 0 ? 'w-12' : ''}`}
+                  style={{
+                    maxWidth: header.getSize(),
+                  }}
                 >
                   {header.isPlaceholder ? null : (
                     <div
