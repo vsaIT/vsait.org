@@ -4,6 +4,7 @@ import { ApiResponseType, CardProps } from '@lib/types';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import StyledSwal from '@components/StyledSwal';
+import { getMembershipYear } from '@lib/utils';
 
 type UserFormValues = {
   foodNeeds: string;
@@ -65,43 +66,6 @@ const Card = ({ user, session }: CardProps) => {
     setValue('student', user.student);
     setValue('publicProfile', user.publicProfile);
   }, [user, setValue]);
-
-  const [membershipStatus, setMembershipStatus] = useState('');
-  const showActiveMembership = () => {
-    const yearNow: number = new Date().getFullYear();
-    const userMemberships = user.membership.reverse();
-
-    if (
-      userMemberships[0]?.year == yearNow ||
-      userMemberships[0]?.year - 1 == yearNow
-    ) {
-      // check if user has an autumn membership
-      if (
-        userMemberships[0]?.year - 1 == yearNow &&
-        userMemberships[1]?.year == yearNow
-      )
-        return setMembershipStatus(
-          `${userMemberships[1]?.year}/${userMemberships[0]?.year}`
-        );
-      // check if user has a spring membership
-      else if (
-        userMemberships[0]?.year == yearNow &&
-        userMemberships[1]?.year == yearNow - 1
-      ) {
-        return setMembershipStatus(
-          `${userMemberships[1]?.year}/${userMemberships[0]?.year}`
-        );
-      } else {
-        return setMembershipStatus(`${userMemberships[0]?.year}`);
-      }
-    } else {
-      return setMembershipStatus('Ingen medlemskap');
-    }
-  };
-
-  useEffect(() => {
-    showActiveMembership();
-  }, [user]);
 
   return (
     <>
@@ -212,18 +176,24 @@ const Card = ({ user, session }: CardProps) => {
         <div className="flex flex-col sm:flex-row">
           <div className="flex flex-col sm:border-r sm:border-b-0 border-b border-stone-300 text-left pl-4 py-5 h-fit sm:w-full">
             <p className="text-stone-500">Status:</p>
-            <p>
-              {' '}
-              {membershipStatus == 'Ingen medlemskap'
-                ? membershipStatus
-                : 'Medlemskap bekreftet for ' + membershipStatus}
-            </p>
+            {user.membership.map((membership) =>
+              Object.values(membership).indexOf(getMembershipYear())
+            ) ? (
+              <p>
+                Medlemskap bekreftet for {getMembershipYear()}/
+                {getMembershipYear() + 1}
+              </p>
+            ) : (
+              <p>Ingen aktiv medlemskap</p>
+            )}
           </div>
           <div className="flex flex-col text-left pl-4 py-5 h-fit sm:w-full">
             <p className="text-stone-500">Tidligere medlemskap:</p>
             {user.membership.map((membership) =>
-              membership.year !== new Date().getFullYear() ? (
-                <p key={membership.year}>{membership.year}</p>
+              membership.year !== getMembershipYear() ? (
+                <p>
+                  {membership.year}/{membership.year + 1}
+                </p>
               ) : null
             )}
           </div>
