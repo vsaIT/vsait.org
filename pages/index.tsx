@@ -49,12 +49,12 @@ const Home: NextPage = () => {
               ) : session && status === 'authenticated' ? (
                 <>
                   <h1 className="text-4xl mb-1.5 font-bold text-white">
-                    Velkommen tilbake, {`${session?.user?.firstName}`}
+                    Velkommen tilbake {`${session?.user?.firstName}!`}
                   </h1>
                   <p className="w-9/12 text-white">
                     {session?.user?.membership.includes(getMembershipYear()) ? (
                       <>
-                        {`Medlemskap bekreftet for ${getMembershipYear()} / ${
+                        {`Medlemskap bekreftet for ${getMembershipYear()}/${
                           getMembershipYear() + 1
                         }`}
                       </>
