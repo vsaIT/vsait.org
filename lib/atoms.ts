@@ -14,3 +14,6 @@ const userAtom = atom<UserType>({
   profileIconSeed: '',
 });
 export { profileIconAtom, userAtom };
+
+const sideNavToggleAtom = atom(false);
+export { sideNavToggleAtom };

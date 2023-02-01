@@ -2,7 +2,7 @@ import type { NextPage } from 'next';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import Footer from '@components/Footer';
-import Navigation from '@lib/components/Navigation';
+import { Navigation } from '@lib/components/Navigation';
 import { SmallHeader } from '@lib/components/Header';
 import Card from '@components/Card';
 import { useCallback, useEffect, useState } from 'react';
@@ -15,7 +15,7 @@ import StyledSwal from '@lib/components/StyledSwal';
 import Swal from 'sweetalert2';
 import { profileIconAtom, userAtom } from '@lib/atoms';
 import { useAtom } from 'jotai';
-import { Button } from '@lib/components/Button';
+import { Button } from '@lib/components/Input';
 import { getErrorMessage } from '@lib/utils';
 
 const Profile: NextPage = () => {
