@@ -1,14 +1,21 @@
 import { Button, Select } from '@components/Input';
 import { ApiResponseType, CardProps } from '@lib/types';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import StyledSwal from '@components/StyledSwal';
 import { getMembershipYear } from '@lib/utils';
+import Swal from 'sweetalert2';
 
 type UserFormValues = {
   foodNeeds: string;
   student: string;
   publicProfile: boolean;
+};
+
+type PasswordFormValues = {
+  oldPassword: string;
+  newPassword: string;
+  confirmPassword: string;
 };
 
 const studentSelectOptions = [
@@ -21,40 +28,100 @@ const studentSelectOptions = [
 
 const Card = ({ user, session }: CardProps) => {
   const { register, handleSubmit, setValue } = useForm<UserFormValues>();
+  const { register: registerPassword, handleSubmit: handlePasswordSubmit } =
+    useForm<PasswordFormValues>();
+
+  const updateUserPassword = useCallback(
+    (data: PasswordFormValues) => {
+      StyledSwal.fire({
+        text: '',
+        showConfirmButton: false,
+        showLoaderOnConfirm: true,
+        didOpen: () => {
+          // Confirm immediately when open swal
+          StyledSwal.getConfirmButton()?.click();
+        },
+        preConfirm: async () => {
+          await fetch(`/api/user/${session?.user.id}/password`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+          })
+            .then(async (response) => {
+              if (!response.ok) throw new Error(response.statusText);
+              const data: ApiResponseType = await response.json();
+              if (data.statusCode === 200) return data;
+              else throw new Error(data.message);
+            })
+            .then((_data) => {
+              StyledSwal.fire({
+                icon: 'success',
+                title: 'Passord ble oppdatert',
+                showConfirmButton: false,
+                timer: 2000,
+              });
+            })
+            .catch((error) => {
+              console.log(error);
+              StyledSwal.fire({
+                icon: 'error',
+                title: 'Brukerinformasjon ble ikke oppdatert',
+                text: error.message,
+                timer: 2000,
+              });
+            });
+        },
+        allowOutsideClick: () => !Swal.isLoading(),
+      });
+    },
+    [session?.user.id]
+  );
 
   const updateUserData = useCallback(
-    async (data: UserFormValues) => {
-      await fetch(`/api/user/${session?.user.id}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+    (data: UserFormValues) => {
+      StyledSwal.fire({
+        text: '',
+        showConfirmButton: false,
+        showLoaderOnConfirm: true,
+        didOpen: () => {
+          // Confirm immediately when open swal
+          StyledSwal.getConfirmButton()?.click();
         },
-        body: JSON.stringify(data),
-      })
-        .then(async (response) => {
-          if (!response.ok) throw new Error(response.statusText);
-          const data: ApiResponseType = await response.json();
-          if (data.statusCode === 200) return data;
-          else throw new Error(data.message);
-        })
-        .then((_data) => {
-          StyledSwal.fire({
-            icon: 'success',
-            title: 'Brukerinformasjonen ble oppdatert',
-            showConfirmButton: false,
-            timer: 2000,
-          });
-        })
-        .catch((_error) => {
-          StyledSwal.fire({
-            icon: 'error',
-            title: 'Brukerinformasjon ble ikke oppdatert',
-            text: 'Ser ut som det var noe som gikk galt',
-            timer: 2000,
-          }).then(() => {
-            window.location.href = '/500';
-          });
-        });
+        preConfirm: async () => {
+          await fetch(`/api/user/${session?.user.id}/information`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+          })
+            .then(async (response) => {
+              if (!response.ok) throw new Error(response.statusText);
+              const data: ApiResponseType = await response.json();
+              if (data.statusCode === 200) return data;
+              else throw new Error(data.message);
+            })
+            .then((_data) => {
+              StyledSwal.fire({
+                icon: 'success',
+                title: 'Brukerinformasjonen ble oppdatert',
+                showConfirmButton: false,
+                timer: 2000,
+              });
+            })
+            .catch((_error) => {
+              StyledSwal.fire({
+                icon: 'error',
+                title: 'Brukerinformasjon ble ikke oppdatert',
+                text: 'Ser ut som det var noe som gikk galt',
+                timer: 2000,
+              });
+            });
+        },
+        allowOutsideClick: () => !Swal.isLoading(),
+      });
     },
     [user, session?.user?.id]
   );
@@ -204,7 +271,10 @@ const Card = ({ user, session }: CardProps) => {
           <h1 className="text-xl font-medium text-left pl-4">Endre passord</h1>
         </div>
 
-        <div className="sm:mx-28 py-4 px-4 sm:my-10">
+        <form
+          onSubmit={handlePasswordSubmit(updateUserPassword)}
+          className="sm:mx-28 py-4 px-4 sm:my-10"
+        >
           <div className="sm:mx-5">
             <label
               htmlFor="old-password"
@@ -214,6 +284,10 @@ const Card = ({ user, session }: CardProps) => {
             </label>
             <input
               id="old-password"
+              {...registerPassword('oldPassword', {
+                minLength: 8,
+              })}
+              minLength={8}
               type="password"
               className="w-full py-3 px-4 border-2 border-stone-300 outline-none text-sm text-left leading-6 bg-transparent rounded-xl transition duration-150 ease-in-out"
             />
@@ -228,6 +302,10 @@ const Card = ({ user, session }: CardProps) => {
             </label>
             <input
               id="new-password"
+              {...registerPassword('newPassword', {
+                minLength: 8,
+              })}
+              minLength={8}
               type="password"
               className="w-full py-3 px-4 border-2 border-stone-300 outline-none text-sm text-left leading-6 bg-transparent rounded-xl transition duration-150 ease-in-out"
             />
@@ -242,6 +320,10 @@ const Card = ({ user, session }: CardProps) => {
             </label>
             <input
               id="confirm-password"
+              {...registerPassword('confirmPassword', {
+                minLength: 8,
+              })}
+              minLength={8}
               type="password"
               className="w-full py-3 px-4 border-2 border-stone-300 outline-none text-sm text-left leading-6 bg-transparent rounded-xl transition duration-150 ease-in-out"
             />
@@ -268,7 +350,7 @@ const Card = ({ user, session }: CardProps) => {
               />
             </div>
           </div>
-        </div>
+        </form>
       </div>
 
       <div className="flex flex-col border rounded-3xl border-stone-300 mt-10">

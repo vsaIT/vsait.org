@@ -20,7 +20,7 @@ const navigation = [
 const Navigation = () => {
   const router = useRouter();
   const [profileIcon, setProfileIcon] = useAtom(profileIconAtom);
-  const [_user, setUser] = useAtom(userAtom);
+  const [user, setUser] = useAtom(userAtom);
   const { status: _, data: session } = useSession({
     required: false,
   });
@@ -89,7 +89,7 @@ const Navigation = () => {
                     : ''
                 }`}
               >
-                Profil
+                {user.firstName || 'Profil'}
               </span>
               <div className="flex items-center justify-center rounded-full overflow-hidden bg-white bg-opacity-50 p-1">
                 <div
