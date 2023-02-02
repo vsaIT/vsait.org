@@ -100,6 +100,7 @@ export type UserType = {
   foodNeeds: string;
   student: string;
   publicProfile: boolean;
+  profileIconSeed: string;
 };
 export type UserInformationType = {
   foodNeeds: string;
