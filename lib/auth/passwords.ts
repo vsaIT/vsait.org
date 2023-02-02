@@ -13,7 +13,7 @@ export const hashPassword = (
   salt: string | number,
   iterations: number = HASH_ITERATIONS
 ) => {
-  const generatedSalt = typeof salt === 'string' ? salt : generateSalt(12);
+  const generatedSalt = typeof salt === 'string' ? salt : generateSalt(salt);
   const hash = crypto.pbkdf2Sync(
     password,
     generatedSalt,

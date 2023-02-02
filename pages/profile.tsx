@@ -93,7 +93,6 @@ const Profile: NextPage = () => {
       ),
       showConfirmButton: false,
       showLoaderOnConfirm: true,
-
       preConfirm: async () => {
         // Hide display on confirm
         const display = document.querySelector(
@@ -104,8 +103,8 @@ const Profile: NextPage = () => {
           display.style.maxHeight = '0';
         }
         // Update user profile icon with new seed
-        await fetch(`/api/user/${session.user.id}`, {
-          method: 'PUT',
+        await fetch(`/api/user/${session.user.id}/icon`, {
+          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
