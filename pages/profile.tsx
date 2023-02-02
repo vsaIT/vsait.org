@@ -36,6 +36,7 @@ const Profile: NextPage = () => {
   const updateProfileIcon = useCallback(async () => {
     if (isModalOpen || !session?.user?.id) return;
     let seed = generateSalt(24);
+    const oldProfileIcon = { ...profileIcon };
     // Disable registration spamming
     setIsModalOpen(true);
     StyledSwal.fire({
@@ -141,8 +142,12 @@ const Profile: NextPage = () => {
           });
       },
       allowOutsideClick: () => !Swal.isLoading(),
-    }).finally(() => setIsModalOpen(false));
-  }, [session?.user?.id, isModalOpen, setIsModalOpen, avatar]);
+    })
+      .then((result) => {
+        if (!result.isConfirmed) setProfileIcon(oldProfileIcon);
+      })
+      .finally(() => setIsModalOpen(false));
+  }, [session?.user?.id, isModalOpen, setIsModalOpen, avatar, setProfileIcon]);
 
   useEffect(() => {
     if (!session?.user?.id) return;
