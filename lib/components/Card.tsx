@@ -4,11 +4,18 @@ import { ApiResponseType, CardProps } from '@lib/types';
 import { useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import StyledSwal from '@components/StyledSwal';
+import { fetch } from 'next/dist/compiled/@edge-runtime/primitives/fetch';
 
 type UserFormValues = {
   foodNeeds: string;
   student: string;
   publicProfile: boolean;
+};
+
+type PasswordFormValues = {
+  oldPassword: string;
+  newPassword: string;
+  confirmPassword: string;
 };
 
 const studentSelectOptions = [
@@ -21,6 +28,12 @@ const studentSelectOptions = [
 
 const Card = ({ user, session }: CardProps) => {
   const { register, handleSubmit, setValue } = useForm<UserFormValues>();
+  const { register: registerPassword, handleSubmit: handlePasswordSubmit } =
+    useForm<PasswordFormValues>();
+
+  const updateUserPassword = useCallback(async (data: PasswordFormValues) => {
+    await fetch(`/api/user/${session?.user.id}`);
+  }, []);
 
   const updateUserData = useCallback(
     async (data: UserFormValues) => {
@@ -187,7 +200,10 @@ const Card = ({ user, session }: CardProps) => {
           <h1 className="text-xl font-medium text-left pl-4">Endre passord</h1>
         </div>
 
-        <div className="sm:mx-28 py-4 px-4 sm:my-10">
+        <form
+          onSubmit={handlePasswordSubmit(updateUserPassword)}
+          className="sm:mx-28 py-4 px-4 sm:my-10"
+        >
           <div className="sm:mx-5">
             <label
               htmlFor="old-password"
@@ -197,6 +213,7 @@ const Card = ({ user, session }: CardProps) => {
             </label>
             <input
               id="old-password"
+              {...registerPassword('oldPassword')}
               type="password"
               className="w-full py-3 px-4 border-2 border-stone-300 outline-none text-sm text-left leading-6 bg-transparent rounded-xl transition duration-150 ease-in-out"
             />
@@ -211,6 +228,7 @@ const Card = ({ user, session }: CardProps) => {
             </label>
             <input
               id="new-password"
+              {...registerPassword('newPassword')}
               type="password"
               className="w-full py-3 px-4 border-2 border-stone-300 outline-none text-sm text-left leading-6 bg-transparent rounded-xl transition duration-150 ease-in-out"
             />
@@ -225,6 +243,7 @@ const Card = ({ user, session }: CardProps) => {
             </label>
             <input
               id="confirm-password"
+              {...registerPassword('confirmPassword')}
               type="password"
               className="w-full py-3 px-4 border-2 border-stone-300 outline-none text-sm text-left leading-6 bg-transparent rounded-xl transition duration-150 ease-in-out"
             />
@@ -251,7 +270,7 @@ const Card = ({ user, session }: CardProps) => {
               />
             </div>
           </div>
-        </div>
+        </form>
       </div>
 
       <div className="flex flex-col border rounded-3xl border-stone-300 mt-10">
