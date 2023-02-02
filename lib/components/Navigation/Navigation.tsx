@@ -44,9 +44,8 @@ const Navigation = () => {
           setUser((prevState) => ({ ...prevState, ...data }));
           setProfileIcon({ seed: data.profileIconSeed, initial: true });
         })
-        .catch((_error) => {
-          signOut();
-          window.location.href = '/500';
+        .catch(async (_error) => {
+          await signOut().then(() => (window.location.href = '/'));
         });
     };
     fetchUser();
