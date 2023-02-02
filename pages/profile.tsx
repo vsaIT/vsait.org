@@ -5,8 +5,8 @@ import Footer from '@components/Footer';
 import { Navigation } from '@lib/components/Navigation';
 import { SmallHeader } from '@lib/components/Header';
 import Card from '@components/Card';
-import { useCallback, useEffect, useState } from 'react';
 import { UserType } from '@lib/types';
+import { useCallback, useEffect, useState } from 'react';
 import { createAvatar } from '@dicebear/core';
 import { bigSmile } from '@dicebear/collection';
 import Image from 'next/image';
@@ -118,7 +118,7 @@ const Profile: NextPage = () => {
             return await response.json();
           })
           .then(async (data: UserType) => {
-            setUser((prevState) => ({ ...prevState, ...data }));
+            setUser((prevState: UserType) => ({ ...prevState, ...data }));
             await StyledSwal.fire({
               icon: 'success',
               title: <p>Endret profil ikon</p>,
@@ -159,7 +159,7 @@ const Profile: NextPage = () => {
           return await response.json();
         })
         .then((data: UserType) => {
-          setUser((prevState) => ({ ...prevState, ...data }));
+          setUser((prevState: UserType) => ({ ...prevState, ...data }));
         })
         .catch((error) => {
           console.log(error);
@@ -169,7 +169,7 @@ const Profile: NextPage = () => {
           setFetching(false);
         });
     };
-    fetchUser();
+    fetchUser().finally();
   }, [session?.user?.id, setFetching]);
 
   return (

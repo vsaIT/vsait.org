@@ -1,8 +1,9 @@
 import { Button, Select } from '@components/Input';
 import { ApiResponseType, CardProps } from '@lib/types';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import StyledSwal from '@components/StyledSwal';
+import { getMembershipYear } from '@lib/utils';
 
 type UserFormValues = {
   foodNeeds: string;
@@ -171,13 +172,30 @@ const Card = ({ user, session }: CardProps) => {
         <div className="flex flex-col border-b h-16 border-stone-300 justify-center">
           <h1 className="text-xl font-medium text-left pl-4">Medlemskap</h1>
         </div>
-        <div className="flex flex-col border-b border-stone-300 text-left pl-4 py-5 h-fit">
-          <p className="text-stone-500">Status:</p>
-          <p>Medlemskap bekreftet for 2022</p>
-        </div>
-        <div className="flex flex-col text-left pl-4 py-5 h-fit">
-          <p className="text-stone-500">Tidligere medlemskap:</p>
-          <p>2022</p>
+        <div className="flex flex-col sm:flex-row">
+          <div className="flex flex-col sm:border-r sm:border-b-0 border-b border-stone-300 text-left pl-4 py-5 h-fit sm:w-full">
+            <p className="text-stone-500">Status:</p>
+            {user.membership.map((membership) =>
+              Object.values(membership).indexOf(getMembershipYear())
+            ) ? (
+              <p>
+                Medlemskap bekreftet for {getMembershipYear()}/
+                {getMembershipYear() + 1}
+              </p>
+            ) : (
+              <p>Ingen aktiv medlemskap</p>
+            )}
+          </div>
+          <div className="flex flex-col text-left pl-4 py-5 h-fit sm:w-full">
+            <p className="text-stone-500">Tidligere medlemskap:</p>
+            {user.membership.map((membership) =>
+              membership.year !== getMembershipYear() ? (
+                <p>
+                  {membership.year}/{membership.year + 1}
+                </p>
+              ) : null
+            )}
+          </div>
         </div>
       </div>
 

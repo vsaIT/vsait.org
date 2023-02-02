@@ -1,6 +1,7 @@
 import { atom } from 'jotai';
 import { generateSalt } from './auth/passwords';
 import { UserType } from './types';
+
 const profileIconAtom = atom({ seed: generateSalt(24), initial: false });
 const userAtom = atom<UserType>({
   id: '',
@@ -11,9 +12,9 @@ const userAtom = atom<UserType>({
   foodNeeds: '',
   student: '',
   publicProfile: false,
+  membership: [],
   profileIconSeed: '',
 });
-export { profileIconAtom, userAtom };
-
 const sideNavToggleAtom = atom(false);
-export { sideNavToggleAtom };
+
+export { profileIconAtom, userAtom, sideNavToggleAtom };

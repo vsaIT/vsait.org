@@ -1,7 +1,7 @@
 import { Session } from 'next-auth';
 import { AppProps } from 'next/app';
 import { EventType as EventTypeType } from '@prisma/client';
-import { Component } from 'react';
+import { Component, HTMLProps } from 'react';
 import { Table } from '@tanstack/react-table';
 import { FieldValues, Path, UseFormRegister } from 'react-hook-form';
 
@@ -38,7 +38,7 @@ export type ButtonProps = {
   text?: string;
   type?: 'button' | 'submit' | 'reset';
   inverted?: boolean;
-} & Omit<React.HTMLProps<HTMLButtonElement>, 'onClick'>;
+} & Omit<HTMLProps<HTMLButtonElement>, 'onClick'>;
 
 export type AdminTableProps<T> = {
   table: Table<T>;
@@ -100,12 +100,10 @@ export type UserType = {
   foodNeeds: string;
   student: string;
   publicProfile: boolean;
+  membership: {
+    year: number;
+  }[];
   profileIconSeed: string;
-};
-export type UserInformationType = {
-  foodNeeds: string;
-  student: string;
-  publicProfile: boolean;
 };
 export type CardProps = {
   user: UserType;
