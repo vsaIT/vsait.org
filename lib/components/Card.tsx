@@ -1,5 +1,4 @@
-import { Button } from '@components/Button';
-import { Select } from '@components/Select';
+import { Button, Select } from '@components/Input';
 import { ApiResponseType, CardProps } from '@lib/types';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -38,7 +37,7 @@ const Card = ({ user, session }: CardProps) => {
           if (data.statusCode === 200) return data;
           else throw new Error(data.message);
         })
-        .then((data) => {
+        .then((_data) => {
           StyledSwal.fire({
             icon: 'success',
             title: 'Brukerinformasjonen ble oppdatert',

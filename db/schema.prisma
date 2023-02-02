@@ -49,7 +49,7 @@ model User {
   lastName              String
   email                 String    @unique
   password              String
-  emailVerified         DateTime?
+  emailVerified         Boolean   @default(false)
   birthdate             DateTime?
   foodNeeds             String    @default("")
   student               String?
@@ -58,6 +58,8 @@ model User {
   accounts              Account[]
   sessions              Session[]
   membership            Membership[]
+
+  profileIconSeed       String    @default(cuid())
 
   userRegistrationList  Registrations[]
   userWaitingList       Waiting[]
@@ -72,7 +74,7 @@ model Event {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   title       String   @db.VarChar(500)
-  description String   @db.VarChar(1000)
+  description String   @db.VarChar(12000)
   image       String?  @db.VarChar(500)
 
   startTime            DateTime

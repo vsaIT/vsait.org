@@ -1,10 +1,10 @@
-import { Button } from '@components/Button';
-import { CustomComponentProps, EventType } from '@lib/types';
+import { Button } from '@components/Input';
+import { ExtendedComponentProps, EventType } from '@lib/types';
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import Link from 'next/link';
 
-const EventsDisplay = ({ className = '' }: CustomComponentProps) => {
+const EventsDisplay = ({ className = '' }: ExtendedComponentProps) => {
   const { isSuccess, isLoading, error, data } = useQuery({
     queryKey: ['quickEvents'],
     queryFn: () =>

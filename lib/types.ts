@@ -1,8 +1,9 @@
 import { Session } from 'next-auth';
 import { AppProps } from 'next/app';
 import { EventType as EventTypeType } from '@prisma/client';
-import { Component } from 'react';
-import { UseFormRegister } from 'react-hook-form';
+import { Component, HTMLProps } from 'react';
+import { Table } from '@tanstack/react-table';
+import { FieldValues, Path, UseFormRegister } from 'react-hook-form';
 
 export type AuthenticatedPage = {
   role?: string;
@@ -19,14 +20,13 @@ export type ExtendedAppProps = AppProps & {
   pageProps: { auth?: boolean; session?: Session };
 };
 
-export type CustomComponentProps = {
+export type ExtendedComponentProps = {
   className?: string;
 };
 
 export type ChildrenProps = {
   children?: JSX.Element;
-  className?: string;
-};
+} & ExtendedComponentProps;
 
 export type HeaderProps = {
   title?: string;
@@ -35,12 +35,15 @@ export type HeaderProps = {
 export type ButtonProps = {
   children?: JSX.Element;
   onClick?: () => void;
-  disabled?: boolean;
-  type?: 'button' | 'submit' | 'reset';
   text?: string;
-  className?: string;
+  type?: 'button' | 'submit' | 'reset';
   inverted?: boolean;
+} & Omit<HTMLProps<HTMLButtonElement>, 'onClick'>;
+
+export type AdminTableProps<T> = {
+  table: Table<T>;
 };
+
 export type ApiResponseType = {
   statusCode: number;
   message: string;
@@ -68,6 +71,7 @@ export type EventType = {
   eventType: EventTypeType;
   startTime: Date;
   endTime: Date;
+  updatedAt: Date;
   registrationDeadline: Date;
   cancellationDeadline: Date;
   registrationList: string[];
@@ -75,15 +79,16 @@ export type EventType = {
   checkinId: string;
   checkinList: string[];
   isDraft: boolean;
+  isCancelled: boolean;
 };
 
-export type SelectProps = {
+export type SelectProps<T extends FieldValues> = {
   options: {
     value: string;
     label: string;
   }[];
-  id?: string;
-  register?: UseFormRegister<any>;
+  id?: Path<T>;
+  register?: UseFormRegister<T>;
 };
 
 export type UserType = {
@@ -98,11 +103,7 @@ export type UserType = {
   membership: {
     year: number;
   }[];
-};
-export type UserInformationType = {
-  foodNeeds: string;
-  student: string;
-  publicProfile: boolean;
+  profileIconSeed: string;
 };
 export type CardProps = {
   user: UserType;

@@ -2,28 +2,152 @@ import type { NextPage } from 'next';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import Footer from '@components/Footer';
-import Navigation from '@lib/components/Navigation';
+import { Navigation } from '@lib/components/Navigation';
 import { SmallHeader } from '@lib/components/Header';
 import Card from '@components/Card';
-import { useEffect, useState } from 'react';
 import { UserType } from '@lib/types';
+import { useCallback, useEffect, useState } from 'react';
+import { createAvatar } from '@dicebear/core';
+import { bigSmile } from '@dicebear/collection';
+import Image from 'next/image';
+import { generateSalt } from '@lib/auth/passwords';
+import StyledSwal from '@lib/components/StyledSwal';
+import Swal from 'sweetalert2';
+import { profileIconAtom, userAtom } from '@lib/atoms';
+import { useAtom } from 'jotai';
+import { Button } from '@lib/components/Input';
+import { getErrorMessage } from '@lib/utils';
 
 const Profile: NextPage = () => {
   const { data: session, status } = useSession({
     required: true,
   });
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [fetching, setFetching] = useState(true);
-  const [user, setUser] = useState<UserType>({
-    id: '',
-    firstName: '',
-    lastName: '',
-    email: '',
-    birthdate: '',
-    foodNeeds: '',
-    student: '',
-    publicProfile: false,
-    membership: [],
+  const [profileIcon, setProfileIcon] = useAtom(profileIconAtom);
+  const [user, setUser] = useAtom(userAtom);
+
+  const avatar = createAvatar(bigSmile, {
+    seed: profileIcon.seed,
+    radius: 50,
+    backgroundColor: ['f5f5f5'],
   });
+
+  const updateProfileIcon = useCallback(async () => {
+    if (isModalOpen || !session?.user?.id) return;
+    let seed = generateSalt(24);
+    const oldProfileIcon = { ...profileIcon };
+    // Disable registration spamming
+    setIsModalOpen(true);
+    StyledSwal.fire({
+      title: <p></p>,
+      html: (
+        <>
+          <div
+            id="modal-display"
+            className="flex flex-col w-full h-full max-h-128 overflow-y-hidden transition-all duration-500"
+          >
+            <div className="flex items-center justify-center rounded-full">
+              <div className="relative w-28 h-28">
+                <Image
+                  id="modal-icon"
+                  src={avatar.toDataUriSync()}
+                  alt="Profile icon"
+                  layout="fill"
+                />
+              </div>
+            </div>
+            <div className="flex flex-col w-8/12 gap-1 mx-auto my-5">
+              <Button
+                className="text-base"
+                onClick={() => {
+                  // Generate new seed
+                  seed = generateSalt(24);
+                  // Update profile icon atom
+                  setProfileIcon((oldProfileIcon) => {
+                    return { ...oldProfileIcon, seed };
+                  });
+                  // Update profile icon display
+                  const newAvatar = createAvatar(bigSmile, {
+                    seed: seed,
+                    radius: 50,
+                    backgroundColor: ['f5f5f5'],
+                  });
+                  const icon = document.querySelector(
+                    '#modal-icon'
+                  ) as HTMLImageElement;
+                  if (icon) icon.src = newAvatar.toDataUriSync();
+                }}
+                text="Generer nytt ikon"
+              />
+              <Button
+                className="text-base"
+                onClick={() => {
+                  StyledSwal.getConfirmButton()?.click();
+                }}
+                text="Lagre endringer"
+              />
+            </div>
+          </div>
+        </>
+      ),
+      showConfirmButton: false,
+      showLoaderOnConfirm: true,
+
+      preConfirm: async () => {
+        // Hide display on confirm
+        const display = document.querySelector(
+          '#modal-display'
+        ) as HTMLDivElement;
+        if (display) {
+          display.style.pointerEvents = 'none';
+          display.style.maxHeight = '0';
+        }
+        // Update user profile icon with new seed
+        await fetch(`/api/user/${session.user.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            seed: seed,
+          }),
+        })
+          .then(async (response) => {
+            if (!response.ok) throw new Error(response.statusText);
+            return await response.json();
+          })
+          .then(async (data: UserType) => {
+            setUser((prevState: UserType) => ({ ...prevState, ...data }));
+            await StyledSwal.fire({
+              icon: 'success',
+              title: <p>Endret profil ikon</p>,
+              showConfirmButton: false,
+              timer: 1500,
+            });
+          })
+          .catch((error: unknown) => {
+            return StyledSwal.fire({
+              icon: 'error',
+              title: <p>Mislykket!</p>,
+              html: (
+                <>
+                  <p>Endring av profil ikon mislykket</p>
+                  <code className="mt-2 w-full">{getErrorMessage(error)}</code>
+                </>
+              ),
+              showConfirmButton: false,
+              timer: 5000,
+            });
+          });
+      },
+      allowOutsideClick: () => !Swal.isLoading(),
+    })
+      .then((result) => {
+        if (!result.isConfirmed) setProfileIcon(oldProfileIcon);
+      })
+      .finally(() => setIsModalOpen(false));
+  }, [session?.user?.id, isModalOpen, setIsModalOpen, avatar, setProfileIcon]);
 
   useEffect(() => {
     if (!session?.user?.id) return;
@@ -35,7 +159,7 @@ const Profile: NextPage = () => {
           return await response.json();
         })
         .then((data: UserType) => {
-          setUser((prevState) => ({ ...prevState, ...data }));
+          setUser((prevState: UserType) => ({ ...prevState, ...data }));
         })
         .catch((error) => {
           console.log(error);
@@ -45,7 +169,7 @@ const Profile: NextPage = () => {
           setFetching(false);
         });
     };
-    fetchUser();
+    fetchUser().finally();
   }, [session?.user?.id, setFetching]);
 
   return (
@@ -64,15 +188,33 @@ const Profile: NextPage = () => {
           {status === 'loading' && fetching ? (
             <>'Loading or not authenticated...'</>
           ) : (
-            <div className="w-full bg-white shadow-2xl rounded-2xl p-6">
-              <div className="flex flex-col ml-10 sm:ml-20 my-5 sm:my-10 text-left">
-                <p>
-                  {user.firstName} {user.lastName}
-                </p>
-                <p className="text-slate-500">Medlem</p>
+            <div className="flex flex-col gap-6 w-[calc(100%-3rem)] bg-white shadow-2xl rounded-2xl p-6 mx-auto box-border">
+              <div className="flex items-center">
+                <div
+                  className="flex items-center justify-center p-1 cursor-pointer"
+                  onClick={updateProfileIcon}
+                >
+                  <div
+                    className={`relative w-28 h-28 transition-all duration-700 ${
+                      !profileIcon.initial ? 'opacity-0' : ''
+                    }`}
+                  >
+                    <Image
+                      src={avatar.toDataUriSync()}
+                      alt="Profile icon"
+                      layout="fill"
+                    />
+                  </div>
+                </div>
+                <div className="flex flex-col ml-5 text-left">
+                  <p>
+                    {user.firstName} {user.lastName}
+                  </p>
+                  <p className="text-slate-500">Medlem</p>
+                </div>
               </div>
 
-              <div className="my-8 sm:mx-10">
+              <div>
                 <Card user={user} session={session} />
               </div>
             </div>

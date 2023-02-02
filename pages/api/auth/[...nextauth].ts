@@ -131,6 +131,7 @@ export default NextAuth({
                 firstName: true,
                 lastName: true,
                 role: true,
+                profileIconSeed: true,
               },
             });
           } else {
@@ -143,6 +144,7 @@ export default NextAuth({
             firstName: newUser.firstName,
             lastName: newUser.lastName,
             role: newUser.role,
+            profileIconSeed: newUser.profileIconSeed,
             membership: [],
           };
         } catch (error) {
@@ -183,7 +185,11 @@ export default NextAuth({
               firstName: true,
               lastName: true,
               role: true,
+              profileIconSeed: true,
               membership: {
+                orderBy: {
+                  year: 'desc',
+                },
                 select: {
                   year: true,
                 },
@@ -209,6 +215,7 @@ export default NextAuth({
             firstName: maybeUser.firstName,
             lastName: maybeUser.lastName,
             role: maybeUser.role,
+            profileIconSeed: maybeUser.profileIconSeed,
             membership: maybeUser.membership.map((m) => m.year),
           };
         } catch (error) {
@@ -243,6 +250,7 @@ export default NextAuth({
         token.firstName = user.firstName;
         token.lastName = user.lastName;
         token.role = user.role;
+        token.profileIconSeed = user.profileIconSeed;
         token.membership = user.membership;
       }
       return token;
@@ -256,6 +264,7 @@ export default NextAuth({
           firstName: token.firstName as string,
           lastName: token.lastName as string,
           role: token.role as Role,
+          profileIconSeed: token.profileIconSeed as string,
           membership: token.membership as number[],
         },
       };
