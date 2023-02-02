@@ -32,10 +32,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           throw new Error(
             'Password length has to be at least 8 characters long'
           );
-        // Verify password is the same
         if (newPassword !== confirmPassword)
           throw new Error('Password does not match!');
-        // Verify old password is correct
         const user = await prisma.user.findFirst({
           where: {
             id: userID,
@@ -44,13 +42,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             password: true,
           },
         });
-        // Get the salt from user password and iterations taken
-        // Hash the oldPassword with the salt and iteration count
-
         const hashedPassword = user?.password || '';
         if (!verifyPassword(oldPassword, hashedPassword))
           throw new Error('Old password is not correct!');
-        // Update databases with new password
         await prisma.user.update({
           where: {
             id: userID,
