@@ -9,7 +9,7 @@ import {
 } from 'next-auth/react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Button } from '@components/Button';
+import { Button } from '@components/Input';
 import { MINIMUM_ACTIVITY_TIMEOUT } from '@lib/constants';
 import ToastMessage from '../Toast';
 

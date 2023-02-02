@@ -20,6 +20,7 @@ module.exports = {
         layout: '400px 0.75rem 1fr',
         eventdetail: 'minmax(300px, 1fr) 2fr',
         event: '30px 1fr',
+        sideNavigationButton: '1.25rem minmax(120px, 1fr)',
       },
       gridTemplateRows: {
         organizationfocus: '1fr 150px',

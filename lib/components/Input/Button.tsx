@@ -1,19 +1,17 @@
 import { ButtonProps } from '@lib/types';
 
 const Button = ({
-  text,
   onClick,
+  text = '',
   children,
-  disabled,
-  type,
   className = '',
   inverted = false,
+  ...props
 }: ButtonProps) => {
   if (inverted) {
     return (
       <button
-        disabled={disabled ?? false}
-        type={type}
+        {...props}
         onClick={onClick}
         className={`text-black py-2 px-10 rounded-xl bg-white hover:brightness-85 shadow-md transition-all duration-300 ${className}`}
       >
@@ -24,8 +22,7 @@ const Button = ({
   }
   return (
     <button
-      disabled={disabled ?? false}
-      type={type}
+      {...props}
       onClick={onClick}
       className={`text-white py-2 px-10 rounded-xl bg-primary hover:brightness-85 shadow-md transition-all duration-300 ${className}`}
     >

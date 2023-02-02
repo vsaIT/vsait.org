@@ -66,6 +66,23 @@ async function main() {
       passwordResetUrl: generateSalt(12),
     },
   });
+  await prisma.membership.upsert({
+    where: { year: 2022 },
+    update: {},
+    create: {
+      year: 2022,
+      users: {
+        connect: [
+          {
+            email: 'a@a.com',
+          },
+          {
+            email: 'b@b.com',
+          },
+        ],
+      },
+    },
+  });
 
   const open: EventType = 'OPEN';
   const member: EventType = 'MEMBERSHIP';

@@ -2,9 +2,9 @@ import type { NextPage } from 'next';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import Footer from '@components/Footer';
-import Navigation from '@components/Navigation';
+import { Navigation } from '@lib/components/Navigation';
 import { LargeHeader } from '@components/Header';
-import { Button } from '@components/Button';
+import { Button } from '@components/Input';
 import Wave from '@components/Wave';
 import { EventsQuickView } from '@components/Events';
 import { useInView } from 'react-intersection-observer';
@@ -49,12 +49,12 @@ const Home: NextPage = () => {
               ) : session && status === 'authenticated' ? (
                 <>
                   <h1 className="text-4xl mb-1.5 font-bold text-white">
-                    Velkommen tilbake, {`${session?.user?.firstName}`}
+                    Velkommen tilbake {`${session?.user?.firstName}!`}
                   </h1>
                   <p className="w-9/12 text-white">
                     {session?.user?.membership.includes(getMembershipYear()) ? (
                       <>
-                        {`Medlemskap bekreftet for ${getMembershipYear()} / ${
+                        {`Medlemskap bekreftet for ${getMembershipYear()}/${
                           getMembershipYear() + 1
                         }`}
                       </>
