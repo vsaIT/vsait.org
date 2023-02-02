@@ -8,6 +8,7 @@ import { useAtom } from 'jotai';
 import { profileIconAtom, userAtom } from '@lib/atoms';
 import { useEffect } from 'react';
 import { UserType } from '@lib/types';
+import { signOut } from 'next-auth/react';
 
 const navigation = [
   { href: '/', text: 'Hjem' },
@@ -43,8 +44,8 @@ const Navigation = () => {
           setUser((prevState) => ({ ...prevState, ...data }));
           setProfileIcon({ seed: data.profileIconSeed, initial: true });
         })
-        .catch((error) => {
-          console.log(error);
+        .catch((_error) => {
+          signOut();
           window.location.href = '/500';
         });
     };
