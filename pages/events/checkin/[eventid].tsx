@@ -13,7 +13,7 @@ import { useCallback, useState } from 'react';
 import StyledSwal from '@lib/components/StyledSwal';
 import { getErrorMessage } from '@lib/utils';
 import { Person } from '@lib/icons';
-import Accordion from '@lib/components/Accordion';
+import { Accordion } from '@components/Accordion';
 import Link from 'next/link';
 
 const Checkin: NextPage = () => {
