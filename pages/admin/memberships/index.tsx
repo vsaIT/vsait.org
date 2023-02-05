@@ -80,7 +80,7 @@ const AdminMemberships: NextPage = () => {
         ),
         footer: (info) => info.column.id,
       }),
-      columnHelper.accessor((row) => row.users.length, {
+      columnHelper.accessor((row) => String(row.users.length), {
         id: 'total-members',
         header: () => 'Registrerte',
         cell: (info) => <span>{info.getValue()}</span>,
