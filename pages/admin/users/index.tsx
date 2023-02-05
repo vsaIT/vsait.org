@@ -1,21 +1,120 @@
-import { AdminLayout } from '@lib/components/Admin';
+import { AdminLayout, AdminTablePagination } from '@lib/components/Admin';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import { DebouncedInput, IndeterminateCheckbox } from '@components/Input';
-import React, { useState } from 'react';
-import { Search } from '@lib/icons';
 import {
+  Button,
+  DebouncedInput,
+  IndeterminateCheckbox,
+} from '@components/Input';
+import React, { useMemo, useState } from 'react';
+import { CircleCheck, CircleXMark, Search } from '@lib/icons';
+import {
+  ColumnFiltersState,
   createColumnHelper,
   getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  SortingState,
   useReactTable,
 } from '@tanstack/react-table';
 import Link from 'next/link';
 import { AdminTable } from '@components/Admin';
 import { UserType } from '@lib/types';
-import { getLocaleDateString } from '@lib/utils';
+import { getLocaleDateString, getMembershipYear } from '@lib/utils';
 
+type AdminUserType = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  birthdate: Date;
+  createdAt: Date;
+  student: string;
+  membership: { year: number }[];
+  role: string;
+};
 const AdminUsers: NextPage = () => {
-  const columnHelper = createColumnHelper<any>();
+  const [rowSelection, setRowSelection] = useState({});
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  // Midlertidig testdata
+  const [sorting, setSorting] = useState<SortingState>([
+    {
+      id: 'firstName',
+      desc: true,
+    },
+  ]);
+
+  const [data, setData] = useState<AdminUserType[]>([
+    {
+      id: '2',
+      firstName: 'test',
+      lastName: 'test',
+      email: 'test',
+      birthdate: new Date(),
+      createdAt: new Date(),
+      student: 'test',
+      membership: [{ year: 2022 }, { year: 2021 }],
+      role: 'USER',
+    },
+    {
+      id: '2',
+      firstName: 'awdad',
+      lastName: 'test',
+      email: 'test',
+      birthdate: new Date(),
+      createdAt: new Date(),
+      student: 'test',
+      membership: [{ year: 2022 }, { year: 2021 }],
+      role: 'USER',
+    },
+    {
+      id: '2',
+      firstName: 'awdad',
+      lastName: 'test',
+      email: 'test',
+      birthdate: new Date(),
+      createdAt: new Date(),
+      student: 'test',
+      membership: [{ year: 2022 }, { year: 2021 }],
+      role: 'USER',
+    },
+    {
+      id: '2',
+      firstName: 'awdad',
+      lastName: 'test',
+      email: 'test',
+      birthdate: new Date(),
+      createdAt: new Date(),
+      student: 'test',
+      membership: [{ year: 2022 }, { year: 2021 }],
+      role: 'USER',
+    },
+    {
+      id: '2',
+      firstName: 'awdad',
+      lastName: 'tedsaddsadst',
+      email: 'tedsadasdst',
+      birthdate: new Date(),
+      createdAt: new Date(),
+      student: 'test',
+      membership: [{ year: 2022 }, { year: 2021 }],
+      role: 'USER',
+    },
+    {
+      id: '2',
+      firstName: 'wadadawd',
+      lastName: 'dadadaw',
+      email: 'dwada',
+      birthdate: new Date(),
+      createdAt: new Date(),
+      student: 'dsds',
+      membership: [{ year: 2022 }, { year: 2021 }],
+      role: 'USER',
+    },
+  ]);
+
+  const columnHelper = createColumnHelper<AdminUserType>();
   const columns = [
     columnHelper.display({
       id: 'select',
@@ -52,7 +151,7 @@ const AdminUsers: NextPage = () => {
         id: 'firstName',
         header: () => 'Fornavn',
         cell: (info) => (
-          <Link href={`/`}>
+          <Link href={`/admin/events/${info.getValue().id}`}>
             <a className="inline-block min-w-[180px] font-medium text-primary hover:brightness-75 transition-all">
               {info.getValue().firstName}
             </a>
@@ -86,13 +185,91 @@ const AdminUsers: NextPage = () => {
       cell: (info) => <span>{getLocaleDateString(info.getValue())}</span>,
       footer: (info) => info.column.id,
     }),
+    columnHelper.accessor('student', {
+      id: 'student',
+      header: () => 'Student',
+      cell: (info) => (
+        <span>
+          {info.getValue() !== 'Non-student' ? (
+            <CircleCheck
+              className="w-[14px] h-[14px] fill-[#70BF2B]"
+              color="inherit"
+            />
+          ) : (
+            <CircleXMark
+              className="w-[14px] h-[14px] fill-[#D5564D]"
+              color="inherit"
+            />
+          )}
+        </span>
+      ),
+      footer: (info) => info.column.id,
+    }),
+    columnHelper.accessor('membership', {
+      id: 'membership',
+      header: () => 'Medlemskap',
+      cell: (info) => (
+        <span>
+          {info.getValue().some(({ year }) => year === getMembershipYear()) ? (
+            <CircleCheck
+              className="w-[14px] h-[14px] fill-[#70BF2B]"
+              color="inherit"
+            />
+          ) : (
+            <CircleXMark
+              className="w-[14px] h-[14px] fill-[#D5564D]"
+              color="inherit"
+            />
+          )}
+        </span>
+      ),
+      footer: (info) => info.column.id,
+    }),
+    columnHelper.accessor('role', {
+      id: 'role',
+      header: () => 'Admin',
+      cell: (info) => (
+        <span>
+          {info.getValue() === 'ADMIN' ? (
+            <CircleCheck
+              className="w-[14px] h-[14px] fill-[#70BF2B]"
+              color="inherit"
+            />
+          ) : (
+            <CircleXMark
+              className="w-[14px] h-[14px] fill-[#D5564D]"
+              color="inherit"
+            />
+          )}
+        </span>
+      ),
+      footer: (info) => info.column.id,
+    }),
   ];
   const table = useReactTable({
-    data: [{}],
+    data: data,
+
     columns: columns,
+    initialState: { pagination: { pageIndex: 0, pageSize: 9 } },
+    state: {
+      rowSelection,
+      sorting,
+      columnFilters,
+    },
+    onRowSelectionChange: setRowSelection,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    // Pipeline
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    debugTable: false,
   });
 
+  const pageCount = table.getPageCount();
+  const pageIndex = table.getState().pagination.pageIndex;
+  const pageSize = table.getState().pagination.pageSize;
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
       <Head>
@@ -109,21 +286,71 @@ const AdminUsers: NextPage = () => {
                   <h1 className="text-xl font-medium">Brukere</h1>
                   <p className="text-sm">Se og endre brukere her</p>
                 </div>
-                <div className="relative w-96 bg-amber-300">
+                <div className="relative w-96">
                   <div className="mt-1 relative fill-stone-400">
-                    // TODO: Debounced
-                    <Search className="w-4 h-4 absolute" color="inherit" />
+                    <DebouncedInput
+                      type="text"
+                      value={
+                        (table
+                          .getColumn('firstName')
+                          .getFilterValue() as string) ?? ''
+                      }
+                      onChange={(value) =>
+                        table
+                          .getColumn('firstName')
+                          .setFilterValue(String(value))
+                      }
+                      placeholder="Søk etter bruker"
+                      className="w-full py-2 px-4 pl-10 border-2 border-stone-300 outline-none text-sm text-left leading-6 bg-transparent rounded-xl transition duration-150 ease-in-out"
+                    />
+                    <Search
+                      className="w-4 h-4 absolute top-[13px] left-4"
+                      color="inherit"
+                    />
                   </div>
                 </div>
               </div>
 
               <div className="bg-white rounded-xl w-full h-full p-6">
                 <div className="flex justify-between items-center pb-6">
-                  legg til arran
+                  <div>
+                    <p
+                      className={`text-sm text-neutral-500 transition-all duration-500 ${
+                        Object.keys(rowSelection).length > 0
+                          ? 'opacity-100'
+                          : 'opacity-0'
+                      }`}
+                    >
+                      {Object.keys(rowSelection).length} av{' '}
+                      {table.getPreFilteredRowModel().rows.length} valgt
+                    </p>
+                  </div>
+                  <Link href="/admin/events/new">
+                    <a>
+                      <Button
+                        text="Legg til nytt arrangement"
+                        className="text-xs py-3 px-8"
+                      />
+                    </a>
+                  </Link>
                 </div>
-                <div className="grid [grid-template-rows:minmax(409px,1fr)_50px">
+                <div className="grid [grid-template-rows:minmax(409px,1fr)_50px]">
                   <div className="rounded-lg border border-neutral-300 overflow-hidden">
                     <AdminTable table={table} />
+                  </div>
+                  <div className="flex justify-between items-end gap-2">
+                    <p className="flex items-center gap-1 text-sm">
+                      Viser
+                      <strong>
+                        {1 + pageIndex * pageSize} -{' '}
+                        {pageIndex + 1 == pageCount
+                          ? data.length
+                          : (pageIndex + 1) * pageSize}{' '}
+                        av {data.length}
+                      </strong>
+                      brukere
+                    </p>
+                    <AdminTablePagination table={table} />
                   </div>
                 </div>
               </div>
