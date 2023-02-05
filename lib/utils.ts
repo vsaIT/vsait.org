@@ -30,3 +30,7 @@ export const getLocaleDateString = (cdate: Date) => {
     date.getMinutes()
   ).padStart(2, '0')}`;
 };
+
+export const normalize = (value: string) => {
+  return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+};
