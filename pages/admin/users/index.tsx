@@ -152,7 +152,7 @@ const AdminUsers: NextPage = () => {
           id: 'firstName',
           header: () => 'Fornavn',
           cell: (info) => (
-            <Link href={`/admin/events/${info.getValue().id}`}>
+            <Link href={`/admin/users/${info.getValue().id}`}>
               <a className="inline-block min-w-[180px] font-medium text-primary hover:brightness-75 transition-all">
                 {info.getValue().firstName}
               </a>
@@ -330,10 +330,10 @@ const AdminUsers: NextPage = () => {
                       {table.getPreFilteredRowModel().rows.length} valgt
                     </p>
                   </div>
-                  <Link href="/admin/events/new">
+                  <Link href="/admin/users/new">
                     <a>
                       <Button
-                        text="Legg til nytt arrangement"
+                        text="Legg til bruker"
                         className="text-xs py-3 px-8"
                       />
                     </a>
