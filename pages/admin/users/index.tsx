@@ -20,7 +20,6 @@ import {
 } from '@tanstack/react-table';
 import Link from 'next/link';
 import { AdminTable } from '@components/Admin';
-import { UserType } from '@lib/types';
 import { getLocaleDateString, getMembershipYear } from '@lib/utils';
 
 type AdminUserType = {
@@ -37,7 +36,7 @@ type AdminUserType = {
 const AdminUsers: NextPage = () => {
   const [rowSelection, setRowSelection] = useState({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  // Midlertidig testdata
+
   const [sorting, setSorting] = useState<SortingState>([
     {
       id: 'firstName',
@@ -45,6 +44,7 @@ const AdminUsers: NextPage = () => {
     },
   ]);
 
+  // Midlertidig testdata
   const [data, setData] = useState<AdminUserType[]>([
     {
       id: '2',
@@ -115,137 +115,142 @@ const AdminUsers: NextPage = () => {
   ]);
 
   const columnHelper = createColumnHelper<AdminUserType>();
-  const columns = [
-    columnHelper.display({
-      id: 'select',
-      header: () => (
-        <div className="w-full h-full flex justify-center items-center">
-          <IndeterminateCheckbox
-            {...{
-              checked: table.getIsAllRowsSelected(),
-              indeterminate: table.getIsSomeRowsSelected(),
-              onChange: table.getToggleAllRowsSelectedHandler(),
-              className: '[filter:hue-rotate(140deg)_saturate(0.85)]',
-            }}
-          />
-        </div>
+  const columns = useMemo(
+    () => [
+      columnHelper.display({
+        id: 'select',
+        header: () => (
+          <div className="w-full h-full flex justify-center items-center">
+            <IndeterminateCheckbox
+              {...{
+                checked: table.getIsAllRowsSelected(),
+                indeterminate: table.getIsSomeRowsSelected(),
+                onChange: table.getToggleAllRowsSelectedHandler(),
+                className: '[filter:hue-rotate(140deg)_saturate(0.85)]',
+              }}
+            />
+          </div>
+        ),
+        cell: ({ row }) => (
+          <div className="w-full h-full flex justify-center items-center">
+            <IndeterminateCheckbox
+              {...{
+                checked: row.getIsSelected(),
+                indeterminate: row.getIsSomeSelected(),
+                onChange: row.getToggleSelectedHandler(),
+                className: '[filter:hue-rotate(140deg)_saturate(0.85)]',
+              }}
+            />
+          </div>
+        ),
+      }),
+      columnHelper.accessor(
+        (row) => {
+          return { id: row.id, firstName: row.firstName };
+        },
+        {
+          id: 'firstName',
+          header: () => 'Fornavn',
+          cell: (info) => (
+            <Link href={`/admin/events/${info.getValue().id}`}>
+              <a className="inline-block min-w-[180px] font-medium text-primary hover:brightness-75 transition-all">
+                {info.getValue().firstName}
+              </a>
+            </Link>
+          ),
+          footer: (info) => info.column.id,
+        }
       ),
-      cell: ({ row }) => (
-        <div className="w-full h-full flex justify-center items-center">
-          <IndeterminateCheckbox
-            {...{
-              checked: row.getIsSelected(),
-              indeterminate: row.getIsSomeSelected(),
-              onChange: row.getToggleSelectedHandler(),
-              className: '[filter:hue-rotate(140deg)_saturate(0.85)]',
-            }}
-          />
-        </div>
-      ),
-    }),
-    columnHelper.accessor(
-      (row) => {
-        return { id: row.id, firstName: row.firstName };
-      },
-      {
-        id: 'firstName',
-        header: () => 'Fornavn',
+      columnHelper.accessor('lastName', {
+        id: 'lastName',
+        header: () => 'Etternavn',
+        cell: (info) => info.getValue(),
+        footer: (info) => info.column.id,
+      }),
+      columnHelper.accessor('email', {
+        id: 'email',
+        header: () => 'E-post',
+        cell: (info) => info.getValue(),
+
+        footer: (info) => info.column.id,
+      }),
+      columnHelper.accessor('birthdate', {
+        id: 'birthdate',
+        header: () => 'Fødselsdato',
+        cell: (info) => info.getValue(),
+        footer: (info) => info.column.id,
+      }),
+      columnHelper.accessor('createdAt', {
+        id: 'createdAt',
+        header: () => 'Registeringsdato',
+        cell: (info) => <span>{getLocaleDateString(info.getValue())}</span>,
+        footer: (info) => info.column.id,
+      }),
+      columnHelper.accessor('student', {
+        id: 'student',
+        header: () => 'Student',
         cell: (info) => (
-          <Link href={`/admin/events/${info.getValue().id}`}>
-            <a className="inline-block min-w-[180px] font-medium text-primary hover:brightness-75 transition-all">
-              {info.getValue().firstName}
-            </a>
-          </Link>
+          <span>
+            {info.getValue() !== 'Non-student' ? (
+              <CircleCheck
+                className="w-[14px] h-[14px] fill-[#70BF2B]"
+                color="inherit"
+              />
+            ) : (
+              <CircleXMark
+                className="w-[14px] h-[14px] fill-[#D5564D]"
+                color="inherit"
+              />
+            )}
+          </span>
         ),
         footer: (info) => info.column.id,
-      }
-    ),
-    columnHelper.accessor('lastName', {
-      id: 'lastName',
-      header: () => 'Etternavn',
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor('email', {
-      id: 'email',
-      header: () => 'E-post',
-      cell: (info) => info.getValue(),
-
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor('birthdate', {
-      id: 'birthdate',
-      header: () => 'Fødselsdato',
-      cell: (info) => info.getValue(),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor('createdAt', {
-      id: 'createdAt',
-      header: () => 'Registeringsdato',
-      cell: (info) => <span>{getLocaleDateString(info.getValue())}</span>,
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor('student', {
-      id: 'student',
-      header: () => 'Student',
-      cell: (info) => (
-        <span>
-          {info.getValue() !== 'Non-student' ? (
-            <CircleCheck
-              className="w-[14px] h-[14px] fill-[#70BF2B]"
-              color="inherit"
-            />
-          ) : (
-            <CircleXMark
-              className="w-[14px] h-[14px] fill-[#D5564D]"
-              color="inherit"
-            />
-          )}
-        </span>
-      ),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor('membership', {
-      id: 'membership',
-      header: () => 'Medlemskap',
-      cell: (info) => (
-        <span>
-          {info.getValue().some(({ year }) => year === getMembershipYear()) ? (
-            <CircleCheck
-              className="w-[14px] h-[14px] fill-[#70BF2B]"
-              color="inherit"
-            />
-          ) : (
-            <CircleXMark
-              className="w-[14px] h-[14px] fill-[#D5564D]"
-              color="inherit"
-            />
-          )}
-        </span>
-      ),
-      footer: (info) => info.column.id,
-    }),
-    columnHelper.accessor('role', {
-      id: 'role',
-      header: () => 'Admin',
-      cell: (info) => (
-        <span>
-          {info.getValue() === 'ADMIN' ? (
-            <CircleCheck
-              className="w-[14px] h-[14px] fill-[#70BF2B]"
-              color="inherit"
-            />
-          ) : (
-            <CircleXMark
-              className="w-[14px] h-[14px] fill-[#D5564D]"
-              color="inherit"
-            />
-          )}
-        </span>
-      ),
-      footer: (info) => info.column.id,
-    }),
-  ];
+      }),
+      columnHelper.accessor('membership', {
+        id: 'membership',
+        header: () => 'Medlemskap',
+        cell: (info) => (
+          <span>
+            {info
+              .getValue()
+              .some(({ year }) => year === getMembershipYear()) ? (
+              <CircleCheck
+                className="w-[14px] h-[14px] fill-[#70BF2B]"
+                color="inherit"
+              />
+            ) : (
+              <CircleXMark
+                className="w-[14px] h-[14px] fill-[#D5564D]"
+                color="inherit"
+              />
+            )}
+          </span>
+        ),
+        footer: (info) => info.column.id,
+      }),
+      columnHelper.accessor('role', {
+        id: 'role',
+        header: () => 'Admin',
+        cell: (info) => (
+          <span>
+            {info.getValue() === 'ADMIN' ? (
+              <CircleCheck
+                className="w-[14px] h-[14px] fill-[#70BF2B]"
+                color="inherit"
+              />
+            ) : (
+              <CircleXMark
+                className="w-[14px] h-[14px] fill-[#D5564D]"
+                color="inherit"
+              />
+            )}
+          </span>
+        ),
+        footer: (info) => info.column.id,
+      }),
+    ],
+    []
+  );
   const table = useReactTable({
     data: data,
 
