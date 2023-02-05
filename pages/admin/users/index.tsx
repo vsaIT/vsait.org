@@ -6,7 +6,7 @@ import {
   DebouncedInput,
   IndeterminateCheckbox,
 } from '@components/Input';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { CircleCheck, CircleXMark, Search } from '@lib/icons';
 import {
   ColumnFiltersState,
@@ -21,6 +21,7 @@ import {
 import Link from 'next/link';
 import { AdminTable } from '@components/Admin';
 import { getLocaleDateString, getMembershipYear } from '@lib/utils';
+import { useSession } from 'next-auth/react';
 
 type AdminUserType = {
   id: string;
@@ -34,6 +35,31 @@ type AdminUserType = {
   role: string;
 };
 const AdminUsers: NextPage = () => {
+  const { data: session } = useSession({
+    required: true,
+  });
+  const [users, setUsers] = useState<AdminUserType[]>([]);
+  const fetchUser = async () => {
+    const response = await fetch('/api/user');
+    if (!response.ok) {
+      const message = `An error has occured: ${response.status}`;
+      throw new Error(message);
+    }
+    const users = await response.json();
+    return users;
+  };
+
+  useEffect(() => {
+    if (!session?.user?.id) return;
+
+    fetchUser()
+      .then((users) => setUsers(users))
+      .catch((error) => {
+        error.message;
+        window.location.href = '/500';
+      });
+  }, [session?.user?.id]);
+
   const [rowSelection, setRowSelection] = useState({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
@@ -41,76 +67,6 @@ const AdminUsers: NextPage = () => {
     {
       id: 'firstName',
       desc: true,
-    },
-  ]);
-
-  // Midlertidig testdata
-  const [data, setData] = useState<AdminUserType[]>([
-    {
-      id: '2',
-      firstName: 'test',
-      lastName: 'test',
-      email: 'test',
-      birthdate: new Date(),
-      createdAt: new Date(),
-      student: 'test',
-      membership: [{ year: 2022 }, { year: 2021 }],
-      role: 'USER',
-    },
-    {
-      id: '2',
-      firstName: 'awdad',
-      lastName: 'test',
-      email: 'test',
-      birthdate: new Date(),
-      createdAt: new Date(),
-      student: 'test',
-      membership: [{ year: 2022 }, { year: 2021 }],
-      role: 'USER',
-    },
-    {
-      id: '2',
-      firstName: 'awdad',
-      lastName: 'test',
-      email: 'test',
-      birthdate: new Date(),
-      createdAt: new Date(),
-      student: 'test',
-      membership: [{ year: 2022 }, { year: 2021 }],
-      role: 'USER',
-    },
-    {
-      id: '2',
-      firstName: 'awdad',
-      lastName: 'test',
-      email: 'test',
-      birthdate: new Date(),
-      createdAt: new Date(),
-      student: 'test',
-      membership: [{ year: 2022 }, { year: 2021 }],
-      role: 'USER',
-    },
-    {
-      id: '2',
-      firstName: 'awdad',
-      lastName: 'tedsaddsadst',
-      email: 'tedsadasdst',
-      birthdate: new Date(),
-      createdAt: new Date(),
-      student: 'test',
-      membership: [{ year: 2022 }, { year: 2021 }],
-      role: 'USER',
-    },
-    {
-      id: '2',
-      firstName: 'wadadawd',
-      lastName: 'dadadaw',
-      email: 'dwada',
-      birthdate: new Date(),
-      createdAt: new Date(),
-      student: 'dsds',
-      membership: [{ year: 2022 }, { year: 2021 }],
-      role: 'USER',
     },
   ]);
 
@@ -252,7 +208,7 @@ const AdminUsers: NextPage = () => {
     []
   );
   const table = useReactTable({
-    data: data,
+    data: users,
 
     columns: columns,
     initialState: { pagination: { pageIndex: 0, pageSize: 9 } },
@@ -349,9 +305,9 @@ const AdminUsers: NextPage = () => {
                       <strong>
                         {1 + pageIndex * pageSize} -{' '}
                         {pageIndex + 1 == pageCount
-                          ? data.length
+                          ? users?.length
                           : (pageIndex + 1) * pageSize}{' '}
-                        av {data.length}
+                        av {users?.length}
                       </strong>
                       brukere
                     </p>
