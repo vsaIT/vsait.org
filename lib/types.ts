@@ -97,7 +97,6 @@ export type UserType = {
   lastName: string;
   email: string;
   birthdate: string;
-  createdAt?: Date;
   foodNeeds: string;
   student: string;
   publicProfile: boolean;
