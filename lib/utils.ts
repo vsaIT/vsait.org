@@ -22,9 +22,10 @@ const MONTH = [
   'nov.',
   'des.',
 ];
-export const getLocaleDateString = (cdate: Date) => {
+
+export const getLocaleDatetimeString = (cdate: Date) => {
   const date = new Date(cdate);
-  return `${date.getDate()}. ${
+  return `${String(date.getDate()).padStart(2, '0')}. ${
     MONTH[date.getMonth()]
   } ${date.getFullYear()}, ${String(date.getHours()).padStart(2, '0')}:${String(
     date.getMinutes()
@@ -33,4 +34,10 @@ export const getLocaleDateString = (cdate: Date) => {
 
 export const normalize = (value: string) => {
   return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+};
+export const getLocaleDateString = (cdate: Date) => {
+  const date = new Date(cdate);
+  return `${String(date.getDate()).padStart(2, '0')}. ${
+    MONTH[date.getMonth()]
+  } ${date.getFullYear()}`;
 };

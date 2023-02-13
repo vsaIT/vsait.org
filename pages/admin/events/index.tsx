@@ -18,7 +18,7 @@ import {
 } from '@tanstack/react-table';
 import { useQuery } from '@tanstack/react-query';
 import { EventType } from '@lib/types';
-import { getLocaleDateString, normalize } from '@lib/utils';
+import { getLocaleDatetimeString, normalize } from '@lib/utils';
 import {
   Button,
   DebouncedInput,
@@ -103,19 +103,19 @@ const AdminEvents: NextPage = () => {
       columnHelper.accessor('startTime', {
         id: 'startTime',
         header: () => 'Starttid',
-        cell: (info) => <span>{getLocaleDateString(info.getValue())}</span>,
+        cell: (info) => <span>{getLocaleDatetimeString(info.getValue())}</span>,
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor('endTime', {
         id: 'endTime',
         header: () => 'Sluttid',
-        cell: (info) => <span>{getLocaleDateString(info.getValue())}</span>,
+        cell: (info) => <span>{getLocaleDatetimeString(info.getValue())}</span>,
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor('updatedAt', {
         id: 'lastEdited',
         header: () => <span>Sist endret</span>,
-        cell: (info) => <span>{getLocaleDateString(info.getValue())}</span>,
+        cell: (info) => <span>{getLocaleDatetimeString(info.getValue())}</span>,
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor('startTime', {

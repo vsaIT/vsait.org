@@ -104,6 +104,7 @@ export type UserType = {
     year: number;
   }[];
   profileIconSeed: string;
+  userAttendanceList?: { event: EventType }[];
 };
 export type CardProps = {
   user: UserType;

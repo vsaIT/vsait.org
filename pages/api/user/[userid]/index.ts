@@ -37,6 +37,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             publicProfile: true,
             membership: true,
             profileIconSeed: true,
+            userAttendanceList: {
+              select: {
+                event: true,
+              },
+            },
           },
         });
         return res.status(200).json(user);
