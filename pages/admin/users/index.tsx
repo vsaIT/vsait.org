@@ -20,7 +20,7 @@ import {
 } from '@tanstack/react-table';
 import Link from 'next/link';
 import { AdminTable } from '@components/Admin';
-import { getLocaleDateString, getMembershipYear } from '@lib/utils';
+import { getLocaleDateString, getMembershipYear, normalize } from '@lib/utils';
 
 type AdminUserType = {
   id: string;
@@ -39,7 +39,7 @@ const AdminUsers: NextPage = () => {
 
   const [sorting, setSorting] = useState<SortingState>([
     {
-      id: 'firstName',
+      id: 'createdAt',
       desc: true,
     },
   ]);
@@ -159,6 +159,15 @@ const AdminUsers: NextPage = () => {
             </Link>
           ),
           footer: (info) => info.column.id,
+          filterFn: (row, columnId, value: string) => {
+            const accessor = row.getValue(columnId) as {
+              id: string;
+              firstName: string;
+            };
+            return normalize(accessor.firstName.toLowerCase()).includes(
+              normalize(value.toLowerCase())
+            );
+          },
         }
       ),
       columnHelper.accessor('lastName', {
