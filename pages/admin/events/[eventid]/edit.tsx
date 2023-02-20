@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { AdminLayout } from '@lib/components/Admin';
 
-const AdminEventsView: NextPage = () => {
+const AdminEventsEdit: NextPage = () => {
   const router = useRouter();
   const { eventid } = router.query;
 
@@ -29,4 +29,4 @@ const AdminEventsView: NextPage = () => {
   );
 };
 
-export default AdminEventsView;
+export default AdminEventsEdit;

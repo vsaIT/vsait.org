@@ -18,7 +18,7 @@ import {
 } from '@tanstack/react-table';
 import { useQuery } from '@tanstack/react-query';
 import { EventType } from '@lib/types';
-import { getLocaleDatetimeString, normalize } from '@lib/utils';
+import { getLocaleDatetimeString } from '@lib/utils';
 import {
   Button,
   DebouncedInput,
@@ -89,15 +89,6 @@ const AdminEvents: NextPage = () => {
             </Link>
           ),
           footer: (info) => info.column.id,
-          filterFn: (row, columnId, value: string) => {
-            const accessor = row.getValue(columnId) as {
-              id: string;
-              title: string;
-            };
-            return normalize(accessor.title.toLowerCase()).includes(
-              normalize(value.toLowerCase())
-            );
-          },
         }
       ),
       columnHelper.accessor('startTime', {
