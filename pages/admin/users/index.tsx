@@ -20,7 +20,7 @@ import {
 } from '@tanstack/react-table';
 import Link from 'next/link';
 import { AdminTable } from '@components/Admin';
-import { getLocaleDateString, getMembershipYear } from '@lib/utils';
+import { getLocaleDateString, getMembershipYear, normalize } from '@lib/utils';
 import type { User } from '@prisma/client';
 import { Membership } from '@prisma/client';
 import { useSession } from 'next-auth/react';
@@ -64,74 +64,6 @@ const AdminUsers: NextPage = () => {
   ]);
 
   // Midlertidig testdata
-  const [data, setData] = useState<Partial<AdminUserType>[]>([
-    {
-      id: '2',
-      firstName: 'test',
-      lastName: 'test',
-      email: 'test',
-      birthdate: new Date(),
-      createdAt: new Date(),
-      student: 'test',
-      membership: [{ year: 2022 }, { year: 2021 }],
-      role: 'USER',
-    },
-    {
-      id: '2',
-      firstName: 'awdad',
-      lastName: 'test',
-      email: 'test',
-      birthdate: new Date(),
-      createdAt: new Date(),
-      student: 'test',
-      membership: [{ year: 2022 }, { year: 2021 }],
-      role: 'USER',
-    },
-    {
-      id: '2',
-      firstName: 'awdad',
-      lastName: 'test',
-      email: 'test',
-      birthdate: new Date(),
-      createdAt: new Date(),
-      student: 'test',
-      membership: [{ year: 2022 }, { year: 2021 }],
-      role: 'USER',
-    },
-    {
-      id: '2',
-      firstName: 'awdad',
-      lastName: 'test',
-      email: 'test',
-      birthdate: new Date(),
-      createdAt: new Date(),
-      student: 'test',
-      membership: [{ year: 2022 }, { year: 2021 }],
-      role: 'USER',
-    },
-    {
-      id: '2',
-      firstName: 'awdad',
-      lastName: 'tedsaddsadst',
-      email: 'tedsadasdst',
-      birthdate: new Date(),
-      createdAt: new Date(),
-      student: 'test',
-      membership: [{ year: 2022 }, { year: 2021 }],
-      role: 'USER',
-    },
-    {
-      id: '2',
-      firstName: 'wadadawd',
-      lastName: 'dadadaw',
-      email: 'dwada',
-      birthdate: new Date(),
-      createdAt: new Date(),
-      student: 'dsds',
-      membership: [{ year: 2022 }, { year: 2021 }],
-      role: 'USER',
-    },
-  ]);
 
   const columnHelper = createColumnHelper<Partial<AdminUserType>>();
   const columns = useMemo(
@@ -178,6 +110,15 @@ const AdminUsers: NextPage = () => {
             </Link>
           ),
           footer: (info) => info.column.id,
+          filterFn: (row, columnId, value: string) => {
+            const accessor = row.getValue(columnId) as {
+              id: string;
+              firstName: string;
+            };
+            return normalize(accessor.firstName.toLowerCase()).includes(
+              normalize(value.toLowerCase())
+            );
+          },
         }
       ),
       columnHelper.accessor('lastName', {
