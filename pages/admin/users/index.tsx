@@ -21,18 +21,11 @@ import {
 import Link from 'next/link';
 import { AdminTable } from '@components/Admin';
 import { getLocaleDateString, getMembershipYear, normalize } from '@lib/utils';
+import type { User } from '@prisma/client';
+import { Membership } from '@prisma/client';
 
-type AdminUserType = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  birthdate: Date;
-  createdAt: Date;
-  student: string;
-  membership: { year: number }[];
-  role: string;
-};
+type AdminUserType = User & { membership: Membership[] };
+
 const AdminUsers: NextPage = () => {
   const [rowSelection, setRowSelection] = useState({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -45,7 +38,7 @@ const AdminUsers: NextPage = () => {
   ]);
 
   // Midlertidig testdata
-  const [data, setData] = useState<AdminUserType[]>([
+  const [data, setData] = useState<Partial<AdminUserType>[]>([
     {
       id: '2',
       firstName: 'test',
@@ -114,7 +107,7 @@ const AdminUsers: NextPage = () => {
     },
   ]);
 
-  const columnHelper = createColumnHelper<AdminUserType>();
+  const columnHelper = createColumnHelper<Partial<AdminUserType>>();
   const columns = useMemo(
     () => [
       columnHelper.display({
@@ -186,13 +179,17 @@ const AdminUsers: NextPage = () => {
       columnHelper.accessor('birthdate', {
         id: 'birthdate',
         header: () => 'Fødselsdato',
-        cell: (info) => <span>{getLocaleDateString(info.getValue())}</span>,
+        cell: (info) => (
+          <span>{getLocaleDateString(info.getValue() as Date)}</span>
+        ),
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor('createdAt', {
         id: 'createdAt',
         header: () => 'Registeringsdato',
-        cell: (info) => <span>{getLocaleDateString(info.getValue())}</span>,
+        cell: (info) => (
+          <span>{getLocaleDateString(info.getValue() as Date)}</span>
+        ),
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor('student', {
@@ -220,9 +217,9 @@ const AdminUsers: NextPage = () => {
         header: () => 'Medlemskap',
         cell: (info) => (
           <span>
-            {info
-              .getValue()
-              .some(({ year }) => year === getMembershipYear()) ? (
+            {(info.getValue() || []).some(
+              ({ year }) => year === getMembershipYear()
+            ) ? (
               <CircleCheck
                 className="w-[14px] h-[14px] fill-[#70BF2B]"
                 color="inherit"
