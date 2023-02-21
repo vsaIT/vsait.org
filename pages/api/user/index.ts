@@ -3,17 +3,22 @@ import prisma from '@db';
 import { getErrorMessage } from '@lib/utils';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { method } = req;
+  const { method, query } = req;
 
   switch (method) {
     case 'GET':
       try {
-        const users = await prisma.user.findMany({
-          include: {
-            membership: true,
-          },
-        });
-        return res.status(200).json(users);
+        const [users, userCount] = await prisma.$transaction([
+          prisma.user.findMany({
+            include: {
+              membership: true,
+            },
+            skip: (Number(query.page) + 1) * 9,
+            take: 9,
+          }),
+          prisma.user.count(),
+        ]);
+        return res.status(200).json({ users, userCount });
       } catch (error) {
         return res
           .status(500)

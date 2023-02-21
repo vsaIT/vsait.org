@@ -31,14 +31,21 @@ const AdminUsers: NextPage = () => {
   const { data: session } = useSession({
     required: true,
   });
-  const [users, setUsers] = useState<AdminUserType[]>([]);
-  const fetchUser = async () => {
-    const response = await fetch('/api/user');
+  const [users, setUsers] = useState<{
+    users: AdminUserType[];
+    userCount: number;
+  }>({
+    users: [],
+    userCount: 0,
+  });
+  const fetchUser = async (page = 1) => {
+    const response = await fetch(`/api/user?page=${page}`);
     if (!response.ok) {
       const message = `An error has occured: ${response.status}`;
       throw new Error(message);
     }
     const users = await response.json();
+    console.log(users);
     return users;
   };
 
@@ -63,9 +70,7 @@ const AdminUsers: NextPage = () => {
     },
   ]);
 
-  // Midlertidig testdata
-
-  const columnHelper = createColumnHelper<Partial<AdminUserType>>();
+  const columnHelper = createColumnHelper<AdminUserType>();
   const columns = useMemo(
     () => [
       columnHelper.display({
@@ -216,7 +221,7 @@ const AdminUsers: NextPage = () => {
     []
   );
   const table = useReactTable({
-    data: users,
+    data: users.users,
 
     columns: columns,
     initialState: { pagination: { pageIndex: 0, pageSize: 9 } },
@@ -225,6 +230,7 @@ const AdminUsers: NextPage = () => {
       sorting,
       columnFilters,
     },
+    pageCount: Math.floor(users.userCount / 9),
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -313,9 +319,9 @@ const AdminUsers: NextPage = () => {
                       <strong>
                         {1 + pageIndex * pageSize} -{' '}
                         {pageIndex + 1 == pageCount
-                          ? users?.length
+                          ? users?.userCount
                           : (pageIndex + 1) * pageSize}{' '}
-                        av {users?.length}
+                        av {users?.userCount}
                       </strong>
                       brukere
                     </p>
