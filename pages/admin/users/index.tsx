@@ -20,20 +20,13 @@ import {
 } from '@tanstack/react-table';
 import Link from 'next/link';
 import { AdminTable } from '@components/Admin';
-import { getLocaleDateString, getMembershipYear } from '@lib/utils';
+import { getLocaleDateString, getMembershipYear, normalize } from '@lib/utils';
+import type { User } from '@prisma/client';
+import { Membership } from '@prisma/client';
 import { useSession } from 'next-auth/react';
 
-type AdminUserType = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  birthdate: Date;
-  createdAt: Date;
-  student: string;
-  membership: { year: number }[];
-  role: string;
-};
+type AdminUserType = User & { membership: Membership[] };
+
 const AdminUsers: NextPage = () => {
   const { data: session } = useSession({
     required: true,
@@ -65,12 +58,13 @@ const AdminUsers: NextPage = () => {
 
   const [sorting, setSorting] = useState<SortingState>([
     {
-      id: 'firstName',
+      id: 'createdAt',
       desc: true,
     },
   ]);
 
   const columnHelper = createColumnHelper<AdminUserType>();
+
   const columns = useMemo(
     () => [
       columnHelper.display({
@@ -115,6 +109,15 @@ const AdminUsers: NextPage = () => {
             </Link>
           ),
           footer: (info) => info.column.id,
+          filterFn: (row, columnId, value: string) => {
+            const accessor = row.getValue(columnId) as {
+              id: string;
+              firstName: string;
+            };
+            return normalize(accessor.firstName.toLowerCase()).includes(
+              normalize(value.toLowerCase())
+            );
+          },
         }
       ),
       columnHelper.accessor('lastName', {
@@ -133,13 +136,17 @@ const AdminUsers: NextPage = () => {
       columnHelper.accessor('birthdate', {
         id: 'birthdate',
         header: () => 'Fødselsdato',
-        cell: (info) => <span>{getLocaleDateString(info.getValue())}</span>,
+        cell: (info) => (
+          <span>{getLocaleDateString(info.getValue() as Date)}</span>
+        ),
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor('createdAt', {
         id: 'createdAt',
         header: () => 'Registeringsdato',
-        cell: (info) => <span>{getLocaleDateString(info.getValue())}</span>,
+        cell: (info) => (
+          <span>{getLocaleDateString(info.getValue() as Date)}</span>
+        ),
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor('student', {
@@ -167,9 +174,9 @@ const AdminUsers: NextPage = () => {
         header: () => 'Medlemskap',
         cell: (info) => (
           <span>
-            {info
-              .getValue()
-              .some(({ year }) => year === getMembershipYear()) ? (
+            {(info.getValue() || []).some(
+              ({ year }) => year === getMembershipYear()
+            ) ? (
               <CircleCheck
                 className="w-[14px] h-[14px] fill-[#70BF2B]"
                 color="inherit"
