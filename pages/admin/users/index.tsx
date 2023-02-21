@@ -6,14 +6,13 @@ import {
   DebouncedInput,
   IndeterminateCheckbox,
 } from '@components/Input';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { CircleCheck, CircleXMark, Search } from '@lib/icons';
 import {
   ColumnFiltersState,
   createColumnHelper,
   getCoreRowModel,
   getFilteredRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   SortingState,
   useReactTable,
@@ -23,10 +22,31 @@ import { AdminTable } from '@components/Admin';
 import { getLocaleDateString, getMembershipYear, normalize } from '@lib/utils';
 import type { User } from '@prisma/client';
 import { Membership } from '@prisma/client';
+import { useSession } from 'next-auth/react';
 
 type AdminUserType = User & { membership: Membership[] };
 
+const fetchUser = async (page: number) => {
+  const response = await fetch(`/api/user?page=${page + 1}`);
+  if (!response.ok) {
+    const message = `An error has occured: ${response.status}`;
+    throw new Error(message);
+  }
+  const users = await response.json();
+  return users;
+};
 const AdminUsers: NextPage = () => {
+  const { data: session } = useSession({
+    required: true,
+  });
+  const [users, setUsers] = useState<{
+    users: AdminUserType[];
+    userCount: number;
+  }>({
+    users: [],
+    userCount: 0,
+  });
+
   const [rowSelection, setRowSelection] = useState({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
@@ -37,77 +57,7 @@ const AdminUsers: NextPage = () => {
     },
   ]);
 
-  // Midlertidig testdata
-  const [data, setData] = useState<Partial<AdminUserType>[]>([
-    {
-      id: '2',
-      firstName: 'test',
-      lastName: 'test',
-      email: 'test',
-      birthdate: new Date(),
-      createdAt: new Date(),
-      student: 'test',
-      membership: [{ year: 2022 }, { year: 2021 }],
-      role: 'USER',
-    },
-    {
-      id: '2',
-      firstName: 'awdad',
-      lastName: 'test',
-      email: 'test',
-      birthdate: new Date(),
-      createdAt: new Date(),
-      student: 'test',
-      membership: [{ year: 2022 }, { year: 2021 }],
-      role: 'USER',
-    },
-    {
-      id: '2',
-      firstName: 'awdad',
-      lastName: 'test',
-      email: 'test',
-      birthdate: new Date(),
-      createdAt: new Date(),
-      student: 'test',
-      membership: [{ year: 2022 }, { year: 2021 }],
-      role: 'USER',
-    },
-    {
-      id: '2',
-      firstName: 'awdad',
-      lastName: 'test',
-      email: 'test',
-      birthdate: new Date(),
-      createdAt: new Date(),
-      student: 'test',
-      membership: [{ year: 2022 }, { year: 2021 }],
-      role: 'USER',
-    },
-    {
-      id: '2',
-      firstName: 'awdad',
-      lastName: 'tedsaddsadst',
-      email: 'tedsadasdst',
-      birthdate: new Date(),
-      createdAt: new Date(),
-      student: 'test',
-      membership: [{ year: 2022 }, { year: 2021 }],
-      role: 'USER',
-    },
-    {
-      id: '2',
-      firstName: 'wadadawd',
-      lastName: 'dadadaw',
-      email: 'dwada',
-      birthdate: new Date(),
-      createdAt: new Date(),
-      student: 'dsds',
-      membership: [{ year: 2022 }, { year: 2021 }],
-      role: 'USER',
-    },
-  ]);
-
-  const columnHelper = createColumnHelper<Partial<AdminUserType>>();
+  const columnHelper = createColumnHelper<AdminUserType>();
   const columns = useMemo(
     () => [
       columnHelper.display({
@@ -258,7 +208,7 @@ const AdminUsers: NextPage = () => {
     []
   );
   const table = useReactTable({
-    data: data,
+    data: users.users,
 
     columns: columns,
     initialState: { pagination: { pageIndex: 0, pageSize: 9 } },
@@ -267,13 +217,14 @@ const AdminUsers: NextPage = () => {
       sorting,
       columnFilters,
     },
+    pageCount: Math.ceil(users.userCount / 9),
+    manualPagination: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     // Pipeline
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     debugTable: false,
   });
@@ -281,6 +232,18 @@ const AdminUsers: NextPage = () => {
   const pageCount = table.getPageCount();
   const pageIndex = table.getState().pagination.pageIndex;
   const pageSize = table.getState().pagination.pageSize;
+
+  useEffect(() => {
+    if (!session?.user?.id) return;
+
+    fetchUser(pageIndex)
+      .then((users) => setUsers(users))
+      .catch((error) => {
+        error.message;
+        window.location.href = '/500';
+      });
+  }, [session?.user?.id, pageIndex, fetchUser]);
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
       <Head>
@@ -355,9 +318,9 @@ const AdminUsers: NextPage = () => {
                       <strong>
                         {1 + pageIndex * pageSize} -{' '}
                         {pageIndex + 1 == pageCount
-                          ? data.length
+                          ? users?.userCount
                           : (pageIndex + 1) * pageSize}{' '}
-                        av {data.length}
+                        av {users?.userCount}
                       </strong>
                       brukere
                     </p>
