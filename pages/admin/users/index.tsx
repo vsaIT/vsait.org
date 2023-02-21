@@ -13,7 +13,6 @@ import {
   createColumnHelper,
   getCoreRowModel,
   getFilteredRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   SortingState,
   useReactTable,
@@ -27,6 +26,15 @@ import { useSession } from 'next-auth/react';
 
 type AdminUserType = User & { membership: Membership[] };
 
+const fetchUser = async (page: number) => {
+  const response = await fetch(`/api/user?page=${page + 1}`);
+  if (!response.ok) {
+    const message = `An error has occured: ${response.status}`;
+    throw new Error(message);
+  }
+  const users = await response.json();
+  return users;
+};
 const AdminUsers: NextPage = () => {
   const { data: session } = useSession({
     required: true,
@@ -38,27 +46,6 @@ const AdminUsers: NextPage = () => {
     users: [],
     userCount: 0,
   });
-  const fetchUser = async (page = 1) => {
-    const response = await fetch(`/api/user?page=${page}`);
-    if (!response.ok) {
-      const message = `An error has occured: ${response.status}`;
-      throw new Error(message);
-    }
-    const users = await response.json();
-    console.log(users);
-    return users;
-  };
-
-  useEffect(() => {
-    if (!session?.user?.id) return;
-
-    fetchUser()
-      .then((users) => setUsers(users))
-      .catch((error) => {
-        error.message;
-        window.location.href = '/500';
-      });
-  }, [session?.user?.id]);
 
   const [rowSelection, setRowSelection] = useState({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -230,14 +217,14 @@ const AdminUsers: NextPage = () => {
       sorting,
       columnFilters,
     },
-    pageCount: Math.floor(users.userCount / 9),
+    pageCount: Math.ceil(users.userCount / 9),
+    manualPagination: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     // Pipeline
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     debugTable: false,
   });
@@ -245,6 +232,18 @@ const AdminUsers: NextPage = () => {
   const pageCount = table.getPageCount();
   const pageIndex = table.getState().pagination.pageIndex;
   const pageSize = table.getState().pagination.pageSize;
+
+  useEffect(() => {
+    if (!session?.user?.id) return;
+
+    fetchUser(pageIndex)
+      .then((users) => setUsers(users))
+      .catch((error) => {
+        error.message;
+        window.location.href = '/500';
+      });
+  }, [session?.user?.id, pageIndex, fetchUser]);
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
       <Head>

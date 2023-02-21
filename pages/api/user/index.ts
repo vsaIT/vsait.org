@@ -13,11 +13,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             include: {
               membership: true,
             },
-            skip: (Number(query.page) + 1) * 9,
+            skip: (Number(query.page) - 1) * 9,
             take: 9,
           }),
           prisma.user.count(),
         ]);
+        res.setHeader('Cache-Control', 'max-age=120');
         return res.status(200).json({ users, userCount });
       } catch (error) {
         return res
