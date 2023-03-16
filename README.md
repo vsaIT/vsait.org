@@ -16,13 +16,10 @@ Site: https://jazzy-malasada-b00157.netlify.app
 
 https://www.figma.com/file/8WEtfHLJZxjADUfiSiEOKS/VsaIT
 
-### ☁️ One-click Deploy with Netlify
-
-[![Deploy to Netlify button](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/vsaIT/vsait.org)
-
 ### 💻 Development
 
-TBA
+- Install yarn: `npm i -g yarn`
+- Install modules: `yarn install --ignore-engines`
 
 ### 📖 Readings
 
