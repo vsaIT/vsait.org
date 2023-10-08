@@ -58,6 +58,7 @@ const AdminUsers: NextPage = () => {
   ]);
 
   const columnHelper = createColumnHelper<AdminUserType>();
+
   const columns = useMemo(
     () => [
       columnHelper.display({
