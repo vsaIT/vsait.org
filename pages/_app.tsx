@@ -3,13 +3,13 @@ import Footer from '@lib/components/Footer';
 import { Navigation } from '@lib/components/Navigation';
 import '@lib/styles/globals.css';
 import type { ExtendedAppProps } from '@lib/types';
+import { mapPageTitle } from '@lib/utils';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SessionProvider } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { mapPageTitle } from '@lib/utils';
 
 const queryClient = new QueryClient();
 

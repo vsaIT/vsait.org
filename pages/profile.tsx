@@ -11,7 +11,6 @@ import { getErrorMessage } from '@lib/utils';
 import { useAtom } from 'jotai';
 import type { NextPage } from 'next';
 import { useSession } from 'next-auth/react';
-import Head from 'next/head';
 import Image from 'next/image';
 import { useCallback, useEffect, useState } from 'react';
 import Swal from 'sweetalert2';

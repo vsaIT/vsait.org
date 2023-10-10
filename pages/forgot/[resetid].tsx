@@ -7,7 +7,6 @@ import { ApiResponseType } from '@lib/types';
 import { getErrorMessage } from '@lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import type { NextPage } from 'next';
-import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';

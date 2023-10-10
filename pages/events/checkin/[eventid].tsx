@@ -8,7 +8,6 @@ import { getErrorMessage } from '@lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import type { NextPage } from 'next';
 import { useSession } from 'next-auth/react';
-import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';

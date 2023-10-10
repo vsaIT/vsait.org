@@ -4,7 +4,6 @@ import { Calendar, Person, Place } from '@lib/icons';
 import { EventType } from '@lib/types';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { NextPage } from 'next';
-import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';

@@ -6,7 +6,6 @@ import { Lock } from '@lib/icons';
 import { ApiResponseType } from '@lib/types';
 import { getErrorMessage } from '@lib/utils';
 import type { NextPage } from 'next';
-import Head from 'next/head';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';

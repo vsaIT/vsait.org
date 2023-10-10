@@ -1,6 +1,5 @@
-import type { NextPage } from 'next';
-import Head from 'next/head';
 import { AdminLayout } from '@lib/components/Admin';
+import type { NextPage } from 'next';
 
 const Statistics: NextPage = () => {
   return (

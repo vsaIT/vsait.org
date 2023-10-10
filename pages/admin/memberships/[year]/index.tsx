@@ -1,10 +1,9 @@
-import type { NextPage } from 'next';
-import Head from 'next/head';
-import { useRouter } from 'next/router';
 import { AdminLayout } from '@lib/components/Admin';
-import { useQuery } from '@tanstack/react-query';
 import { Membership } from '@prisma/client';
+import { useQuery } from '@tanstack/react-query';
+import type { NextPage } from 'next';
 import { User } from 'next-auth';
+import { useRouter } from 'next/router';
 
 const AdminMembershipsView: NextPage = () => {
   const router = useRouter();
