@@ -1,15 +1,15 @@
+import { Button } from '@components/Input';
+import { MINIMUM_ACTIVITY_TIMEOUT } from '@lib/constants';
 import { filter } from 'lodash';
 import { GetServerSidePropsContext } from 'next';
 import {
-  getSession,
   getCsrfToken,
-  signIn,
   getProviders,
+  getSession,
+  signIn,
 } from 'next-auth/react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Button } from '@components/Input';
-import { MINIMUM_ACTIVITY_TIMEOUT } from '@lib/constants';
 import ToastMessage from '../Toast';
 
 type RegistrationFormValues = {
@@ -270,7 +270,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 
   const csrfToken = await getCsrfToken({ req: context.req });
-  const providers = filter(await getProviders(), (provider: any) => {
+  const providers = filter(await getProviders(), (provider: Credential) => {
     return provider.type !== 'credentials';
   });
 

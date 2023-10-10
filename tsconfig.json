@@ -21,8 +21,10 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "incremental": true
+    "incremental": true,
+    "noUnusedLocals": false,     // Report unused local variables
+    "noUnusedParameters": false,    // Report unused parameters
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", ".gitignore", "./.gitignore"]
+  "exclude": ["node_modules", "**/*.gitignore"]
 }

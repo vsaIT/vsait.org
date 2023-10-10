@@ -18,7 +18,7 @@ type LoginFormValues = {
   password: string;
 };
 
-const LoginForm = ({ csrfToken }: any) => {
+const LoginForm = ({ csrfToken }: { csrfToken: string }) => {
   const [isSubmitting, setSubmitting] = useState(false);
   const { register, handleSubmit } = useForm<LoginFormValues>();
   console.log(csrfToken);
@@ -135,7 +135,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 
   const csrfToken = await getCsrfToken({ req: context.req });
-  const providers = filter(await getProviders(), (provider: any) => {
+  const providers = filter(await getProviders(), (provider: Credential) => {
     return provider.type !== 'credentials';
   });
 
