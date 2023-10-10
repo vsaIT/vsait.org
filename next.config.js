@@ -4,5 +4,4 @@ module.exports = {
     ignoreBuildErrors: true,
   },
   reactStrictMode: true,
-  exclude: ["./.gitignore"]
 };
