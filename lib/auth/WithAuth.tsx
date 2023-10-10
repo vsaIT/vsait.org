@@ -1,12 +1,11 @@
 import { useSession, signIn } from 'next-auth/react';
 import { useLayoutEffect } from 'react';
 import router from 'next/router';
+import { AuthenticatedPage } from '@lib/types';
 
 type WithAuthProps = {
   children: React.ReactNode;
-  options?: {
-    redirectTo?: string;
-  };
+  options?: AuthenticatedPage;
 };
 
 const WithAuth = ({ children, options }: WithAuthProps) => {

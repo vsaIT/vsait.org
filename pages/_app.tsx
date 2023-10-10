@@ -13,9 +13,12 @@ const queryClient = new QueryClient();
 const MyApp = ({ Component, pageProps }: ExtendedAppProps) => {
   const AnyComponent = Component as any;
   const content = Component.auth ? (
-    <WithAuth options={Component.auth}>
-      <AnyComponent {...pageProps} />
-    </WithAuth>
+    <>
+      {/* @ts-expect-error Server Component */}
+      <WithAuth options={Component.auth}>
+        <AnyComponent {...pageProps} />
+      </WithAuth>
+    </>
   ) : (
     <AnyComponent {...pageProps} />
   );

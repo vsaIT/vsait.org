@@ -1,6 +1,6 @@
 # .env file
 .env
-
+.gitignore
 # dependencies
 /node_modules
 /.pnp
