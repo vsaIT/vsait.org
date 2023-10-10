@@ -24,7 +24,11 @@ type RegistrationFormValues = {
   student: string;
 };
 
-const RegistrationForm = ({ csrfToken }: any) => {
+type RegistrationFormProps = {
+  csrfToken?: string;
+};
+
+const RegistrationForm = ({ csrfToken }: RegistrationFormProps) => {
   const [isSubmitting, setSubmitting] = useState(false);
   const { register, handleSubmit } = useForm<RegistrationFormValues>();
 

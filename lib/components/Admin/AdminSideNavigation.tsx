@@ -72,34 +72,35 @@ const AdminSideNavigation = () => {
             </div>
           </button>
           {links.map((link) => (
-            <Link href={link.href} key={link.href}>
-              <a
-                className={`px-3 py-2 transition-all duration-300 hover:bg-[rgba(0,0,0,0.3)] h-10 rounded-md w-full fill-white text-white ${
-                  router.pathname.split('/').slice(0, 3).join('/') === link.href
-                    ? 'bg-[rgba(0,0,0,0.3)]'
-                    : ''
-                }`}
-              >
-                <div className="grid items-center text-left grid-cols-sideNavigationButton overflow-hidden">
-                  {link.icon}
-                  <p className="ml-2 text-sm font-medium [transform:translateY(1.5px)]">
-                    {link.text}
-                  </p>
-                </div>
-              </a>
+            <Link
+              href={link.href}
+              key={link.href}
+              className={`px-3 py-2 transition-all duration-300 hover:bg-[rgba(0,0,0,0.3)] h-10 rounded-md w-full fill-white text-white ${
+                router.pathname.split('/').slice(0, 3).join('/') === link.href
+                  ? 'bg-[rgba(0,0,0,0.3)]'
+                  : ''
+              }`}
+            >
+              <div className="grid items-center text-left grid-cols-sideNavigationButton overflow-hidden">
+                {link.icon}
+                <p className="ml-2 text-sm font-medium [transform:translateY(1.5px)]">
+                  {link.text}
+                </p>
+              </div>
             </Link>
           ))}
         </div>
         <div className="flex flex-col gap-2 w-full items-start">
-          <Link href="/">
-            <a className="px-3 py-2 transition-all duration-300 hover:bg-[rgba(0,0,0,0.3)] h-10 rounded-md w-full fill-white text-white">
-              <div className="grid items-center text-left grid-cols-sideNavigationButton overflow-hidden">
-                <House className="h-4 w-4" color="inherit" />
-                <p className="ml-2 text-sm font-medium [transform:translateY(2px)]">
-                  Til nettsiden
-                </p>
-              </div>
-            </a>
+          <Link
+            href="/"
+            className="px-3 py-2 transition-all duration-300 hover:bg-[rgba(0,0,0,0.3)] h-10 rounded-md w-full fill-white text-white"
+          >
+            <div className="grid items-center text-left grid-cols-sideNavigationButton overflow-hidden">
+              <House className="h-4 w-4" color="inherit" />
+              <p className="ml-2 text-sm font-medium [transform:translateY(2px)]">
+                Til nettsiden
+              </p>
+            </div>
           </Link>
         </div>
       </div>

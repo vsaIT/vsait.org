@@ -96,10 +96,11 @@ const AdminUsers: NextPage = () => {
           id: 'firstName',
           header: () => 'Fornavn',
           cell: (info) => (
-            <Link href={`/admin/users/${info.getValue().id}`}>
-              <a className="inline-block min-w-[180px] font-medium text-primary hover:brightness-75 transition-all">
-                {info.getValue().firstName}
-              </a>
+            <Link
+              href={`/admin/users/${info.getValue().id}`}
+              className="inline-block min-w-[180px] font-medium text-primary hover:brightness-75 transition-all"
+            >
+              {info.getValue().firstName}
             </Link>
           ),
           footer: (info) => info.column.id,
@@ -268,12 +269,12 @@ const AdminUsers: NextPage = () => {
                       value={
                         (table
                           .getColumn('firstName')
-                          .getFilterValue() as string) ?? ''
+                          ?.getFilterValue() as string) ?? ''
                       }
                       onChange={(value) =>
                         table
                           .getColumn('firstName')
-                          .setFilterValue(String(value))
+                          ?.setFilterValue(String(value))
                       }
                       placeholder="Søk etter bruker"
                       className="w-full py-2 px-4 pl-10 border-2 border-stone-300 outline-none text-sm text-left leading-6 bg-transparent rounded-xl transition duration-150 ease-in-out"
@@ -301,12 +302,10 @@ const AdminUsers: NextPage = () => {
                     </p>
                   </div>
                   <Link href="/admin/users/new">
-                    <a>
-                      <Button
-                        text="Legg til bruker"
-                        className="text-xs py-3 px-8"
-                      />
-                    </a>
+                    <Button
+                      text="Legg til bruker"
+                      className="text-xs py-3 px-8"
+                    />
                   </Link>
                 </div>
                 <div className="grid [grid-template-rows:minmax(409px,1fr)_50px]">

@@ -169,10 +169,11 @@ const Checkin: NextPage = () => {
                 <h2 className="font-bold text-2xl mb-4 bg-slate-400 p-4 rounded-md animate-pulse w-4/12 mx-auto text-center"></h2>
               ) : (
                 <h2 className="font-bold text-2xl mb-4 text-center">
-                  <Link href={`/events/${eventid}`}>
-                    <a className="text-primary hover:underline">
-                      {event.title}
-                    </a>
+                  <Link
+                    href={`/events/${eventid}`}
+                    className="text-primary hover:underline"
+                  >
+                    {event.title}
                   </Link>
                 </h2>
               )}

@@ -158,8 +158,8 @@ const ForgotPassword: NextPage = () => {
               </div>
             </form>
             <div className="flex justify-center mt-4">
-              <Link href="/login">
-                <a className="text-darker">Logg inn</a>
+              <Link href="/login" className="text-darker">
+                Logg inn
               </Link>
             </div>
           </div>

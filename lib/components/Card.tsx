@@ -373,13 +373,14 @@ const Card = ({ user, session }: CardProps) => {
                 Math.min(attendanceCount, user?.userAttendanceList?.length)
               )
               .map(({ event }) => (
-                <Link href={`/events/${event.id}`}>
-                  <a className="flex justify-between border rounded-lg py-3 px-6 border-stone-200 bg-stone-200 text-stone-700 text-left text-bold text-sm w-full">
-                    <span>{event.title}</span>
-                    <span>{`${getLocaleDatetimeString(
-                      event.startTime
-                    )} - ${getLocaleDatetimeString(event.endTime)}`}</span>
-                  </a>
+                <Link
+                  href={`/events/${event.id}`}
+                  className="flex justify-between border rounded-lg py-3 px-6 border-stone-200 bg-stone-200 text-stone-700 text-left text-bold text-sm w-full"
+                >
+                  <span>{event.title}</span>
+                  <span>{`${getLocaleDatetimeString(
+                    event.startTime
+                  )} - ${getLocaleDatetimeString(event.endTime)}`}</span>
                 </Link>
               ))}
 

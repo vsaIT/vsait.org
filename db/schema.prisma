@@ -42,31 +42,30 @@ model Session {
 }
 
 model User {
-  id                    String    @id @default(cuid())
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
-  firstName             String
-  lastName              String
-  email                 String    @unique
-  password              String
-  emailVerified         Boolean   @default(false)
-  birthdate             DateTime?
-  foodNeeds             String    @default("")
-  student               String?
-  publicProfile         Boolean   @default(false)
-  role                  Role      @default(USER)
-  accounts              Account[]
-  sessions              Session[]
-  membership            Membership[]
+  id              String       @id @default(cuid())
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  firstName       String
+  lastName        String
+  email           String       @unique
+  password        String
+  emailVerified   Boolean      @default(false)
+  birthdate       DateTime?
+  foodNeeds       String       @default("")
+  student         String?
+  publicProfile   Boolean      @default(false)
+  role            Role         @default(USER)
+  accounts        Account[]
+  sessions        Session[]
+  membership      Membership[]
+  profileIconSeed String       @default(cuid())
 
-  profileIconSeed       String    @default(cuid())
+  userRegistrationList Registrations[]
+  userWaitingList      Waiting[]
+  userAttendanceList   Attendances[]
 
-  userRegistrationList  Registrations[]
-  userWaitingList       Waiting[]
-  userAttendanceList    Attendances[]
-
-  emailVerificationUrl  String
-  passwordResetUrl      String
+  emailVerificationUrl String
+  passwordResetUrl     String
 }
 
 model Event {
@@ -85,48 +84,48 @@ model Event {
   location  String?
   eventType EventType? @default(MEMBERSHIP)
 
-  maxRegistrations     Int?
-  registrationList     Registrations[]
-  waitingList          Waiting[]
-  attendanceList       Attendances[]
+  maxRegistrations Int?
+  registrationList Registrations[]
+  waitingList      Waiting[]
+  attendanceList   Attendances[]
 
-  isDraft              Boolean @default(false)
-  isCancelled          Boolean @default(false)
+  isDraft     Boolean @default(false)
+  isCancelled Boolean @default(false)
 }
 
 model Registrations {
-  user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
-  event     Event?    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  event     Event?   @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId   Int
-  createdAt DateTime  @default(now())
+  createdAt DateTime @default(now())
 
   @@id([userId, eventId])
 }
 
 model Waiting {
-  user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
-  event     Event?    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  event     Event?   @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId   Int
-  createdAt DateTime  @default(now())
+  createdAt DateTime @default(now())
 
   @@id([userId, eventId])
 }
 
 model Attendances {
-  user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
-  event     Event?    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  event     Event?   @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId   Int
-  createdAt DateTime  @default(now())
+  createdAt DateTime @default(now())
 
   @@id([userId, eventId])
 }
 
 model Membership {
-  year      Int       @id
-  users     User[]
+  year  Int    @id
+  users User[]
 }
 
 model VerificationToken {

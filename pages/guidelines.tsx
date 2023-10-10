@@ -35,7 +35,7 @@ const Organization: NextPage = () => {
             <p className="mb-2">Følgende logo er VSAiT sin offisielle logo:</p>
             <div className="max-w-sm">
               <Image
-                src="https://medlem.vsait.org/static/home/logo.svg"
+                src="logo.svg"
                 alt="Vercel Logo"
                 width={256}
                 height={256}

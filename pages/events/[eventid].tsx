@@ -252,10 +252,11 @@ const Event: NextPage = () => {
                               </p>
                               <p>
                                 Vennligst søk om medlemsskap ved å gå inn på{' '}
-                                <Link href="/profile">
-                                  <a className="font-medium text-primary hover:underline">
-                                    profil
-                                  </a>
+                                <Link
+                                  href="/profile"
+                                  className="font-medium text-primary hover:underline"
+                                >
+                                  profil
                                 </Link>
                                 .
                               </p>

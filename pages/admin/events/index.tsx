@@ -82,10 +82,11 @@ const AdminEvents: NextPage = () => {
           id: 'title',
           header: () => 'Tittel',
           cell: (info) => (
-            <Link href={`/admin/events/${info.getValue().id}`}>
-              <a className="inline-block min-w-[180px] font-medium text-primary hover:brightness-75 transition-all">
-                {info.getValue().title}
-              </a>
+            <Link
+              href={`/admin/events/${info.getValue().id}`}
+              className="inline-block min-w-[180px] font-medium text-primary hover:brightness-75 transition-all"
+            >
+              {info.getValue().title}
             </Link>
           ),
           footer: (info) => info.column.id,
@@ -235,11 +236,12 @@ const AdminEvents: NextPage = () => {
                     <DebouncedInput
                       type="text"
                       value={
-                        (table.getColumn('title').getFilterValue() as string) ??
-                        ''
+                        (table
+                          .getColumn('title')
+                          ?.getFilterValue() as string) ?? ''
                       }
                       onChange={(value) =>
-                        table.getColumn('title').setFilterValue(String(value))
+                        table.getColumn('title')?.setFilterValue(String(value))
                       }
                       placeholder="Søk etter arrangementer"
                       className="w-full py-2 px-4 pl-10 border-2 border-stone-300 outline-none text-sm text-left leading-6 bg-transparent rounded-xl transition duration-150 ease-in-out"
@@ -267,12 +269,10 @@ const AdminEvents: NextPage = () => {
                     </p>
                   </div>
                   <Link href="/admin/events/new">
-                    <a>
-                      <Button
-                        text="Legg til nytt arrangement"
-                        className="text-xs py-3 px-8"
-                      />
-                    </a>
+                    <Button
+                      text="Legg til nytt arrangement"
+                      className="text-xs py-3 px-8"
+                    />
                   </Link>
                 </div>
                 <div className="grid [grid-template-rows:minmax(409px,1fr)_50px]">

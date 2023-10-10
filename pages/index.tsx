@@ -78,18 +78,14 @@ const Home: NextPage = () => {
                   </p>
                   <div className="flex gap-5 py-10">
                     <Link href="/login">
-                      <a>
-                        <Button
-                          text="Logg inn"
-                          className="rounded-3xl"
-                          inverted
-                        />
-                      </a>
+                      <Button
+                        text="Logg inn"
+                        className="rounded-3xl"
+                        inverted
+                      />
                     </Link>
                     <Link href="/register">
-                      <a>
-                        <Button text="Register" className="rounded-3xl" />
-                      </a>
+                      <Button text="Register" className="rounded-3xl" />
                     </Link>
                   </div>
                 </>

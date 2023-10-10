@@ -1,13 +1,14 @@
+import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { PrismaAdapter } from '@next-auth/prisma-adapter';
+
+import prisma, { Role } from '@db/index';
 
 import {
   generateSalt,
   hashPassword,
   verifyPassword,
 } from '@lib/auth/passwords';
-import prisma, { Role } from '@db/index';
 
 type RegisterInputType =
   | 'firstName'
@@ -89,6 +90,7 @@ export default NextAuth({
               firstName: true,
               lastName: true,
               role: true,
+              profileIconSeed: true,
             },
           });
           let newUser = null;
@@ -238,6 +240,7 @@ export default NextAuth({
     async redirect({ url, baseUrl }) {
       return url.startsWith(baseUrl) ? url : baseUrl;
     },
+
     async jwt({
       token,
       user,

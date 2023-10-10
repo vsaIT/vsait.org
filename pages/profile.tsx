@@ -53,7 +53,7 @@ const Profile: NextPage = () => {
                   id="modal-icon"
                   src={avatar.toDataUriSync()}
                   alt="Profile icon"
-                  layout="fill"
+                  fill
                 />
               </div>
             </div>
@@ -201,7 +201,7 @@ const Profile: NextPage = () => {
                     <Image
                       src={avatar.toDataUriSync()}
                       alt="Profile icon"
-                      layout="fill"
+                      fill
                     />
                   </div>
                 </div>

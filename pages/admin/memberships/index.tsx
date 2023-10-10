@@ -72,10 +72,11 @@ const AdminMemberships: NextPage = () => {
         id: 'year',
         header: () => 'Medlemskap',
         cell: (info) => (
-          <Link href={`/admin/memberships/${info.getValue()}`}>
-            <a className="inline-block min-w-[180px] font-medium text-primary hover:brightness-75 transition-all">
-              {info.getValue()}
-            </a>
+          <Link
+            href={`/admin/memberships/${info.getValue()}`}
+            className="inline-block min-w-[180px] font-medium text-primary hover:brightness-75 transition-all"
+          >
+            {info.getValue()}
           </Link>
         ),
         footer: (info) => info.column.id,
