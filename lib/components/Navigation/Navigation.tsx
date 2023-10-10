@@ -52,7 +52,7 @@ const Navigation = () => {
   }, [profileIcon, setProfileIcon, setUser, session?.user?.id]);
 
   return (
-    <header className="absolute top-0 flex h-24 w-full items-center justify-center px-6 z-10 margin-left-auto">
+    <header className="absolute top-0 left-1/2 transform -translate-x-1/2 flex h-24 w-full max-w-screen-xl items-center justify-center px-6 z-10">
       {/* @ts-expect-error Server Component */}
       <Link
         href="/"
