@@ -132,229 +132,218 @@ const Event: NextPage = () => {
   if (error) window.location.href = '/500';
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center">
-      <Head>
-        <title>VSAiT | Arrangementer</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <>
+      {/* @ts-expect-error Server Component */}
+      <SmallHeader />
+      {status === 'loading' || isLoading || !isSuccess || data?.statusCode ? (
+        <>
+          {/* @ts-expect-error Server Component */}
+          <EventsDetailedSkeleton />
+        </>
+      ) : (
+        <div className="flex flex-col z-10 max-w-screen-xl mb-32 gap-6 transform -translate-y-10 w-11/12">
+          <div className="flex w-full bg-white shadow-2xl rounded-2xl p-6">
+            <div className="w-full overflow-hidden">
+              {/* @ts-expect-error Server Component */}
+              <Image
+                src={event.image}
+                alt="Vercel Logo"
+                width={1352}
+                height={564}
+                layout="responsive"
+              />
+            </div>
+          </div>
 
-      <main className="flex w-full flex-1 flex-col items-center text-center">
-        {/* @ts-expect-error Server Component */}
-        <SmallHeader />
-        {status === 'loading' || isLoading || !isSuccess || data?.statusCode ? (
-          <>
-            {/* @ts-expect-error Server Component */}
-            <EventsDetailedSkeleton />
-          </>
-        ) : (
-          <div className="flex flex-col z-10 max-w-screen-xl mb-32 gap-6 transform -translate-y-10 w-11/12">
-            <div className="flex w-full bg-white shadow-2xl rounded-2xl p-6">
-              <div className="w-full overflow-hidden">
-                {/* @ts-expect-error Server Component */}
-                <Image
-                  src={event.image}
-                  alt="Vercel Logo"
-                  width={1352}
-                  height={564}
-                  layout="responsive"
-                />
+          <div className="grid grid-cols-eventdetail text-left gap-6">
+            <div className="flex flex-col w-full bg-white shadow-2xl rounded-2xl p-6">
+              <h2 className="font-bold text-2xl mb-4">Detaljer</h2>
+
+              <div className="flex flex-col gap-2">
+                <p>
+                  <b>Starttid:</b> {new Date(event.startTime).toDateString()}
+                </p>
+                <p>
+                  <b>Sluttid:</b> {new Date(event.endTime).toDateString()}
+                </p>
+                <p>
+                  <b>Påmeldingsfrist:</b>{' '}
+                  {new Date(event.registrationDeadline).toDateString()}
+                </p>
+                <p>
+                  <b>Avmeldingsfrist:</b>{' '}
+                  {new Date(event.cancellationDeadline).toDateString()}
+                </p>
+                <p>
+                  <b>Sted:</b> {event.location}
+                </p>
+                <p>
+                  <b>Åpent for:</b>{' '}
+                  {event.eventType === 'OPEN' ? 'Alle' : 'Medlemmer'}
+                </p>
               </div>
             </div>
+            <div className="flex flex-col w-full bg-white shadow-2xl rounded-2xl p-6">
+              <h2 className="font-bold text-2xl mb-4">{event.title}</h2>
+              <p className="italic mb-2">
+                Last edited: {new Date().toDateString()}
+              </p>
+              <p>{event.description}</p>
+            </div>
+          </div>
 
-            <div className="grid grid-cols-eventdetail text-left gap-6">
-              <div className="flex flex-col w-full bg-white shadow-2xl rounded-2xl p-6">
-                <h2 className="font-bold text-2xl mb-4">Detaljer</h2>
-
+          <div className="grid grid-cols-eventdetail text-left gap-6">
+            <div className="flex flex-col">
+              <div className="flex flex-col w-full bg-white shadow-2xl rounded-2xl p-6 mb-6">
+                <h2 className="font-bold text-2xl mb-4">Påmelding</h2>
                 <div className="flex flex-col gap-2">
                   <p>
-                    <b>Starttid:</b> {new Date(event.startTime).toDateString()}
+                    <b>Antall påmeldte:</b> {event.registrationList.length} /{' '}
+                    {event.maxRegistrations}
                   </p>
                   <p>
-                    <b>Sluttid:</b> {new Date(event.endTime).toDateString()}
+                    <b>Venteliste:</b> {event.waitingList.length}
                   </p>
-                  <p>
-                    <b>Påmeldingsfrist:</b>{' '}
-                    {new Date(event.registrationDeadline).toDateString()}
-                  </p>
-                  <p>
-                    <b>Avmeldingsfrist:</b>{' '}
-                    {new Date(event.cancellationDeadline).toDateString()}
-                  </p>
-                  <p>
-                    <b>Sted:</b> {event.location}
-                  </p>
-                  <p>
-                    <b>Åpent for:</b>{' '}
-                    {event.eventType === 'OPEN' ? 'Alle' : 'Medlemmer'}
-                  </p>
-                </div>
-              </div>
-              <div className="flex flex-col w-full bg-white shadow-2xl rounded-2xl p-6">
-                <h2 className="font-bold text-2xl mb-4">{event.title}</h2>
-                <p className="italic mb-2">
-                  Last edited: {new Date().toDateString()}
-                </p>
-                <p>{event.description}</p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-eventdetail text-left gap-6">
-              <div className="flex flex-col">
-                <div className="flex flex-col w-full bg-white shadow-2xl rounded-2xl p-6 mb-6">
-                  <h2 className="font-bold text-2xl mb-4">Påmelding</h2>
-                  <div className="flex flex-col gap-2">
-                    <p>
-                      <b>Antall påmeldte:</b> {event.registrationList.length} /{' '}
-                      {event.maxRegistrations}
-                    </p>
-                    <p>
-                      <b>Venteliste:</b> {event.waitingList.length}
-                    </p>
-                    <div className="flex flex-col gap-3 mt-2">
-                      {session?.user ? (
-                        <>
-                          {/* @ts-expect-error Server Component */}
-                          <Button
-                            onClick={() => showRegistrations()}
-                            text="Se andre påmeldte"
-                          />
-                          {new Date() >=
-                          new Date(event.registrationDeadline) ? (
-                            <p className="text-center">
-                              Arrangementet er ikke åpent for påmelding!
-                            </p>
-                          ) : new Date() >=
-                              new Date(event.cancellationDeadline) &&
-                            data.hasRegistered ? (
-                            <p className="text-center">
-                              Arrangementet er ikke lenger åpent for avmelding!
-                            </p>
-                          ) : (data.hasMembership &&
-                              event.eventType === 'MEMBERSHIP') ||
-                            event.eventType === 'OPEN' ? (
-                            data.hasRegistered ? (
-                              <>
-                                {/* @ts-expect-error Server Component */}
-                                <Button
-                                  onClick={() =>
-                                    registrationEnabled && register()
-                                  }
-                                  text="Meld deg av"
-                                />
-                              </>
-                            ) : (
-                              <>
-                                {/* @ts-expect-error Server Component */}
-                                <Button
-                                  onClick={() =>
-                                    registrationEnabled && register()
-                                  }
-                                  text="Meld deg på"
-                                />
-                              </>
-                            )
+                  <div className="flex flex-col gap-3 mt-2">
+                    {session?.user ? (
+                      <>
+                        {/* @ts-expect-error Server Component */}
+                        <Button
+                          onClick={() => showRegistrations()}
+                          text="Se andre påmeldte"
+                        />
+                        {new Date() >= new Date(event.registrationDeadline) ? (
+                          <p className="text-center">
+                            Arrangementet er ikke åpent for påmelding!
+                          </p>
+                        ) : new Date() >=
+                            new Date(event.cancellationDeadline) &&
+                          data.hasRegistered ? (
+                          <p className="text-center">
+                            Arrangementet er ikke lenger åpent for avmelding!
+                          </p>
+                        ) : (data.hasMembership &&
+                            event.eventType === 'MEMBERSHIP') ||
+                          event.eventType === 'OPEN' ? (
+                          data.hasRegistered ? (
+                            <>
+                              {/* @ts-expect-error Server Component */}
+                              <Button
+                                onClick={() =>
+                                  registrationEnabled && register()
+                                }
+                                text="Meld deg av"
+                              />
+                            </>
                           ) : (
-                            <div className="flex flex-col gap-1">
-                              <p>
-                                Dette arrangementet er kun åpen for medlemmer.
-                              </p>
-                              <p>
-                                Vennligst søk om medlemsskap ved å gå inn på{' '}
-                                {/* @ts-expect-error Server Component */}
-                                <Link
-                                  href="/profile"
-                                  className="font-medium text-primary hover:underline"
-                                >
-                                  profil
-                                </Link>
-                                .
-                              </p>
-                            </div>
-                          )}
-                        </>
-                      ) : (
-                        <p className="text-center">
-                          Du må være pålogget for å melde deg på arrangementet!
-                        </p>
-                      )}
-                    </div>
+                            <>
+                              {/* @ts-expect-error Server Component */}
+                              <Button
+                                onClick={() =>
+                                  registrationEnabled && register()
+                                }
+                                text="Meld deg på"
+                              />
+                            </>
+                          )
+                        ) : (
+                          <div className="flex flex-col gap-1">
+                            <p>
+                              Dette arrangementet er kun åpen for medlemmer.
+                            </p>
+                            <p>
+                              Vennligst søk om medlemsskap ved å gå inn på{' '}
+                              {/* @ts-expect-error Server Component */}
+                              <Link
+                                href="/profile"
+                                className="font-medium text-primary hover:underline"
+                              >
+                                profil
+                              </Link>
+                              .
+                            </p>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <p className="text-center">
+                        Du må være pålogget for å melde deg på arrangementet!
+                      </p>
+                    )}
                   </div>
                 </div>
-
-                {session?.user.role === 'ADMIN' && (
-                  <div className="flex flex-col w-full bg-white shadow-2xl rounded-2xl p-6">
-                    <h2 className="font-bold text-2xl mb-4">Innslipp</h2>
-                    <a
-                      className="block w-full"
-                      href={`/events/checkin/${eventid}`}
-                    >
-                      {/* @ts-expect-error Server Component */}
-                      <Button text="Gå til innslipp" className="w-full" />
-                    </a>
-                  </div>
-                )}
               </div>
+
+              {session?.user.role === 'ADMIN' && (
+                <div className="flex flex-col w-full bg-white shadow-2xl rounded-2xl p-6">
+                  <h2 className="font-bold text-2xl mb-4">Innslipp</h2>
+                  <a
+                    className="block w-full"
+                    href={`/events/checkin/${eventid}`}
+                  >
+                    {/* @ts-expect-error Server Component */}
+                    <Button text="Gå til innslipp" className="w-full" />
+                  </a>
+                </div>
+              )}
+            </div>
+            <div className="flex flex-col w-full bg-white shadow-2xl rounded-2xl p-6">
+              <h2 className="font-bold text-2xl mb-4">Info</h2>
+              <div className="flex flex-col gap-4">
+                <p>
+                  Til venstre kan man se antallet påmeldte. Hensikten bak dette
+                  er hovedsakelig for å estimere hvor mye mat som skal kjøpes
+                  inn. Det står også en maksgrense, som gjelder hovedsakelig for
+                  mindre arrangementer der vi ikke kan være alt for mange
+                  mennesker samlet (f. eks buldring, mini-golf og bowling).
+                  Fortvil ikke dersom maksgrensen på et arrangement nås, da du
+                  vil få muligheten til å melde deg på ventelista for
+                  arrangementet - gitt at du er nummer 1 i køen, vil du få
+                  plassen dersom noen melder seg av.
+                </p>
+                <p>
+                  I boksen øverst til venstre, står det en oversikt over start-
+                  og sluttid for arrangementet. Merk at det også står
+                  påmeldings- og avmeldingsfrist som er viktige å forholde seg
+                  til. Avmelding er spesielt viktig, dersom det er en venteliste
+                  på arrangementet, slik at nestemann får plass.
+                </p>
+                <p>
+                  PS! Husk å skriv ned mulige matvarer som kan forårsake
+                  allergiske reaksjoner på profilen din, slik at vi kan tilpasse
+                  mattilbudet på våre arrangementer etter deres matbehov ♥.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {session?.user.role === 'ADMIN' && (
+            <div className="flex flex-col text-left">
               <div className="flex flex-col w-full bg-white shadow-2xl rounded-2xl p-6">
-                <h2 className="font-bold text-2xl mb-4">Info</h2>
-                <div className="flex flex-col gap-4">
-                  <p>
-                    Til venstre kan man se antallet påmeldte. Hensikten bak
-                    dette er hovedsakelig for å estimere hvor mye mat som skal
-                    kjøpes inn. Det står også en maksgrense, som gjelder
-                    hovedsakelig for mindre arrangementer der vi ikke kan være
-                    alt for mange mennesker samlet (f. eks buldring, mini-golf
-                    og bowling). Fortvil ikke dersom maksgrensen på et
-                    arrangement nås, da du vil få muligheten til å melde deg på
-                    ventelista for arrangementet - gitt at du er nummer 1 i
-                    køen, vil du få plassen dersom noen melder seg av.
-                  </p>
-                  <p>
-                    I boksen øverst til venstre, står det en oversikt over
-                    start- og sluttid for arrangementet. Merk at det også står
-                    påmeldings- og avmeldingsfrist som er viktige å forholde seg
-                    til. Avmelding er spesielt viktig, dersom det er en
-                    venteliste på arrangementet, slik at nestemann får plass.
-                  </p>
-                  <p>
-                    PS! Husk å skriv ned mulige matvarer som kan forårsake
-                    allergiske reaksjoner på profilen din, slik at vi kan
-                    tilpasse mattilbudet på våre arrangementer etter deres
-                    matbehov ♥.
-                  </p>
+                <h2 className="font-bold text-2xl mb-4">Liste over påmeldte</h2>
+                <div className="flex flex-col rounded-lg bg-slate-100 overflow-hidden text-xs">
+                  <div className="flex bg-light py-2 px-10 mb-1 font-bold text-white">
+                    <p className="w-1/3">Navn</p>
+                    <p className="w-1/3">E-post</p>
+                    <p className="w-1/3">Matbehov</p>
+                  </div>
+                  {data?.registrations?.map((user: RegisteredUserType) => (
+                    <div
+                      key={user.email}
+                      className="flex rounded-md bg-white py-2 px-9 mx-1 mb-1"
+                    >
+                      <p className="w-1/3">{user.name}</p>
+                      <p className="w-1/3">{user.email}</p>
+                      <p className="w-1/3">{user.foodNeeds}</p>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
-
-            {session?.user.role === 'ADMIN' && (
-              <div className="flex flex-col text-left">
-                <div className="flex flex-col w-full bg-white shadow-2xl rounded-2xl p-6">
-                  <h2 className="font-bold text-2xl mb-4">
-                    Liste over påmeldte
-                  </h2>
-                  <div className="flex flex-col rounded-lg bg-slate-100 overflow-hidden text-xs">
-                    <div className="flex bg-light py-2 px-10 mb-1 font-bold text-white">
-                      <p className="w-1/3">Navn</p>
-                      <p className="w-1/3">E-post</p>
-                      <p className="w-1/3">Matbehov</p>
-                    </div>
-                    {data?.registrations?.map((user: RegisteredUserType) => (
-                      <div
-                        key={user.email}
-                        className="flex rounded-md bg-white py-2 px-9 mx-1 mb-1"
-                      >
-                        <p className="w-1/3">{user.name}</p>
-                        <p className="w-1/3">{user.email}</p>
-                        <p className="w-1/3">{user.foodNeeds}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-      </main>
-    </div>
+          )}
+        </div>
+      )}
+    </>
   );
 };
 

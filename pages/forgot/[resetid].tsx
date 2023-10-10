@@ -132,91 +132,84 @@ const ForgotPassword: NextPage = () => {
   if (error) window.location.href = '/500';
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center">
-      <Head>
-        <title>VSAiT | Tilbakestill passord</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <>
+      {/* @ts-expect-error Server Component */}
+      <SmallHeader />
 
-      <main className="flex w-full flex-1 flex-col items-center text-center">
-        {/* @ts-expect-error Server Component */}
-        <SmallHeader />
-
-        <div className="flex flex-col justify-center w-128 p-8 mb-10 text-left bg-white shadow-2xl rounded-2xl transform -translate-y-10">
-          <div className="flex flex-col justify-center m-auto text-center w-8/12 mb-5">
-            <div className="flex justify-center relative w-24 h-24 overflow-hidden m-auto fill-slate-700">
-              {/* @ts-expect-error Server Component */}
-              <Lock color="inherit" />
-            </div>
-            <h2 className="text-l font-bold leading-7 text-gray-900">
-              Tilbakestill passordet ditt
-            </h2>
-            <p className="text-sm">
-              Oppgi nytt passord, så oppdaterer vi passordet til kontoen din.
-            </p>
+      <div className="flex flex-col justify-center w-128 p-8 mb-10 text-left bg-white shadow-2xl rounded-2xl transform -translate-y-10">
+        <div className="flex flex-col justify-center m-auto text-center w-8/12 mb-5">
+          <div className="flex justify-center relative w-24 h-24 overflow-hidden m-auto fill-slate-700">
+            {/* @ts-expect-error Server Component */}
+            <Lock color="inherit" />
           </div>
-          <div className="w-full">
-            <form
-              className="text-center w-full"
-              onSubmit={handleSubmit(onSubmit)}
-            >
-              <div className="relative my-6">
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-left text-stone-500 absolute bg-white left-4 -top-2 px-2 rounded-md"
-                >
-                  Nytt passord
-                </label>
-                <div className="mt-1">
-                  <input
-                    id="password"
-                    type="password"
-                    autoComplete="password"
-                    placeholder="Nytt passord"
-                    minLength={8}
-                    required
-                    {...register('password')}
-                    className="w-full py-3 px-4 border-2 border-stone-300 outline-none text-sm text-left leading-6 bg-transparent rounded-xl transition duration-150 ease-in-out"
-                  />
-                </div>
-              </div>
-              <div className="relative my-6">
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-left text-stone-500 absolute bg-white left-4 -top-2 px-2 rounded-md"
-                >
-                  Gjenta nytt passord
-                </label>
-                <div className="mt-1">
-                  <input
-                    id="repeatPassword"
-                    type="password"
-                    autoComplete="repeat-password"
-                    placeholder="Gjenta nytt passord"
-                    minLength={8}
-                    required
-                    {...register('repeatPassword')}
-                    className="w-full py-3 px-4 border-2 border-stone-300 outline-none text-sm text-left leading-6 bg-transparent rounded-xl transition duration-150 ease-in-out"
-                  />
-                </div>
-              </div>
-
-              <div className="mt-6 space-y-2 flex justify-center">
-                {/* @ts-expect-error Server Component */}
-                <Button
-                  disabled={isSubmitting || loading}
-                  onClick={() => console.log('submit')}
-                  className="w-full"
-                  type="submit"
-                >
-                  {isSubmitting ? <p>Loading...</p> : <p>Oppdater passord</p>}
-                </Button>
-              </div>
-            </form>
-          </div>
+          <h2 className="text-l font-bold leading-7 text-gray-900">
+            Tilbakestill passordet ditt
+          </h2>
+          <p className="text-sm">
+            Oppgi nytt passord, så oppdaterer vi passordet til kontoen din.
+          </p>
         </div>
-      </main>
-    </div>
+        <div className="w-full">
+          <form
+            className="text-center w-full"
+            onSubmit={handleSubmit(onSubmit)}
+          >
+            <div className="relative my-6">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-left text-stone-500 absolute bg-white left-4 -top-2 px-2 rounded-md"
+              >
+                Nytt passord
+              </label>
+              <div className="mt-1">
+                <input
+                  id="password"
+                  type="password"
+                  autoComplete="password"
+                  placeholder="Nytt passord"
+                  minLength={8}
+                  required
+                  {...register('password')}
+                  className="w-full py-3 px-4 border-2 border-stone-300 outline-none text-sm text-left leading-6 bg-transparent rounded-xl transition duration-150 ease-in-out"
+                />
+              </div>
+            </div>
+            <div className="relative my-6">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-left text-stone-500 absolute bg-white left-4 -top-2 px-2 rounded-md"
+              >
+                Gjenta nytt passord
+              </label>
+              <div className="mt-1">
+                <input
+                  id="repeatPassword"
+                  type="password"
+                  autoComplete="repeat-password"
+                  placeholder="Gjenta nytt passord"
+                  minLength={8}
+                  required
+                  {...register('repeatPassword')}
+                  className="w-full py-3 px-4 border-2 border-stone-300 outline-none text-sm text-left leading-6 bg-transparent rounded-xl transition duration-150 ease-in-out"
+                />
+              </div>
+            </div>
+
+            <div className="mt-6 space-y-2 flex justify-center">
+              {/* @ts-expect-error Server Component */}
+              <Button
+                disabled={isSubmitting || loading}
+                onClick={() => console.log('submit')}
+                className="w-full"
+                type="submit"
+              >
+                {isSubmitting ? <p>Loading...</p> : <p>Oppdater passord</p>}
+              </Button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </>
   );
 };
 

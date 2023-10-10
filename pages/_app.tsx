@@ -5,12 +5,16 @@ import '@lib/styles/globals.css';
 import type { ExtendedAppProps } from '@lib/types';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SessionProvider } from 'next-auth/react';
+import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { mapPageTitle } from '@lib/utils';
 
 const queryClient = new QueryClient();
 
 const MyApp = ({ Component, pageProps }: ExtendedAppProps) => {
+  const currPath = useRouter().pathname;
   const AnyComponent = Component as any;
   const content = Component.auth ? (
     <>
@@ -31,7 +35,15 @@ const MyApp = ({ Component, pageProps }: ExtendedAppProps) => {
         <QueryClientProvider client={queryClient}>
           {/* @ts-expect-error Server Component */}
           <Navigation />
-          {content}
+          <div className="flex min-h-screen flex-col items-center justify-center">
+            <Head>
+              <title>{mapPageTitle(currPath)}</title>
+              <link rel="icon" href="/favicon.ico" />
+            </Head>
+            <main className="flex w-full flex-1 flex-col items-center text-center">
+              {content}
+            </main>
+          </div>
           {/* @ts-expect-error Server Component */}
           <Footer />
         </QueryClientProvider>

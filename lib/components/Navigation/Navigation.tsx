@@ -9,6 +9,7 @@ import { profileIconAtom, userAtom } from '@lib/atoms';
 import { useEffect } from 'react';
 import { UserType } from '@lib/types';
 import { signOut } from 'next-auth/react';
+import { Role } from '@prisma/client';
 
 const navigation = [
   { href: '/', text: 'Hjem' },
@@ -59,7 +60,7 @@ const Navigation = () => {
         className="absolute left-8 rounded-full overflow-hidden h-16 w-16"
       >
         {/* @ts-expect-error Server Component */}
-        <Image src="logo.svg" alt="Vercel Logo" fill />
+        <Image src="/logo.svg" alt="Vercel Logo" fill />
       </Link>
       <nav className="flex gap-5">
         {navigation.map((nav) => (
@@ -77,6 +78,22 @@ const Navigation = () => {
             </Link>
           </div>
         ))}
+        {/*admin nav*/}
+        {session?.user?.role === Role.ADMIN && (
+          <div key="admin">
+            {/* @ts-expect-error Server Component */}
+            <Link
+              href="/admin"
+              className={`text-white transition-all duration-300 underline-offset-4 hover:text-secondary hover:brightness-150 ${
+                router.pathname.split('/')[1] === 'admin'
+                  ? 'underline text-secondary brightness-150'
+                  : ''
+              }`}
+            >
+              Admin
+            </Link>
+          </div>
+        )}
       </nav>
       <div className="absolute right-8 w-auto ">
         {session ? (

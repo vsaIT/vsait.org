@@ -270,99 +270,92 @@ const AdminUsers: NextPage = () => {
   }, [session?.user?.id, pageIndex, fetchUser]);
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center">
-      <Head>
-        <title>VSAiT | Administrasjon brukere</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main className="flex w-full flex-1 flex-col items-center">
-        {/* @ts-expect-error Server Component */}
-        <AdminLayout>
-          <>
-            <div className="flex flex-col w-full p-6 gap-6 h-screen">
-              <div className="flex w-full gap-6 bg-white p-6 rounded-xl justify-between">
-                <div className="flex flex-col">
-                  <h1 className="text-xl font-medium">Brukere</h1>
-                  <p className="text-sm">Se og endre brukere her</p>
-                </div>
-                <div className="relative w-96">
-                  <div className="mt-1 relative fill-stone-400">
-                    {/* @ts-expect-error Server Component */}
-                    <DebouncedInput
-                      type="text"
-                      value={
-                        (table
-                          .getColumn('firstName')
-                          ?.getFilterValue() as string) ?? ''
-                      }
-                      onChange={(value) =>
-                        table
-                          .getColumn('firstName')
-                          ?.setFilterValue(String(value))
-                      }
-                      placeholder="Søk etter bruker"
-                      className="w-full py-2 px-4 pl-10 border-2 border-stone-300 outline-none text-sm text-left leading-6 bg-transparent rounded-xl transition duration-150 ease-in-out"
-                    />
-                    {/* @ts-expect-error Server Component */}
-                    <Search
-                      className="w-4 h-4 absolute top-[13px] left-4"
-                      color="inherit"
-                    />
-                  </div>
-                </div>
+    <>
+      {/* @ts-expect-error Server Component */}
+      <AdminLayout>
+        <>
+          <div className="flex flex-col w-full p-6 gap-6 h-screen">
+            <div className="flex w-full gap-6 bg-white p-6 rounded-xl justify-between">
+              <div className="flex flex-col">
+                <h1 className="text-xl font-medium">Brukere</h1>
+                <p className="text-sm">Se og endre brukere her</p>
               </div>
-
-              <div className="bg-white rounded-xl w-full h-full p-6">
-                <div className="flex justify-between items-center pb-6">
-                  <div>
-                    <p
-                      className={`text-sm text-neutral-500 transition-all duration-500 ${
-                        Object.keys(rowSelection).length > 0
-                          ? 'opacity-100'
-                          : 'opacity-0'
-                      }`}
-                    >
-                      {Object.keys(rowSelection).length} av{' '}
-                      {table.getPreFilteredRowModel().rows.length} valgt
-                    </p>
-                  </div>
+              <div className="relative w-96">
+                <div className="mt-1 relative fill-stone-400">
                   {/* @ts-expect-error Server Component */}
-                  <Link href="/admin/users/new">
-                    {/* @ts-expect-error Server Component */}
-                    <Button
-                      text="Legg til bruker"
-                      className="text-xs py-3 px-8"
-                    />
-                  </Link>
-                </div>
-                <div className="grid [grid-template-rows:minmax(409px,1fr)_50px]">
-                  <div className="rounded-lg border border-neutral-300 overflow-hidden">
-                    {/* @ts-expect-error Server Component */}
-                    <AdminTable table={table} />
-                  </div>
-                  <div className="flex justify-between items-end gap-2">
-                    <p className="flex items-center gap-1 text-sm">
-                      Viser
-                      <strong>
-                        {1 + pageIndex * pageSize} -{' '}
-                        {pageIndex + 1 == pageCount
-                          ? users?.userCount
-                          : (pageIndex + 1) * pageSize}{' '}
-                        av {users?.userCount}
-                      </strong>
-                      brukere
-                    </p>
-                    {/* @ts-expect-error Server Component */}
-                    <AdminTablePagination table={table} />
-                  </div>
+                  <DebouncedInput
+                    type="text"
+                    value={
+                      (table
+                        .getColumn('firstName')
+                        ?.getFilterValue() as string) ?? ''
+                    }
+                    onChange={(value) =>
+                      table
+                        .getColumn('firstName')
+                        ?.setFilterValue(String(value))
+                    }
+                    placeholder="Søk etter bruker"
+                    className="w-full py-2 px-4 pl-10 border-2 border-stone-300 outline-none text-sm text-left leading-6 bg-transparent rounded-xl transition duration-150 ease-in-out"
+                  />
+                  {/* @ts-expect-error Server Component */}
+                  <Search
+                    className="w-4 h-4 absolute top-[13px] left-4"
+                    color="inherit"
+                  />
                 </div>
               </div>
             </div>
-          </>
-        </AdminLayout>
-      </main>
-    </div>
+
+            <div className="bg-white rounded-xl w-full h-full p-6">
+              <div className="flex justify-between items-center pb-6">
+                <div>
+                  <p
+                    className={`text-sm text-neutral-500 transition-all duration-500 ${
+                      Object.keys(rowSelection).length > 0
+                        ? 'opacity-100'
+                        : 'opacity-0'
+                    }`}
+                  >
+                    {Object.keys(rowSelection).length} av{' '}
+                    {table.getPreFilteredRowModel().rows.length} valgt
+                  </p>
+                </div>
+                {/* @ts-expect-error Server Component */}
+                <Link href="/admin/users/new">
+                  {/* @ts-expect-error Server Component */}
+                  <Button
+                    text="Legg til bruker"
+                    className="text-xs py-3 px-8"
+                  />
+                </Link>
+              </div>
+              <div className="grid [grid-template-rows:minmax(409px,1fr)_50px]">
+                <div className="rounded-lg border border-neutral-300 overflow-hidden">
+                  {/* @ts-expect-error Server Component */}
+                  <AdminTable table={table} />
+                </div>
+                <div className="flex justify-between items-end gap-2">
+                  <p className="flex items-center gap-1 text-sm">
+                    Viser
+                    <strong>
+                      {1 + pageIndex * pageSize} -{' '}
+                      {pageIndex + 1 == pageCount
+                        ? users?.userCount
+                        : (pageIndex + 1) * pageSize}{' '}
+                      av {users?.userCount}
+                    </strong>
+                    brukere
+                  </p>
+                  {/* @ts-expect-error Server Component */}
+                  <AdminTablePagination table={table} />
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      </AdminLayout>
+    </>
   );
 };
 

@@ -173,56 +173,44 @@ const Profile: NextPage = () => {
   }, [session?.user?.id, setFetching]);
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center">
-      <Head>
-        <title>VSAiT | Profil</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main className="flex w-full flex-1 flex-col items-center text-center">
-        {/* @ts-expect-error Server Component */}
-        <SmallHeader />
-
-        <div className="flex flex-col z-10 max-w-screen-xl mb-32 w-full gap-6 transform -translate-y-10">
-          {status === 'loading' && fetching ? (
-            <>'Loading or not authenticated...'</>
-          ) : (
-            <div className="flex flex-col gap-6 w-[calc(100%-3rem)] bg-white shadow-2xl rounded-2xl p-6 mx-auto box-border">
-              <div className="flex items-center">
+    <>
+      {/* @ts-expect-error Server Component */}
+      <SmallHeader />
+      <div className="flex flex-col z-10 max-w-screen-xl mb-32 w-full gap-6 transform -translate-y-10">
+        {status === 'loading' && fetching ? (
+          <>'Loading or not authenticated...'</>
+        ) : (
+          <div className="flex flex-col gap-6 w-[calc(100%-3rem)] bg-white shadow-2xl rounded-2xl p-6 mx-auto box-border">
+            <div className="flex items-center">
+              <div
+                className="flex items-center justify-center p-1 cursor-pointer"
+                onClick={updateProfileIcon}
+              >
                 <div
-                  className="flex items-center justify-center p-1 cursor-pointer"
-                  onClick={updateProfileIcon}
+                  className={`relative w-28 h-28 transition-all duration-700 ${
+                    !profileIcon.initial ? 'opacity-0' : ''
+                  }`}
                 >
-                  <div
-                    className={`relative w-28 h-28 transition-all duration-700 ${
-                      !profileIcon.initial ? 'opacity-0' : ''
-                    }`}
-                  >
-                    {/* @ts-expect-error Server Component */}
-                    <Image
-                      src={avatar.toDataUriSync()}
-                      alt="Profile icon"
-                      fill
-                    />
-                  </div>
-                </div>
-                <div className="flex flex-col ml-5 text-left">
-                  <p>
-                    {user.firstName} {user.lastName}
-                  </p>
-                  <p className="text-slate-500">Medlem</p>
+                  {/* @ts-expect-error Server Component */}
+                  <Image src={avatar.toDataUriSync()} alt="Profile icon" fill />
                 </div>
               </div>
-
-              <div>
-                {/* @ts-expect-error Server Component */}
-                <Card user={user} session={session} />
+              <div className="flex flex-col ml-5 text-left">
+                <p>
+                  {user.firstName} {user.lastName}
+                </p>
+                <p className="text-slate-500">Medlem</p>
               </div>
             </div>
-          )}
-        </div>
-      </main>
-    </div>
+
+            <div>
+              {/* @ts-expect-error Server Component */}
+              <Card user={user} session={session} />
+            </div>
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 
