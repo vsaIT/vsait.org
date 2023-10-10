@@ -11,6 +11,7 @@ const Admin: NextPage = () => {
       </Head>
 
       <main className="flex w-full flex-1 flex-col items-center">
+        {/* @ts-expect-error Server Component */}
         <AdminLayout>
           <>
             <div className="flex flex-col p-6 w-full gap-6 h-screen">
