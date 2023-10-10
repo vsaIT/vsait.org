@@ -1,32 +1,31 @@
-import type { NextPage } from 'next';
-import Head from 'next/head';
-import { Navigation } from '@lib/components/Navigation';
 import {
   AdminLayout,
   AdminTable,
   AdminTablePagination,
 } from '@lib/components/Admin';
 import {
-  useReactTable,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  SortingState,
-  createColumnHelper,
-  getSortedRowModel,
-  ColumnFiltersState,
-} from '@tanstack/react-table';
-import { useQuery } from '@tanstack/react-query';
-import { EventType } from '@lib/types';
-import { getLocaleDatetimeString } from '@lib/utils';
-import {
   Button,
   DebouncedInput,
   IndeterminateCheckbox,
 } from '@lib/components/Input';
-import React, { useMemo, useState } from 'react';
 import { CircleCheck, CircleXMark, Search } from '@lib/icons';
+import { EventType } from '@lib/types';
+import { getLocaleDatetimeString } from '@lib/utils';
+import { useQuery } from '@tanstack/react-query';
+import {
+  ColumnFiltersState,
+  SortingState,
+  createColumnHelper,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
+import type { NextPage } from 'next';
+import Head from 'next/head';
 import Link from 'next/link';
+import { useMemo, useState } from 'react';
 
 const AdminEvents: NextPage = () => {
   const { isLoading, error, isFetching, data } = useQuery({

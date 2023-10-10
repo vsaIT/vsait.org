@@ -1,9 +1,7 @@
-import type { NextPage } from 'next';
-import Head from 'next/head';
-import Footer from '@components/Footer';
-import { Navigation } from '@lib/components/Navigation';
 import { LargeHeader } from '@components/Header';
 import Wave from '@components/Wave';
+import type { NextPage } from 'next';
+import Head from 'next/head';
 
 const Custom500: NextPage = () => {
   return (

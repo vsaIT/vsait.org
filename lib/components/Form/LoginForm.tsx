@@ -1,16 +1,15 @@
+import { Button } from '@components/Input';
+import { MINIMUM_ACTIVITY_TIMEOUT } from '@lib/constants';
 import { filter } from 'lodash';
 import { GetServerSidePropsContext } from 'next';
 import {
-  getSession,
   getCsrfToken,
-  signIn,
   getProviders,
-  SignInResponse,
+  getSession,
+  signIn,
 } from 'next-auth/react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Button } from '@components/Input';
-import { MINIMUM_ACTIVITY_TIMEOUT } from '@lib/constants';
 import ToastMessage from '../Toast';
 
 type LoginFormValues = {

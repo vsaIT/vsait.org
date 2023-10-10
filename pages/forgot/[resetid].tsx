@@ -1,19 +1,17 @@
+import { SmallHeader } from '@lib/components/Header';
+import { Button } from '@lib/components/Input';
+import StyledSwal from '@lib/components/StyledSwal';
+import { MINIMUM_ACTIVITY_TIMEOUT } from '@lib/constants';
+import { Lock } from '@lib/icons';
+import { ApiResponseType } from '@lib/types';
+import { getErrorMessage } from '@lib/utils';
+import { useQuery } from '@tanstack/react-query';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import Footer from '@components/Footer';
-import { Navigation } from '@lib/components/Navigation';
-import { SmallHeader } from '@lib/components/Header';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { MINIMUM_ACTIVITY_TIMEOUT } from '@lib/constants';
-import { Lock } from '@lib/icons';
-import { Button } from '@lib/components/Input';
-import { useQuery } from '@tanstack/react-query';
-import StyledSwal from '@lib/components/StyledSwal';
-import { getErrorMessage } from '@lib/utils';
 import Swal from 'sweetalert2';
-import { ApiResponseType } from '@lib/types';
 
 type ResetFormValues = {
   password: string;

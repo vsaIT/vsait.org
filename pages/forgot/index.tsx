@@ -1,18 +1,16 @@
-import type { NextPage } from 'next';
-import Head from 'next/head';
-import Footer from '@components/Footer';
-import { Navigation } from '@lib/components/Navigation';
 import { SmallHeader } from '@lib/components/Header';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { Button } from '@lib/components/Input';
+import StyledSwal from '@lib/components/StyledSwal';
 import { MINIMUM_ACTIVITY_TIMEOUT } from '@lib/constants';
 import { Lock } from '@lib/icons';
-import { Button } from '@lib/components/Input';
 import { ApiResponseType } from '@lib/types';
-import StyledSwal from '@lib/components/StyledSwal';
 import { getErrorMessage } from '@lib/utils';
-import Swal from 'sweetalert2';
+import type { NextPage } from 'next';
+import Head from 'next/head';
 import Link from 'next/link';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import Swal from 'sweetalert2';
 
 type ForgotFormValues = {
   email: string;

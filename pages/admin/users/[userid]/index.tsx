@@ -1,10 +1,9 @@
+import { Accordion } from '@components/Accordion';
+import { Button } from '@components/Input';
+import { AdminLayout } from '@lib/components/Admin';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { AdminLayout } from '@lib/components/Admin';
-import React from 'react';
-import { Accordion } from '@components/Accordion';
-import { Button } from '@components/Input';
 
 const AdminUsersView: NextPage = () => {
   const router = useRouter();
@@ -18,6 +17,7 @@ const AdminUsersView: NextPage = () => {
       </Head>
 
       <main className="flex w-full flex-1 flex-col items-center">
+        {/* @ts-expect-error Server Component */}
         <AdminLayout>
           <>
             <div className="flex flex-col p-6 w-full gap-6 h-screen">
@@ -226,6 +226,7 @@ const AdminUsersView: NextPage = () => {
                         />
                         <div>Rolle</div>
                       </div>
+                      {/* @ts-expect-error Server Component */}
                       <Accordion
                         label="Endre passord"
                         labelClassName="text-xl font-medium text-left pl-2 py-4"
@@ -264,6 +265,7 @@ const AdminUsersView: NextPage = () => {
 
                           <div className="flex flex-col justify-center h-16 my-5">
                             <div className="my-10">
+                              {/* @ts-expect-error Server Component */}
                               <Button
                                 type="submit"
                                 text="Bytt passord"

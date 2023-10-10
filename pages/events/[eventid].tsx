@@ -1,20 +1,18 @@
-import type { NextPage } from 'next';
-import { useRouter } from 'next/router';
-import Head from 'next/head';
-import Footer from '@components/Footer';
-import { ApiResponseType, EventType, RegisteredUserType } from '@lib/types';
+import { EventsDetailedSkeleton } from '@lib/components/Events';
 import { SmallHeader } from '@lib/components/Header';
-import { Navigation } from '@lib/components/Navigation';
-import Image from 'next/image';
 import { Button } from '@lib/components/Input';
-import { useSession } from 'next-auth/react';
+import StyledSwal from '@lib/components/StyledSwal';
+import { ApiResponseType, EventType, RegisteredUserType } from '@lib/types';
+import { getErrorMessage } from '@lib/utils';
 import { useQuery } from '@tanstack/react-query';
+import type { NextPage } from 'next';
+import { useSession } from 'next-auth/react';
+import Head from 'next/head';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useCallback, useState } from 'react';
 import Swal from 'sweetalert2';
-import StyledSwal from '@lib/components/StyledSwal';
-import { EventsDetailedSkeleton } from '@lib/components/Events';
-import { getErrorMessage } from '@lib/utils';
-import Link from 'next/link';
 
 const Event: NextPage = () => {
   const router = useRouter();

@@ -99,13 +99,13 @@ const AdminUsers: NextPage = () => {
           header: () => 'Fornavn',
           cell: (info) => (
             <>
-            {/* @ts-expect-error Server Component */}
-            <Link
-              href={`/admin/users/${info.getValue().id}`}
-              className="inline-block min-w-[180px] font-medium text-primary hover:brightness-75 transition-all"
-            >
-              {info.getValue().firstName}
-            </Link>
+              {/* @ts-expect-error Server Component */}
+              <Link
+                href={`/admin/users/${info.getValue().id}`}
+                className="inline-block min-w-[180px] font-medium text-primary hover:brightness-75 transition-all"
+              >
+                {info.getValue().firstName}
+              </Link>
             </>
           ),
           footer: (info) => info.column.id,
@@ -156,19 +156,19 @@ const AdminUsers: NextPage = () => {
           <span>
             {info.getValue() !== 'Non-student' ? (
               <>
-              {/* @ts-expect-error Server Component */}
-              <CircleCheck
-                className="w-[14px] h-[14px] fill-[#70BF2B]"
-                color="inherit"
-              />
+                {/* @ts-expect-error Server Component */}
+                <CircleCheck
+                  className="w-[14px] h-[14px] fill-[#70BF2B]"
+                  color="inherit"
+                />
               </>
             ) : (
               <>
-              {/* @ts-expect-error Server Component */}
-              <CircleXMark
-                className="w-[14px] h-[14px] fill-[#D5564D]"
-                color="inherit"
-              />
+                {/* @ts-expect-error Server Component */}
+                <CircleXMark
+                  className="w-[14px] h-[14px] fill-[#D5564D]"
+                  color="inherit"
+                />
               </>
             )}
           </span>
@@ -184,19 +184,19 @@ const AdminUsers: NextPage = () => {
               ({ year }) => year === getMembershipYear()
             ) ? (
               <>
-              {/* @ts-expect-error Server Component */}
-              <CircleCheck
-                className="w-[14px] h-[14px] fill-[#70BF2B]"
-                color="inherit"
-              />
+                {/* @ts-expect-error Server Component */}
+                <CircleCheck
+                  className="w-[14px] h-[14px] fill-[#70BF2B]"
+                  color="inherit"
+                />
               </>
             ) : (
               <>
-              {/* @ts-expect-error Server Component */}
-              <CircleXMark
-                className="w-[14px] h-[14px] fill-[#D5564D]"
-                color="inherit"
-              />
+                {/* @ts-expect-error Server Component */}
+                <CircleXMark
+                  className="w-[14px] h-[14px] fill-[#D5564D]"
+                  color="inherit"
+                />
               </>
             )}
           </span>
@@ -210,19 +210,19 @@ const AdminUsers: NextPage = () => {
           <span>
             {info.getValue() === 'ADMIN' ? (
               <>
-              {/* @ts-expect-error Server Component */}
-              <CircleCheck
-                className="w-[14px] h-[14px] fill-[#70BF2B]"
-                color="inherit"
-              />
+                {/* @ts-expect-error Server Component */}
+                <CircleCheck
+                  className="w-[14px] h-[14px] fill-[#70BF2B]"
+                  color="inherit"
+                />
               </>
             ) : (
               <>
-              {/* @ts-expect-error Server Component */}
-              <CircleXMark
-                className="w-[14px] h-[14px] fill-[#D5564D]"
-                color="inherit"
-              />
+                {/* @ts-expect-error Server Component */}
+                <CircleXMark
+                  className="w-[14px] h-[14px] fill-[#D5564D]"
+                  color="inherit"
+                />
               </>
             )}
           </span>

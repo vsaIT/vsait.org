@@ -63,11 +63,10 @@ const Navigation = () => {
       </Link>
       <nav className="flex gap-5">
         {navigation.map((nav) => (
-          <>
+          <div key={nav.text}>
             {/* @ts-expect-error Server Component */}
             <Link
               href={nav.href}
-              key={nav.text}
               className={`text-white transition-all duration-300 underline-offset-4 hover:text-secondary hover:brightness-150 ${
                 router.pathname.split('/')[1] === nav.href.substring(1)
                   ? 'underline text-secondary brightness-150'
@@ -76,7 +75,7 @@ const Navigation = () => {
             >
               {nav.text}
             </Link>
-          </>
+          </div>
         ))}
       </nav>
       <div className="absolute right-8 w-auto ">
