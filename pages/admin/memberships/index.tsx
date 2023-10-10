@@ -45,6 +45,7 @@ const AdminMemberships: NextPage = () => {
         id: 'select',
         header: () => (
           <div className="max-w-[40px] w-full h-full flex justify-center items-center">
+            {/* @ts-expect-error Server Component */}
             <IndeterminateCheckbox
               {...{
                 checked: table.getIsAllRowsSelected(),
@@ -57,6 +58,7 @@ const AdminMemberships: NextPage = () => {
         ),
         cell: ({ row }) => (
           <div className="max-w-[40px] w-full h-full flex justify-center items-center">
+            {/* @ts-expect-error Server Component */}
             <IndeterminateCheckbox
               {...{
                 checked: row.getIsSelected(),
@@ -72,12 +74,15 @@ const AdminMemberships: NextPage = () => {
         id: 'year',
         header: () => 'Medlemskap',
         cell: (info) => (
-          <Link
-            href={`/admin/memberships/${info.getValue()}`}
-            className="inline-block min-w-[180px] font-medium text-primary hover:brightness-75 transition-all"
-          >
-            {info.getValue()}
-          </Link>
+          <>
+            {/* @ts-expect-error Server Component */}
+            <Link
+              href={`/admin/memberships/${info.getValue()}`}
+              className="inline-block min-w-[180px] font-medium text-primary hover:brightness-75 transition-all"
+            >
+              {info.getValue()}
+            </Link>
+          </>
         ),
         footer: (info) => info.column.id,
       }),
@@ -135,9 +140,8 @@ const AdminMemberships: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Navigation />
-
       <main className="flex w-full flex-1 flex-col items-center">
+        {/* @ts-expect-error Server Component */}
         <AdminLayout>
           <>
             <div className="flex flex-col p-6 w-full gap-6 h-screen">
@@ -148,6 +152,7 @@ const AdminMemberships: NextPage = () => {
                 </div>
                 <div className="relative w-96">
                   <div className="mt-1 relative fill-stone-400">
+                    {/* @ts-expect-error Server Component */}
                     <DebouncedInput
                       type="text"
                       value={globalFilter ?? ''}
@@ -155,6 +160,7 @@ const AdminMemberships: NextPage = () => {
                       placeholder="Søk etter medlemskapsår"
                       className="w-full py-2 px-4 pl-10 border-2 border-stone-300 outline-none text-sm text-left leading-6 bg-transparent rounded-xl transition duration-150 ease-in-out"
                     />
+                    {/* @ts-expect-error Server Component */}
                     <Search
                       className="w-4 h-4 absolute top-[13px] left-4"
                       color="inherit"
@@ -180,6 +186,7 @@ const AdminMemberships: NextPage = () => {
                 </div>
                 <div className="grid [grid-template-rows:minmax(409px,1fr)_50px]">
                   <div className="rounded-lg border border-neutral-300 overflow-hidden">
+                    {/* @ts-expect-error Server Component */}
                     <AdminTable table={table} />
                   </div>
                   <div className="flex justify-between items-end gap-2">
@@ -194,6 +201,7 @@ const AdminMemberships: NextPage = () => {
                       </strong>
                       medlemskap
                     </p>
+                    {/* @ts-expect-error Server Component */}
                     <AdminTablePagination table={table} />
                   </div>
                 </div>

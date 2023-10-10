@@ -103,6 +103,7 @@ const LoginForm = ({ csrfToken }: any) => {
             </div>
 
             <div className="mt-6 space-y-2 flex justify-center">
+              {/* @ts-expect-error Server Component */}
               <Button
                 disabled={isSubmitting}
                 onClick={() => console.log('submit')}

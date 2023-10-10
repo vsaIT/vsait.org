@@ -13,15 +13,12 @@ const Registration: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Navigation />
-
       <main className="flex w-full flex-1 flex-col items-center text-center">
+        {/* @ts-expect-error Server Component */}
         <SmallHeader />
-
+        {/* @ts-expect-error Server Component */}
         <RegistrationForm />
       </main>
-
-      <Footer />
     </div>
   );
 };

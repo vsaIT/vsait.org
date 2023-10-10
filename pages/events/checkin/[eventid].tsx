@@ -1,20 +1,18 @@
-import type { NextPage } from 'next';
-import { useRouter } from 'next/router';
-import Head from 'next/head';
-import Footer from '@components/Footer';
-import { ApiResponseType, AttendingUserType, EventType } from '@lib/types';
-import { SmallHeader } from '@lib/components/Header';
-import { Navigation } from '@lib/components/Navigation';
-import Image from 'next/image';
-import { Button } from '@lib/components/Input';
-import { useSession } from 'next-auth/react';
-import { useQuery } from '@tanstack/react-query';
-import { useCallback, useState } from 'react';
-import StyledSwal from '@lib/components/StyledSwal';
-import { getErrorMessage } from '@lib/utils';
-import { Person } from '@lib/icons';
 import { Accordion } from '@components/Accordion';
+import { SmallHeader } from '@lib/components/Header';
+import { Button } from '@lib/components/Input';
+import StyledSwal from '@lib/components/StyledSwal';
+import { Person } from '@lib/icons';
+import { ApiResponseType, AttendingUserType, EventType } from '@lib/types';
+import { getErrorMessage } from '@lib/utils';
+import { useQuery } from '@tanstack/react-query';
+import type { NextPage } from 'next';
+import { useSession } from 'next-auth/react';
+import Head from 'next/head';
+import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useCallback, useState } from 'react';
 
 const Checkin: NextPage = () => {
   const router = useRouter();
@@ -131,15 +129,15 @@ const Checkin: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Navigation />
-
       <main className="flex w-full flex-1 flex-col items-center text-center">
+        {/* @ts-expect-error Server Component */}
         <SmallHeader />
         <div className="flex flex-col z-10 max-w-screen-xl mb-32 gap-6 transform -translate-y-10 w-11/12">
           <div className="flex w-full bg-white shadow-2xl rounded-2xl p-6">
             {loading ? (
               <div className="w-full rounded-l-2xl overflow-hidden">
                 <div className="bg-slate-400 rounded-md animate-pulse w-full">
+                  {/* @ts-expect-error Server Component */}
                   <Image
                     src="/placeholder.png"
                     alt="Vercel Logo"
@@ -152,6 +150,7 @@ const Checkin: NextPage = () => {
               </div>
             ) : (
               <div className="w-full overflow-hidden">
+                {/* @ts-expect-error Server Component */}
                 <Image
                   src={event.image}
                   alt="Vercel Logo"
@@ -169,6 +168,7 @@ const Checkin: NextPage = () => {
                 <h2 className="font-bold text-2xl mb-4 bg-slate-400 p-4 rounded-md animate-pulse w-4/12 mx-auto text-center"></h2>
               ) : (
                 <h2 className="font-bold text-2xl mb-4 text-center">
+                  {/* @ts-expect-error Server Component */}
                   <Link
                     href={`/events/${eventid}`}
                     className="text-primary hover:underline"
@@ -199,12 +199,14 @@ const Checkin: NextPage = () => {
                     </div>
                   </div>
                   <div className="w-3/12 px-2 h-10 mt-1">
+                    {/* @ts-expect-error Server Component */}
                     <Button text="Innsjekk" className="w-full" />
                   </div>
                 </div>
               </form>
               <div className="flex flex-col gap-1 mx-auto mb-2">
                 <p className="flex items-center gap-3">
+                  {/* @ts-expect-error Server Component */}
                   <Person color="inherit" className="flex h-5 w-5 fill-black" />
                   {
                     data?.attendances?.filter(
@@ -216,7 +218,7 @@ const Checkin: NextPage = () => {
               </div>
             </div>
           </div>
-
+          {/* @ts-expect-error Server Component */}
           <Accordion className="bg-white shadow-2xl rounded-2xl">
             <div className="flex flex-col text-left p-2">
               <div className="flex flex-col w-full p-6">
@@ -245,7 +247,6 @@ const Checkin: NextPage = () => {
           </Accordion>
         </div>
       </main>
-      <Footer />
     </div>
   );
 };

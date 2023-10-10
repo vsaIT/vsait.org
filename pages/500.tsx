@@ -13,19 +13,17 @@ const Custom500: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Navigation />
-
       <main className="flex w-full flex-1 flex-col items-center text-center">
+        {/* @ts-expect-error Server Component */}
         <LargeHeader>
           <>
             <h1 className="text-7xl mb-1.5 font-bold text-white">500</h1>
             <p className="w-9/12 text-white">Server-side error occurred...</p>
+            {/* @ts-expect-error Server Component */}
             <Wave />
           </>
         </LargeHeader>
       </main>
-
-      <Footer />
     </div>
   );
 };

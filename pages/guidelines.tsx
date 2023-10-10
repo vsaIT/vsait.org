@@ -1,8 +1,6 @@
+import { CurvyHeader } from '@lib/components/Header';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import Footer from '@components/Footer';
-import { Navigation } from '@lib/components/Navigation';
-import { CurvyHeader } from '@lib/components/Header';
 import Image from 'next/image';
 
 const Organization: NextPage = () => {
@@ -13,9 +11,8 @@ const Organization: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Navigation />
-
       <main className="flex w-full flex-1 flex-col items-center text-center">
+        {/* @ts-expect-error Server Component */}
         <CurvyHeader title="Retningslinjer" />
 
         <div className="flex flex-col z-10 max-w-screen-xl mb-12">
@@ -34,6 +31,7 @@ const Organization: NextPage = () => {
             <h2 className="text-2xl font-bold mb-3">§ 2: LOGO</h2>
             <p className="mb-2">Følgende logo er VSAiT sin offisielle logo:</p>
             <div className="max-w-sm">
+              {/* @ts-expect-error Server Component */}
               <Image
                 src="logo.svg"
                 alt="Vercel Logo"
@@ -66,6 +64,7 @@ const Organization: NextPage = () => {
           <div className="flex flex-col justify-center w-full p-8 mb-4 text-left bg-white shadow-lg rounded-2xl">
             <h2 className="text-2xl font-bold mb-3">§ 4: STRUKTUR</h2>
             <div className="max-w-xl">
+              {/* @ts-expect-error Server Component */}
               <Image
                 src="/vsait-struktur.png"
                 alt="Vercel Logo"
@@ -488,8 +487,6 @@ const Organization: NextPage = () => {
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 };

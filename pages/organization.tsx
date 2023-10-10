@@ -1,8 +1,6 @@
+import { CurvyHeader } from '@lib/components/Header';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import Footer from '@components/Footer';
-import { Navigation } from '@lib/components/Navigation';
-import { CurvyHeader } from '@lib/components/Header';
 import Image from 'next/image';
 
 type BoardType = {
@@ -31,9 +29,8 @@ const Organization: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Navigation />
-
       <main className="flex w-full flex-1 flex-col items-center text-center">
+        {/* @ts-expect-error Server Component */}
         <CurvyHeader title="Om oss" />
 
         <div className="flex flex-col z-10 max-w-screen-xl mb-12">
@@ -85,6 +82,7 @@ const Organization: NextPage = () => {
             <div className="flex justify-between w-full gap-4">
               <div className="grid grid-rows-organizationfocus w-full max-w-xs">
                 <div className="justify-items-center w-3/4 m-auto mb-3">
+                  {/* @ts-expect-error Server Component */}
                   <Image
                     src="/fokus1.png"
                     alt="Sosialt miljø icon"
@@ -103,6 +101,7 @@ const Organization: NextPage = () => {
               </div>
               <div className="grid grid-rows-organizationfocus w-full max-w-xs">
                 <div className="justify-items-center w-3/4 m-auto mb-3">
+                  {/* @ts-expect-error Server Component */}
                   <Image
                     src="/fokus2.png"
                     alt="Kultur icon"
@@ -121,6 +120,7 @@ const Organization: NextPage = () => {
               </div>
               <div className="grid grid-rows-organizationfocus w-full max-w-xs">
                 <div className="justify-items-center w-3/4 m-auto mb-3">
+                  {/* @ts-expect-error Server Component */}
                   <Image
                     src="/fokus3.png"
                     alt="Arrangement icon"
@@ -154,6 +154,7 @@ const Organization: NextPage = () => {
               <div className="flex justify-between px-24 py-12 my-2">
                 <div className="flex w-full justify-start">
                   <div className="w-3/4 max-w-sm rounded-2xl overflow-hidden">
+                    {/* @ts-expect-error Server Component */}
                     <Image
                       src="/cover1.jpg"
                       alt="Bilde av Bli kjent grilling arrangement"
@@ -177,6 +178,7 @@ const Organization: NextPage = () => {
               <div className="flex justify-between px-24 py-16 bg-white shadow-lg rounded-2xl my-2">
                 <div className="flex w-full justify-end order-1">
                   <div className="w-3/4 max-w-sm rounded-2xl overflow-hidden">
+                    {/* @ts-expect-error Server Component */}
                     <Image
                       src="/cover2.jpg"
                       alt="Bilde av Tet Trung Thu arrangement"
@@ -201,6 +203,7 @@ const Organization: NextPage = () => {
               <div className="flex justify-between px-24 py-12 my-2">
                 <div className="flex w-full justify-start">
                   <div className="w-3/4 max-w-sm rounded-2xl overflow-hidden">
+                    {/* @ts-expect-error Server Component */}
                     <Image
                       src="/cover3.jpg"
                       alt="Bilde av Tet arrangement"
@@ -223,6 +226,7 @@ const Organization: NextPage = () => {
               <div className="flex justify-between px-24 py-16 bg-white shadow-lg rounded-2xl my-2">
                 <div className="flex w-full justify-end order-1">
                   <div className="w-3/4 max-w-sm rounded-2xl overflow-hidden">
+                    {/* @ts-expect-error Server Component */}
                     <Image
                       src="/cover4.jpg"
                       alt="Bilde av Eksamensgrilling arrangement"
@@ -274,8 +278,6 @@ const Organization: NextPage = () => {
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 };

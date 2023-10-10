@@ -1,9 +1,7 @@
+import { LoginForm } from '@components/Form';
+import { SmallHeader } from '@components/Header';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import Footer from '@components/Footer';
-import { Navigation } from '@lib/components/Navigation';
-import { SmallHeader } from '@components/Header';
-import { LoginForm } from '@components/Form';
 
 const Login: NextPage = () => {
   return (
@@ -13,15 +11,12 @@ const Login: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Navigation />
-
       <main className="flex w-full flex-1 flex-col items-center text-center">
+        {/* @ts-expect-error Server Component */}
         <SmallHeader />
-
+        {/* @ts-expect-error Server Component */}
         <LoginForm />
       </main>
-
-      <Footer />
     </div>
   );
 };

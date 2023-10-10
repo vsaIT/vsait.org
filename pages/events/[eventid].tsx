@@ -140,16 +140,19 @@ const Event: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Navigation />
-
       <main className="flex w-full flex-1 flex-col items-center text-center">
+        {/* @ts-expect-error Server Component */}
         <SmallHeader />
         {status === 'loading' || isLoading || !isSuccess || data?.statusCode ? (
-          <EventsDetailedSkeleton />
+          <>
+            {/* @ts-expect-error Server Component */}
+            <EventsDetailedSkeleton />
+          </>
         ) : (
           <div className="flex flex-col z-10 max-w-screen-xl mb-32 gap-6 transform -translate-y-10 w-11/12">
             <div className="flex w-full bg-white shadow-2xl rounded-2xl p-6">
               <div className="w-full overflow-hidden">
+                {/* @ts-expect-error Server Component */}
                 <Image
                   src={event.image}
                   alt="Vercel Logo"
@@ -212,6 +215,7 @@ const Event: NextPage = () => {
                     <div className="flex flex-col gap-3 mt-2">
                       {session?.user ? (
                         <>
+                          {/* @ts-expect-error Server Component */}
                           <Button
                             onClick={() => showRegistrations()}
                             text="Se andre påmeldte"
@@ -231,19 +235,25 @@ const Event: NextPage = () => {
                               event.eventType === 'MEMBERSHIP') ||
                             event.eventType === 'OPEN' ? (
                             data.hasRegistered ? (
-                              <Button
-                                onClick={() =>
-                                  registrationEnabled && register()
-                                }
-                                text="Meld deg av"
-                              />
+                              <>
+                                {/* @ts-expect-error Server Component */}
+                                <Button
+                                  onClick={() =>
+                                    registrationEnabled && register()
+                                  }
+                                  text="Meld deg av"
+                                />
+                              </>
                             ) : (
-                              <Button
-                                onClick={() =>
-                                  registrationEnabled && register()
-                                }
-                                text="Meld deg på"
-                              />
+                              <>
+                                {/* @ts-expect-error Server Component */}
+                                <Button
+                                  onClick={() =>
+                                    registrationEnabled && register()
+                                  }
+                                  text="Meld deg på"
+                                />
+                              </>
                             )
                           ) : (
                             <div className="flex flex-col gap-1">
@@ -252,6 +262,7 @@ const Event: NextPage = () => {
                               </p>
                               <p>
                                 Vennligst søk om medlemsskap ved å gå inn på{' '}
+                                {/* @ts-expect-error Server Component */}
                                 <Link
                                   href="/profile"
                                   className="font-medium text-primary hover:underline"
@@ -279,6 +290,7 @@ const Event: NextPage = () => {
                       className="block w-full"
                       href={`/events/checkin/${eventid}`}
                     >
+                      {/* @ts-expect-error Server Component */}
                       <Button text="Gå til innslipp" className="w-full" />
                     </a>
                   </div>
@@ -344,8 +356,6 @@ const Event: NextPage = () => {
           </div>
         )}
       </main>
-
-      <Footer />
     </div>
   );
 };

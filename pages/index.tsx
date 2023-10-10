@@ -1,15 +1,13 @@
-import type { NextPage } from 'next';
-import { useSession } from 'next-auth/react';
-import Head from 'next/head';
-import Footer from '@components/Footer';
-import { Navigation } from '@lib/components/Navigation';
+import { EventsQuickView } from '@components/Events';
 import { LargeHeader } from '@components/Header';
 import { Button } from '@components/Input';
 import Wave from '@components/Wave';
-import { EventsQuickView } from '@components/Events';
-import { useInView } from 'react-intersection-observer';
-import Link from 'next/link';
 import { getMembershipYear } from '@lib/utils';
+import type { NextPage } from 'next';
+import { useSession } from 'next-auth/react';
+import Head from 'next/head';
+import Link from 'next/link';
+import { useInView } from 'react-intersection-observer';
 
 const Home: NextPage = () => {
   const { status, data: session } = useSession({
@@ -29,9 +27,8 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Navigation />
-
       <main className="flex w-full flex-1 flex-col items-center text-center">
+        {/* @ts-expect-error Server Component */}
         <LargeHeader
           ref={ref}
           className={`transition-all duration-1200 delay-150 ${
@@ -77,20 +74,25 @@ const Home: NextPage = () => {
                     utdanningsinstitusjoner i Trondheim.
                   </p>
                   <div className="flex gap-5 py-10">
+                    {/* @ts-expect-error Server Component */}
                     <Link href="/login">
+                      {/* @ts-expect-error Server Component */}
                       <Button
                         text="Logg inn"
                         className="rounded-3xl"
                         inverted
                       />
                     </Link>
+                    {/* @ts-expect-error Server Component */}
                     <Link href="/register">
+                      {/* @ts-expect-error Server Component */}
                       <Button text="Register" className="rounded-3xl" />
                     </Link>
                   </div>
                 </>
               )}
             </div>
+            {/* @ts-expect-error Server Component */}
             <Wave />
           </>
         </LargeHeader>
@@ -100,6 +102,7 @@ const Home: NextPage = () => {
             !session ? '!translate-y-0 !mb-12 shadow-none' : ''
           }`}
         >
+          {/* @ts-expect-error Server Component */}
           <EventsQuickView
             className={`flex flex-col justify-center transition-all duration-700 delay-700 ${
               inView ? 'opacity-100' : 'opacity-0'
@@ -107,8 +110,6 @@ const Home: NextPage = () => {
           />
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 };

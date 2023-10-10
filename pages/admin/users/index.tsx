@@ -65,6 +65,7 @@ const AdminUsers: NextPage = () => {
         id: 'select',
         header: () => (
           <div className="w-full h-full flex justify-center items-center">
+            {/* @ts-expect-error Server Component */}
             <IndeterminateCheckbox
               {...{
                 checked: table.getIsAllRowsSelected(),
@@ -77,6 +78,7 @@ const AdminUsers: NextPage = () => {
         ),
         cell: ({ row }) => (
           <div className="w-full h-full flex justify-center items-center">
+            {/* @ts-expect-error Server Component */}
             <IndeterminateCheckbox
               {...{
                 checked: row.getIsSelected(),
@@ -96,12 +98,15 @@ const AdminUsers: NextPage = () => {
           id: 'firstName',
           header: () => 'Fornavn',
           cell: (info) => (
+            <>
+            {/* @ts-expect-error Server Component */}
             <Link
               href={`/admin/users/${info.getValue().id}`}
               className="inline-block min-w-[180px] font-medium text-primary hover:brightness-75 transition-all"
             >
               {info.getValue().firstName}
             </Link>
+            </>
           ),
           footer: (info) => info.column.id,
           filterFn: (row, columnId, value: string) => {
@@ -150,15 +155,21 @@ const AdminUsers: NextPage = () => {
         cell: (info) => (
           <span>
             {info.getValue() !== 'Non-student' ? (
+              <>
+              {/* @ts-expect-error Server Component */}
               <CircleCheck
                 className="w-[14px] h-[14px] fill-[#70BF2B]"
                 color="inherit"
               />
+              </>
             ) : (
+              <>
+              {/* @ts-expect-error Server Component */}
               <CircleXMark
                 className="w-[14px] h-[14px] fill-[#D5564D]"
                 color="inherit"
               />
+              </>
             )}
           </span>
         ),
@@ -172,15 +183,21 @@ const AdminUsers: NextPage = () => {
             {(info.getValue() || []).some(
               ({ year }) => year === getMembershipYear()
             ) ? (
+              <>
+              {/* @ts-expect-error Server Component */}
               <CircleCheck
                 className="w-[14px] h-[14px] fill-[#70BF2B]"
                 color="inherit"
               />
+              </>
             ) : (
+              <>
+              {/* @ts-expect-error Server Component */}
               <CircleXMark
                 className="w-[14px] h-[14px] fill-[#D5564D]"
                 color="inherit"
               />
+              </>
             )}
           </span>
         ),
@@ -192,15 +209,21 @@ const AdminUsers: NextPage = () => {
         cell: (info) => (
           <span>
             {info.getValue() === 'ADMIN' ? (
+              <>
+              {/* @ts-expect-error Server Component */}
               <CircleCheck
                 className="w-[14px] h-[14px] fill-[#70BF2B]"
                 color="inherit"
               />
+              </>
             ) : (
+              <>
+              {/* @ts-expect-error Server Component */}
               <CircleXMark
                 className="w-[14px] h-[14px] fill-[#D5564D]"
                 color="inherit"
               />
+              </>
             )}
           </span>
         ),
@@ -254,6 +277,7 @@ const AdminUsers: NextPage = () => {
       </Head>
 
       <main className="flex w-full flex-1 flex-col items-center">
+        {/* @ts-expect-error Server Component */}
         <AdminLayout>
           <>
             <div className="flex flex-col w-full p-6 gap-6 h-screen">
@@ -264,6 +288,7 @@ const AdminUsers: NextPage = () => {
                 </div>
                 <div className="relative w-96">
                   <div className="mt-1 relative fill-stone-400">
+                    {/* @ts-expect-error Server Component */}
                     <DebouncedInput
                       type="text"
                       value={
@@ -279,6 +304,7 @@ const AdminUsers: NextPage = () => {
                       placeholder="Søk etter bruker"
                       className="w-full py-2 px-4 pl-10 border-2 border-stone-300 outline-none text-sm text-left leading-6 bg-transparent rounded-xl transition duration-150 ease-in-out"
                     />
+                    {/* @ts-expect-error Server Component */}
                     <Search
                       className="w-4 h-4 absolute top-[13px] left-4"
                       color="inherit"
@@ -301,7 +327,9 @@ const AdminUsers: NextPage = () => {
                       {table.getPreFilteredRowModel().rows.length} valgt
                     </p>
                   </div>
+                  {/* @ts-expect-error Server Component */}
                   <Link href="/admin/users/new">
+                    {/* @ts-expect-error Server Component */}
                     <Button
                       text="Legg til bruker"
                       className="text-xs py-3 px-8"
@@ -310,6 +338,7 @@ const AdminUsers: NextPage = () => {
                 </div>
                 <div className="grid [grid-template-rows:minmax(409px,1fr)_50px]">
                   <div className="rounded-lg border border-neutral-300 overflow-hidden">
+                    {/* @ts-expect-error Server Component */}
                     <AdminTable table={table} />
                   </div>
                   <div className="flex justify-between items-end gap-2">
@@ -324,6 +353,7 @@ const AdminUsers: NextPage = () => {
                       </strong>
                       brukere
                     </p>
+                    {/* @ts-expect-error Server Component */}
                     <AdminTablePagination table={table} />
                   </div>
                 </div>

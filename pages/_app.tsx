@@ -5,6 +5,8 @@ import { SessionProvider } from 'next-auth/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Navigation } from '@lib/components/Navigation';
+import Footer from '@lib/components/Footer';
 
 const queryClient = new QueryClient();
 
@@ -19,18 +21,29 @@ const MyApp = ({ Component, pageProps }: ExtendedAppProps) => {
   );
 
   return (
-    <SessionProvider session={pageProps.session} refetchInterval={5 * 60}>
-      <QueryClientProvider client={queryClient}>{content}</QueryClientProvider>
-      <ToastContainer
-        position="top-right"
-        autoClose={8000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        draggable={false}
-        closeOnClick
-        pauseOnHover
-      />
-    </SessionProvider>
+    <>
+      {/* @ts-expect-error Server Component */}
+      <SessionProvider session={pageProps.session} refetchInterval={5 * 60}>
+        {/* @ts-expect-error Server Component */}
+        <QueryClientProvider client={queryClient}>
+          {/* @ts-expect-error Server Component */}
+          <Navigation />
+          {content}
+          {/* @ts-expect-error Server Component */}
+          <Footer />
+        </QueryClientProvider>
+        {/* @ts-expect-error Server Component */}
+        <ToastContainer
+          position="top-right"
+          autoClose={8000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          draggable={false}
+          closeOnClick
+          pauseOnHover
+        />
+      </SessionProvider>
+    </>
   );
 };
 

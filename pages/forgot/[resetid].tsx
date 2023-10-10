@@ -140,14 +140,14 @@ const ForgotPassword: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Navigation />
-
       <main className="flex w-full flex-1 flex-col items-center text-center">
+        {/* @ts-expect-error Server Component */}
         <SmallHeader />
 
         <div className="flex flex-col justify-center w-128 p-8 mb-10 text-left bg-white shadow-2xl rounded-2xl transform -translate-y-10">
           <div className="flex flex-col justify-center m-auto text-center w-8/12 mb-5">
             <div className="flex justify-center relative w-24 h-24 overflow-hidden m-auto fill-slate-700">
+              {/* @ts-expect-error Server Component */}
               <Lock color="inherit" />
             </div>
             <h2 className="text-l font-bold leading-7 text-gray-900">
@@ -204,6 +204,7 @@ const ForgotPassword: NextPage = () => {
               </div>
 
               <div className="mt-6 space-y-2 flex justify-center">
+                {/* @ts-expect-error Server Component */}
                 <Button
                   disabled={isSubmitting || loading}
                   onClick={() => console.log('submit')}
@@ -217,8 +218,6 @@ const ForgotPassword: NextPage = () => {
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 };
