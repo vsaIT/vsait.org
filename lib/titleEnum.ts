@@ -10,6 +10,7 @@ export enum PageTitle {
   profile = BaseTitle + 'Profil',
   error500 = BaseTitle + '500',
   error404 = BaseTitle + '404',
+  error403 = BaseTitle + '403',
   forgotPassword = BaseTitle + 'Glemt passord',
   resetPassword = BaseTitle + 'Tilbakestill passord',
   event = BaseTitle + 'Arrangementer',

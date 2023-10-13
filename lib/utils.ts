@@ -98,6 +98,8 @@ export function mapPageTitle(path: string): string {
       return PageTitle.error404;
     case '/500':
       return PageTitle.error500;
+    case '/403':
+      return PageTitle.error403;
     default:
       return 'Could not find page title';
   }
