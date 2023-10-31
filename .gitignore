@@ -1,12 +1,6 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-db/backup.sql
-db/parse.py
-db/newseed.ts
-
 # .env file
 .env
-
+.gitignore
 # dependencies
 /node_modules
 /.pnp

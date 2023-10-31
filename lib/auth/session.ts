@@ -3,6 +3,7 @@ import {
   getSession as getNextSession,
   GetSessionParams,
 } from 'next-auth/react';
+import { NextApiRequest, NextApiResponse } from 'next/types';
 
 type DefaultSessionUser = NonNullable<DefaultSession['user']>;
 
@@ -22,4 +23,19 @@ export async function getSession(
 
   // that these are equal are ensured in `[...nextauth]`'s callback
   return session as Session | null;
+}
+
+export async function checkAllowed(
+  req: NextApiRequest,
+  res: NextApiResponse,
+  window: Window
+) {
+  const session = await getSession({ req });
+  console.log(session);
+  if (!session || !session?.user || session?.user?.role !== 'ADMIN')
+    window.location.href = '/401';
+  return res.status(401).json({
+    statusCode: 401,
+    message: 'Unauthorized',
+  });
 }

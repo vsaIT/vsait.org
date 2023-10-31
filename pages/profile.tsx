@@ -1,22 +1,19 @@
+import Card from '@components/Card';
+import { bigSmile } from '@dicebear/collection';
+import { createAvatar } from '@dicebear/core';
+import { profileIconAtom, userAtom } from '@lib/atoms';
+import { generateSalt } from '@lib/auth/passwords';
+import { SmallHeader } from '@lib/components/Header';
+import { Button } from '@lib/components/Input';
+import StyledSwal from '@lib/components/StyledSwal';
+import { UserType } from '@lib/types';
+import { getErrorMessage } from '@lib/utils';
+import { useAtom } from 'jotai';
 import type { NextPage } from 'next';
 import { useSession } from 'next-auth/react';
-import Head from 'next/head';
-import Footer from '@components/Footer';
-import { Navigation } from '@lib/components/Navigation';
-import { SmallHeader } from '@lib/components/Header';
-import Card from '@components/Card';
-import { UserType } from '@lib/types';
-import { useCallback, useEffect, useState } from 'react';
-import { createAvatar } from '@dicebear/core';
-import { bigSmile } from '@dicebear/collection';
 import Image from 'next/image';
-import { generateSalt } from '@lib/auth/passwords';
-import StyledSwal from '@lib/components/StyledSwal';
+import { useCallback, useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
-import { profileIconAtom, userAtom } from '@lib/atoms';
-import { useAtom } from 'jotai';
-import { Button } from '@lib/components/Input';
-import { getErrorMessage } from '@lib/utils';
 
 const Profile: NextPage = () => {
   const { data: session, status } = useSession({
@@ -49,15 +46,17 @@ const Profile: NextPage = () => {
           >
             <div className="flex items-center justify-center rounded-full">
               <div className="relative w-28 h-28">
+                {/* @ts-expect-error Server Component */}
                 <Image
                   id="modal-icon"
                   src={avatar.toDataUriSync()}
                   alt="Profile icon"
-                  layout="fill"
+                  fill
                 />
               </div>
             </div>
             <div className="flex flex-col w-8/12 gap-1 mx-auto my-5">
+              {/* @ts-expect-error Server Component */}
               <Button
                 className="text-base"
                 onClick={() => {
@@ -80,6 +79,7 @@ const Profile: NextPage = () => {
                 }}
                 text="Generer nytt ikon"
               />
+              {/* @ts-expect-error Server Component */}
               <Button
                 className="text-base"
                 onClick={() => {
@@ -172,57 +172,44 @@ const Profile: NextPage = () => {
   }, [session?.user?.id, setFetching]);
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center">
-      <Head>
-        <title>VSAiT | Profil</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <Navigation />
-
-      <main className="flex w-full flex-1 flex-col items-center text-center">
-        <SmallHeader />
-
-        <div className="flex flex-col z-10 max-w-screen-xl mb-32 w-full gap-6 transform -translate-y-10">
-          {status === 'loading' && fetching ? (
-            <>'Loading or not authenticated...'</>
-          ) : (
-            <div className="flex flex-col gap-6 w-[calc(100%-3rem)] bg-white shadow-2xl rounded-2xl p-6 mx-auto box-border">
-              <div className="flex items-center">
+    <>
+      {/* @ts-expect-error Server Component */}
+      <SmallHeader />
+      <div className="flex flex-col z-10 max-w-screen-xl mb-32 w-full gap-6 transform -translate-y-10">
+        {status === 'loading' && fetching ? (
+          <>'Loading or not authenticated...'</>
+        ) : (
+          <div className="flex flex-col gap-6 w-[calc(100%-3rem)] bg-white shadow-2xl rounded-2xl p-6 mx-auto box-border">
+            <div className="flex items-center">
+              <div
+                className="flex items-center justify-center p-1 cursor-pointer"
+                onClick={updateProfileIcon}
+              >
                 <div
-                  className="flex items-center justify-center p-1 cursor-pointer"
-                  onClick={updateProfileIcon}
+                  className={`relative w-28 h-28 transition-all duration-700 ${
+                    !profileIcon.initial ? 'opacity-0' : ''
+                  }`}
                 >
-                  <div
-                    className={`relative w-28 h-28 transition-all duration-700 ${
-                      !profileIcon.initial ? 'opacity-0' : ''
-                    }`}
-                  >
-                    <Image
-                      src={avatar.toDataUriSync()}
-                      alt="Profile icon"
-                      layout="fill"
-                    />
-                  </div>
-                </div>
-                <div className="flex flex-col ml-5 text-left">
-                  <p>
-                    {user.firstName} {user.lastName}
-                  </p>
-                  <p className="text-slate-500">Medlem</p>
+                  {/* @ts-expect-error Server Component */}
+                  <Image src={avatar.toDataUriSync()} alt="Profile icon" fill />
                 </div>
               </div>
-
-              <div>
-                <Card user={user} session={session} />
+              <div className="flex flex-col ml-5 text-left">
+                <p>
+                  {user.firstName} {user.lastName}
+                </p>
+                <p className="text-slate-500">Medlem</p>
               </div>
             </div>
-          )}
-        </div>
-      </main>
 
-      <Footer />
-    </div>
+            <div>
+              {/* @ts-expect-error Server Component */}
+              <Card user={user} session={session} />
+            </div>
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 

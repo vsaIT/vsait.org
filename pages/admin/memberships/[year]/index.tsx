@@ -1,10 +1,9 @@
-import type { NextPage } from 'next';
-import Head from 'next/head';
-import { useRouter } from 'next/router';
 import { AdminLayout } from '@lib/components/Admin';
-import { useQuery } from '@tanstack/react-query';
 import { Membership } from '@prisma/client';
+import { useQuery } from '@tanstack/react-query';
+import type { NextPage } from 'next';
 import { User } from 'next-auth';
+import { useRouter } from 'next/router';
 
 const AdminMembershipsView: NextPage = () => {
   const router = useRouter();
@@ -30,27 +29,21 @@ const AdminMembershipsView: NextPage = () => {
   console.log(membership);
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center">
-      <Head>
-        <title>VSAiT | Administrasjon medlemsskap</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main className="flex w-full flex-1 flex-col items-center">
-        <AdminLayout>
-          <>
-            <div className="flex flex-col p-6 w-full gap-6 h-screen">
-              <div className="flex w-full gap-6 bg-white p-6 rounded-xl justify-between">
-                <div className="flex flex-col">
-                  <h1 className="text-xl font-medium">Medlemskap {year}</h1>
-                  <p className="text-sm">Se og endre medlemskap her</p>
-                </div>
+    <>
+      {/* @ts-expect-error Server Component */}
+      <AdminLayout>
+        <>
+          <div className="flex flex-col p-6 w-full gap-6 h-screen">
+            <div className="flex w-full gap-6 bg-white p-6 rounded-xl justify-between">
+              <div className="flex flex-col">
+                <h1 className="text-xl font-medium">Medlemskap {year}</h1>
+                <p className="text-sm">Se og endre medlemskap her</p>
               </div>
             </div>
-          </>
-        </AdminLayout>
-      </main>
-    </div>
+          </div>
+        </>
+      </AdminLayout>
+    </>
   );
 };
 

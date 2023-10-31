@@ -1,3 +1,5 @@
+import { AdminPageTitle, PageTitle } from './titleEnum';
+
 export const getErrorMessage = (error: unknown) => {
   if (error instanceof Error) return error.message;
   return String(error);
@@ -41,3 +43,64 @@ export const getLocaleDateString = (cdate: Date) => {
     MONTH[date.getMonth()]
   } ${date.getFullYear()}`;
 };
+
+export function mapPageTitle(path: string): string {
+  if (path.startsWith('/admin')) {
+    const adminPath = path.slice(6);
+    switch (adminPath) {
+      case '':
+        return AdminPageTitle.admin;
+      case '/statistics':
+        return AdminPageTitle.stats;
+      case '/users':
+      case '/users/[userid]':
+      case '/users/[userid]/edit':
+        return AdminPageTitle.users;
+      case '/memberships':
+      case '/memberships/[year]':
+      case '/memberships/[year]/edit':
+        return AdminPageTitle.membership;
+      case '/events':
+      case '/events/new':
+      case '/events/[eventid]':
+      case '/events/[eventid]/edit':
+        return AdminPageTitle.event;
+      default:
+        return 'Could not find admin page title';
+    }
+  }
+  switch (path) {
+    // Basics
+    case '/':
+      return PageTitle.home;
+    case '/login':
+      return PageTitle.login;
+    case '/register':
+      return PageTitle.register;
+    case '/profile':
+      return PageTitle.profile;
+    case '/organization':
+      return PageTitle.org;
+    case '/retningslinjer':
+      return PageTitle.guidelines;
+    case '/forgot':
+      return PageTitle.forgotPassword;
+    case '/forgot/[resetid]':
+      return PageTitle.resetPassword;
+    // Events
+    case '/events':
+    case '/events/[eventid]':
+      return PageTitle.event;
+    case '/events/checkin/[eventid]':
+      return PageTitle.checkin;
+    // Errors
+    case '/404':
+      return PageTitle.error404;
+    case '/500':
+      return PageTitle.error500;
+    case '/403':
+      return PageTitle.error403;
+    default:
+      return 'Could not find page title';
+  }
+}

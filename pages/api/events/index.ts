@@ -8,33 +8,33 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const page = isEmpty(req.query?.page) ? 0 : Number(req.query.page);
   const upcoming = isEmpty(req.query?.upcoming) ? false : true;
   const all = isEmpty(req.query?.all) ? false : true;
+  const session = await getSession({ req });
 
   // Retrieve all events, admins only
-  if (all) {
-    const session = await getSession({ req });
-    if (session?.user?.role !== 'ADMIN')
-      return res.status(401).json({
-        statusCode: 401,
-        message: 'Unauthorized',
+  try {
+    if (all) {
+      if (session?.user?.role !== 'ADMIN')
+        return res.status(401).json({
+          statusCode: 401,
+          message: 'Unauthorized',
+        });
+      const events = await prisma.event.findMany({
+        orderBy: {
+          startTime: 'desc',
+        },
+        include: {
+          registrationList: true,
+          waitingList: true,
+          attendanceList: true,
+        },
       });
-    const events = await prisma.event.findMany({
-      orderBy: {
-        startTime: 'desc',
-      },
-      include: {
-        registrationList: true,
-        waitingList: true,
-        attendanceList: true,
-      },
-    });
-    return res.status(200).json({
-      events: events,
-      page: 1,
-      pages: 1,
-    });
-  } else {
-    const take = 5;
-    try {
+      return res.status(200).json({
+        events: events,
+        page: 1,
+        pages: 1,
+      });
+    } else {
+      const take = 5;
       const events = await prisma.event.findMany({
         where: upcoming
           ? {
@@ -61,12 +61,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         page: currentPage,
         pages: pages,
       });
-    } catch (error) {
-      console.error('[api] /api/events', getErrorMessage(error));
-      return res
-        .status(500)
-        .json({ statusCode: 500, message: getErrorMessage(error) });
     }
+  } catch (error) {
+    console.error('[api] /api/events', getErrorMessage(error));
+    return res
+      .status(500)
+      .json({ statusCode: 500, message: getErrorMessage(error) });
   }
 };
 

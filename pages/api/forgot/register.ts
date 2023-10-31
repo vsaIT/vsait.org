@@ -16,7 +16,7 @@ const sendEmail = async (name: string, email: string, restUrl: string) => {
     Hei ${name}!<br/>
     <br/>
     Vi har mottatt en forespørsel om å tilbakestille passordet ditt.<br/>
-    Benytt denne lenken for å opprette et nytt passord: <a href="${url}/forgot/${restUrl}">${url}/forgot/${restUrl}</a><br/>
+    Benytt denne lenken for å opprette et nytt passord: <a href="${url}/forgot/${restUrl}">${url}/forgot/${restUrl}<br/>
     Hvis du ikke har sendt denne forespørselen, kan du se bort fra denne eposten.<br/>
     <br/>
     Vennlig hilsen,<br/>Vietnamese Student Association in Trondheim

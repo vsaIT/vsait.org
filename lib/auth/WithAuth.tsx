@@ -1,14 +1,20 @@
 import { useSession, signIn } from 'next-auth/react';
 import { useLayoutEffect } from 'react';
 import router from 'next/router';
+import { AuthenticatedPage } from '@lib/types';
 
-const WithAuth = ({ children, options }: any) => {
+type WithAuthProps = {
+  children: React.ReactNode;
+  options?: AuthenticatedPage;
+};
+
+const WithAuth = ({ children, options }: WithAuthProps) => {
   const { data: session, status } = useSession();
   const isUser = !!session?.user;
   useLayoutEffect(() => {
     // Do nothing while loading
     if (status === 'loading') {
-      return children;
+      return;
     }
 
     // If not authenticated, redirect to provided url or
@@ -21,7 +27,7 @@ const WithAuth = ({ children, options }: any) => {
     }
   }, [isUser, status]);
 
-  return children;
+  return <>{children}</>;
 };
 
 export default WithAuth;

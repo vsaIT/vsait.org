@@ -3,8 +3,13 @@ module.exports = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  images: {
-    domains: ['medlem.vsait.org'],
-  },
   reactStrictMode: true,
-};
+  
+  webpack: (config, options) => {
+    config.module.rules.push({
+      test: /\.gitignore$/,
+      loader: 'ignore-loader',
+    })
+    return config
+  },
+}

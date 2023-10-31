@@ -2,6 +2,8 @@
 
 Site: https://jazzy-malasada-b00157.netlify.app
 
+Dev: https://dev--jazzy-malasada-b00157.netlify.app
+
 ### 🥞 Stack
 
 - Framework - [Next.js v12](https://nextjs.org)
@@ -13,6 +15,7 @@ Site: https://jazzy-malasada-b00157.netlify.app
 - Styling - [TailwindCSS](https://tailwindcss.com)
 
 ### 🎨 Figma design
+
 
 https://www.figma.com/file/8WEtfHLJZxjADUfiSiEOKS/VsaIT
 
