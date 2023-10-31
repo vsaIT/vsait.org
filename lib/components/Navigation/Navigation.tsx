@@ -13,7 +13,8 @@ import { Role } from '@prisma/client';
 
 const navigation = [
   { href: '/', text: 'Hjem' },
-  { href: '/events', text: 'Arrangementer' },
+  // TODO remove this when we are out of emergency mode
+  //{ href: '/events', text: 'Arrangementer' },
   { href: '/organization', text: 'Om oss' },
   { href: '/guidelines', text: 'Retningslinjer' },
 ];
@@ -60,7 +61,7 @@ const Navigation = () => {
         className="absolute left-8 rounded-full overflow-hidden h-16 w-16"
       >
         {/* @ts-expect-error Server Component */}
-        <Image src="/logo.svg" alt="Vercel Logo" fill />
+        <Image src="/logo.svg" alt="Vsait Logo" fill />
       </Link>
       <nav className="flex gap-5">
         {navigation.map((nav) => (

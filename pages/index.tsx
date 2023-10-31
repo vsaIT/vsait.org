@@ -7,6 +7,7 @@ import type { NextPage } from 'next';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useInView } from 'react-intersection-observer';
+import { VSAIT_IN_EMERGENCY } from 'featureflags';
 
 const Home: NextPage = () => {
   const { status, data: session } = useSession({
@@ -35,7 +36,7 @@ const Home: NextPage = () => {
             }`}
           >
             {loading ? (
-              <></>
+              <>laster inn...</>
             ) : session && status === 'authenticated' ? (
               <>
                 <h1 className="text-4xl mb-1.5 font-bold text-white">
@@ -65,16 +66,17 @@ const Home: NextPage = () => {
                   utdanningsinstitusjoner i Trondheim.
                 </p>
                 <div className="flex gap-5 py-10">
-                  {/* @ts-expect-error Server Component */}
-                  <Link href="/login">
+                  {/* TODO change back to LINK components and route to own page */}
+                  <a href="https://medlem.vsait.org">
                     {/* @ts-expect-error Server Component */}
                     <Button text="Logg inn" className="rounded-3xl" inverted />
-                  </Link>
-                  {/* @ts-expect-error Server Component */}
-                  <Link href="/register">
+                  </a>
+                  {/*<Link href="/register">*/}
+                  <a href="https://medlem.vsait.org/signup">
                     {/* @ts-expect-error Server Component */}
                     <Button text="Register" className="rounded-3xl" />
-                  </Link>
+                    {/*</Link>*/}
+                  </a>
                 </div>
               </>
             )}
@@ -84,18 +86,20 @@ const Home: NextPage = () => {
         </>
       </LargeHeader>
 
-      <div
-        className={`flex flex-col w-11/12 max-w-screen-lg justify-center p-4 -mb-24 bg-white shadow-lg rounded-2xl -translate-y-40 ${
-          !session ? '!translate-y-0 !mb-12 shadow-none' : ''
-        }`}
-      >
-        {/* @ts-expect-error Server Component */}
-        <EventsQuickView
-          className={`flex flex-col justify-center transition-all duration-700 delay-700 ${
-            inView ? 'opacity-100' : 'opacity-0'
+      {!VSAIT_IN_EMERGENCY && (
+        <div
+          className={`flex flex-col w-11/12 max-w-screen-lg justify-center p-4 -mb-24 bg-white shadow-lg rounded-2xl -translate-y-40 ${
+            !session ? '!translate-y-0 !mb-12 shadow-none' : ''
           }`}
-        />
-      </div>
+        >
+          {/* @ts-expect-error Server Component */}
+          <EventsQuickView
+            className={`flex flex-col justify-center transition-all duration-700 delay-700 ${
+              inView ? 'opacity-100' : 'opacity-0'
+            }`}
+          />
+        </div>
+      )}
     </>
   );
 };
