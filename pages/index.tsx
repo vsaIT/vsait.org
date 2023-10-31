@@ -66,17 +66,16 @@ const Home: NextPage = () => {
                   utdanningsinstitusjoner i Trondheim.
                 </p>
                 <div className="flex gap-5 py-10">
-                  {/* TODO change back to LINK components and route to own page */}
-                  <a href="https://medlem.vsait.org">
+                  {/* TODO route to own page */}
+                  <Link href="https://medlem.vsait.org">
                     {/* @ts-expect-error Server Component */}
                     <Button text="Logg inn" className="rounded-3xl" inverted />
-                  </a>
-                  {/*<Link href="/register">*/}
-                  <a href="https://medlem.vsait.org/signup">
+                  </Link>
+                  {/*TODO Change to register when ready*/}
+                  <Link href="https://medlem.vsait.org/signup">
                     {/* @ts-expect-error Server Component */}
                     <Button text="Register" className="rounded-3xl" />
-                    {/*</Link>*/}
-                  </a>
+                  </Link>
                 </div>
               </>
             )}

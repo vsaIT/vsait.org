@@ -13,10 +13,10 @@ import { Role } from '@prisma/client';
 
 const navigation = [
   { href: '/', text: 'Hjem' },
-  // TODO remove this when we are out of emergency mode
-  //{ href: '/events', text: 'Arrangementer' },
+  // TODO change back to /events when events are ready
+  { href: 'https://medlem.vsait.org/events', text: 'Arrangementer' },
   { href: '/organization', text: 'Om oss' },
-  { href: '/guidelines', text: 'Retningslinjer' },
+  { href: '/retningslinjer', text: 'Retningslinjer' },
 ];
 
 const Navigation = () => {

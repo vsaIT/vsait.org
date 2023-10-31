@@ -81,7 +81,7 @@ export function mapPageTitle(path: string): string {
       return PageTitle.profile;
     case '/organization':
       return PageTitle.org;
-    case '/guidelines':
+    case '/retningslinjer':
       return PageTitle.guidelines;
     case '/forgot':
       return PageTitle.forgotPassword;
