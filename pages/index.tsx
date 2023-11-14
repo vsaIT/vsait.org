@@ -67,15 +67,15 @@ const Home: NextPage = () => {
                 </p>
                 <div className="flex gap-5 py-10">
                   {/* TODO route to own page */}
-                  <Link href="https://medlem.vsait.org">
+                  <a href="https://medlem.vsait.org">
                     {/* @ts-expect-error Server Component */}
                     <Button text="Logg inn" className="rounded-3xl" inverted />
-                  </Link>
+                  </a>
                   {/*TODO Change to register when ready*/}
-                  <Link href="https://medlem.vsait.org/signup">
+                  <a href="https://medlem.vsait.org/signup">
                     {/* @ts-expect-error Server Component */}
                     <Button text="Register" className="rounded-3xl" />
-                  </Link>
+                  </a>
                 </div>
               </>
             )}
