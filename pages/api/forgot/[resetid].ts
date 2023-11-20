@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import prisma from '@db';
+import prisma from 'prisma';
 import { getErrorMessage } from '@lib/utils';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {

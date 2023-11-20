@@ -2,7 +2,7 @@ import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
-import prisma, { Role } from '@db/index';
+import prisma, { Role } from 'prisma/index';
 
 import {
   generateSalt,

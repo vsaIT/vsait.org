@@ -7,8 +7,8 @@
       "@api/*": ["pages/api/*"],
       "@lib/*": ["lib/*"],
       "@components/*": ["lib/components/*"],
-      "@db/*": ["db/*"],
-      "@db": ["db/index"]
+      "@db/*": ["prisma/*"],
+      "@db": ["prisma/index"]
     },
     "allowJs": true,
     "skipLibCheck": true,
