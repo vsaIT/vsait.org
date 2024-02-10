@@ -1,18 +1,18 @@
-import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from 'prisma';
-import { getSession } from 'src/lib/auth/session';
 import { getErrorMessage, getMembershipYear } from 'src/lib/utils';
 import { RegisteredUserType } from 'src/lib/types';
+import { NextRequest, NextResponse } from 'next/server';
+import { getToken } from 'next-auth/jwt';
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { eventid } = req.query;
-  const session = await getSession({ req });
+const handler = async (req: NextRequest, {params}: {params: {eventid: number}}) => {
+    const eventid = params.eventid;
+    const token = await getToken({ req: req });
 
   try {
     // Retrieve events including registrationList, waitingList and attendanceList
     const event = await prisma.event.findFirst({
       where:
-        session?.user?.role === 'ADMIN'
+        token?.role === 'ADMIN'
           ? {
               id: Number(eventid),
             }
@@ -38,7 +38,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           },
         },
         waitingList: true,
-        attendanceList: session?.user?.role === 'admin',
+        attendanceList: token?.role === "ADMIN",
       },
     });
     if (!event) throw new Error(`Could not find event with id ${eventid}`);
@@ -46,15 +46,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     // Set user ids in registrationList as filtering for registered users
     let registeredUsers: RegisteredUserType[] = [];
     const userIds = event.registrationList.map((r) => r.userId) || [];
-    const userId = session?.user?.id || '';
+    const userId = token?.id || '';
 
-    if (session) {
+    if (token) {
       // Map registered users with fields name, email and foodNeeds
       registeredUsers = event?.registrationList.map(({ user }) => {
         if (!user) return { name: '', email: '', foodNeeds: '' };
         if (
-          session?.user?.role === 'ADMIN' ||
-          session?.user?.email === user.email
+          token?.role === 'ADMIN' ||
+          token?.email === user.email
         ) {
           return {
             name: `${user.firstName} ${user.lastName}`,
@@ -78,20 +78,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           user?.membership.map((m) => m.year).includes(getMembershipYear())
       ).length > 0;
 
-    return res.status(200).json({
+    return NextResponse.json({
       event: event,
       registrations: registeredUsers,
       hasRegistered:
         userIds.includes(userId) ||
         event.waitingList.map((r) => r.userId).includes(userId),
       hasMembership: hasMembership,
-    });
+    }, { status: 200 });
   } catch (error) {
     console.error(`[api] /api/events/${eventid}`, getErrorMessage(error));
-    return res
-      .status(500)
-      .json({ statusCode: 500, message: getErrorMessage(error) });
+    return NextResponse.json({ message: getErrorMessage(error) }, { status: 500 });
   }
 };
 
-export default handler;
+export { handler as GET, handler as POST }

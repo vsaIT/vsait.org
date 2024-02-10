@@ -1,32 +1,26 @@
-import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from 'prisma';
-import { getSession } from 'src/lib/auth/session';
 import { getErrorMessage, getMembershipYear } from 'src/lib/utils';
 import { isEmpty } from 'lodash';
+import { NextRequest, NextResponse } from 'next/server';
+import { getToken } from 'next-auth/jwt';
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method !== 'POST')
-    return res.status(405).send({ message: 'Only POST requests allowed' });
+const POST = async (req: NextRequest) => {
+  const searchParams = req.nextUrl.searchParams;
+  const userId: string = isEmpty(searchParams.get("userId")) ? '' : searchParams.get("userId") as string;
+  const eventId = isEmpty(searchParams.get("eventId")) ? 0 : Number(searchParams.get("eventId"));
 
-  const userId: string = isEmpty(req.body?.userId) ? '' : req.body.userId;
-  const eventId = isEmpty(req?.body?.eventId) ? 0 : Number(req?.body?.eventId);
-
-  const session = await getSession({ req });
-  if (!session || !session?.user)
-    return res.status(401).json({
-      statusCode: 401,
-      message: 'Unauthorized',
-    });
-  if (userId !== session?.user?.id)
-    return res.status(401).json({
-      statusCode: 401,
-      message: 'Cannot register event for another user',
-    });
+  const token = await getToken({ req: req });
+  if (!token || !token?.user) {
+    return NextResponse.json("Unathorized", { status: 401 });
+  }
+  if (userId !== token?.id) {
+    return NextResponse.json("Cannot register event for another user",{ status: 401 });
+  }
 
   try {
     const event = await prisma.event.findFirst({
       where:
-        session.user.role === 'ADMIN'
+        token?.role === 'ADMIN'
           ? {
               id: Number(eventId),
             }
@@ -51,7 +45,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             createdAt: 'asc',
           },
         },
-        attendanceList: session.user.role === 'admin',
+        attendanceList: token?.role === "ADMIN",
       },
     });
     if (!event) throw new Error(`Could not find event with id ${eventId}`);
@@ -69,8 +63,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       });
       const memberships = userMembership?.membership || [];
       // Check if user have membership for the following year, throw if not
-      if (!memberships.map((m) => m.year).includes(getMembershipYear()))
+      if (!memberships.map((m) => m.year).includes(getMembershipYear())) {
         throw new Error('Event requires user to have membership');
+      }
     }
 
     const hasRegistration = event.registrationList
@@ -82,8 +77,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     let message = '';
     if (hasWaiting) {
       // Check for cancellation deadline
-      if (new Date() >= event.cancellationDeadline)
+      if (new Date() >= event.cancellationDeadline) {
         throw new Error(`Cancellation deadline has passed for event`);
+      }
 
       // If user is in waiting list
       await prisma.waiting.delete({
@@ -96,8 +92,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       });
     } else if (hasRegistration) {
       // Check for cancellation deadline
-      if (new Date() >= event.cancellationDeadline)
+      if (new Date() >= event.cancellationDeadline) {
         throw new Error(`Cancellation deadline has passed for event`);
+      }
 
       // If user is in registration list
       await prisma.registrations.delete({
@@ -131,8 +128,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     } else {
       // Check for registration deadline
-      if (new Date() >= event.registrationDeadline)
+      if (new Date() >= event.registrationDeadline) {
         throw new Error(`Registration deadline has passed for event`);
+      }
 
       // If user is not in waiting or registration list
       if (event.registrationList.length >= maxRegistrations) {
@@ -155,16 +153,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         message = `Successfully registered for event ${eventId}`;
       }
     }
-    return res.status(200).json({
-      statusCode: 200,
-      message: message,
-    });
+    return NextResponse.json({message: message}, { status: 200 })
   } catch (error) {
     console.error('[api] /api/events', getErrorMessage(error));
-    return res
-      .status(200)
-      .json({ statusCode: 500, message: getErrorMessage(error) });
+    return NextResponse.json({ message: getErrorMessage(error) }, { status: 500 });
   }
 };
 
-export default handler;
+const GET = async (req: NextRequest) => {
+  return NextResponse.json('Method Not Allowed', {
+    status: 405,
+  });
+}
+
+export { POST, GET }

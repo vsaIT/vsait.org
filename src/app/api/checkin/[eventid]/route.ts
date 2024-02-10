@@ -1,17 +1,17 @@
-import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from 'prisma';
-import { getSession } from 'src/lib/auth/session';
 import { getErrorMessage } from 'src/lib/utils';
 import { AttendingUserType } from 'src/lib/types';
+import { getToken } from 'next-auth/jwt';
+import { NextRequest, NextResponse } from 'next/server';
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { eventid } = req.query;
-  const session = await getSession({ req });
-  if (!session || session?.user?.role !== 'ADMIN')
-    return res.status(401).json({
-      statusCode: 401,
+const handler = async (req: NextRequest, {params}: {params: {eventid: number}}) => {
+  const eventid = params.eventid;
+  const token = await getToken({ req: req });
+
+  if (!token || token.role !== 'ADMIN')
+    return NextResponse.json({
       message: 'Unauthorized',
-    });
+    }, { status: 401 });
 
   try {
     const event = await prisma.event.findFirst({
@@ -64,16 +64,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       };
     });
 
-    return res.status(200).json({
+    return NextResponse.json({
       event: event,
       attendances: attendingUsers,
-    });
+    }, { status: 200 });
   } catch (error) {
     console.error(`[api] /api/checkin/${eventid}`, getErrorMessage(error));
-    return res
-      .status(500)
-      .json({ statusCode: 500, message: getErrorMessage(error) });
+    return NextResponse.json({ statusCode: 500, message: getErrorMessage(error) }, { status: 500 });
   }
 };
 
-export default handler;
+export { handler as GET, handler as POST }

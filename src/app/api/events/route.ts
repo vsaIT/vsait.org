@@ -1,23 +1,24 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextRequest, NextResponse } from 'next/server';
 import prisma from 'prisma';
 import { getErrorMessage } from 'src/lib/utils';
 import { isEmpty } from 'lodash';
-import { getSession } from 'src/lib/auth/session';
+import { getToken } from 'next-auth/jwt';
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const page = isEmpty(req.query?.page) ? 0 : Number(req.query.page);
-  const upcoming = isEmpty(req.query?.upcoming) ? false : true;
-  const all = isEmpty(req.query?.all) ? false : true;
-  const session = await getSession({ req });
+const handler = async (req: NextRequest) => {
+  const searchParams = req.nextUrl.searchParams;
+  const page = isEmpty(searchParams.get("page")) ? 0 : Number(searchParams.get("page"));
+  const upcoming = isEmpty(searchParams.get("upcoming")) ? false : true;
+  const all = isEmpty(searchParams.get("all")) ? false : true;
+  const token = await getToken({ req });
 
   // Retrieve all events, admins only
   try {
     if (all) {
-      if (session?.user?.role !== 'ADMIN')
-        return res.status(401).json({
-          statusCode: 401,
+      if (token?.role !== 'ADMIN') {
+        return NextResponse.json({
           message: 'Unauthorized',
-        });
+        }, { status: 401 });
+      }
       const events = await prisma.event.findMany({
         orderBy: {
           startTime: 'desc',
@@ -28,11 +29,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           attendanceList: true,
         },
       });
-      return res.status(200).json({
+      return NextResponse.json({
         events: events,
         page: 1,
         pages: 1,
-      });
+      }, { status: 200 });
     } else {
       const take = 5;
       const events = await prisma.event.findMany({
@@ -56,18 +57,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const pages = Math.ceil(events.length / take);
       const currentPage = Math.min(page || 1, pages);
 
-      return res.status(200).json({
+      return NextResponse.json({
         events: events.slice((currentPage - 1) * take, currentPage * take),
         page: currentPage,
         pages: pages,
-      });
+      }, { status: 200 });
     }
   } catch (error) {
     console.error('[api] /api/events', getErrorMessage(error));
-    return res
-      .status(500)
-      .json({ statusCode: 500, message: getErrorMessage(error) });
+    return NextResponse.json({ message: getErrorMessage(error) }, { status: 500 });
   }
 };
 
-export default handler;
+export { handler as default };

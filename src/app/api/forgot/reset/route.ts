@@ -1,20 +1,24 @@
-import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from 'prisma';
 import { getErrorMessage } from 'src/lib/utils';
 import { isEmpty } from 'lodash';
 import { generateSalt, hashPassword } from 'src/lib/auth/passwords';
+import { NextRequest, NextResponse } from 'next/server';
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const resetId = isEmpty(req.body?.resetId) ? '' : String(req.body.resetId);
-  const password = isEmpty(req.body?.password) ? '' : String(req.body.password);
-  const repeatPassword = isEmpty(req.body?.repeatPassword)
+const handler = async (req: NextRequest) => {
+  const searchParams = req.nextUrl.searchParams;
+  const resetId = isEmpty(searchParams.get('resetId'))
     ? ''
-    : String(req.body.repeatPassword);
+    : String(searchParams.get('resetId'));
+  const password = isEmpty(searchParams.get('password'))
+    ? ''
+    : String(searchParams.get('password'));
+  const repeatPassword = isEmpty(searchParams.get('repeatPassword'))
+    ? ''
+    : String(searchParams.get('repeatPassword'));
 
   if (password !== repeatPassword) throw new Error('Passwords do not match!');
   if (password.length < 8)
     throw new Error('Minimum password length is set at 8 characters');
-
   try {
     const userWithResetId = await prisma.user.findFirst({
       where: {
@@ -38,13 +42,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         id: true,
       },
     });
-    return res.status(200).json({ statusCode: 200, user });
+    return NextResponse.json(user, { status: 200 });
   } catch (error) {
     console.error('[api] /api/forgot/reset', getErrorMessage(error));
-    return res
-      .status(500)
-      .json({ statusCode: 500, message: getErrorMessage(error) });
+    return NextResponse.json({ message: getErrorMessage(error) }, { status: 500 });
   }
 };
 
-export default handler;
+export { handler as POST, handler as GET };

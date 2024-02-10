@@ -3,22 +3,18 @@ import prisma from 'prisma';
 import { getSession } from 'src/lib/auth/session';
 import { getErrorMessage } from 'src/lib/utils';
 import { isEmpty } from 'lodash';
+import { NextRequest, NextResponse } from 'next/server';
+import { getToken } from 'next-auth/jwt';
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method !== 'POST')
-    return res.status(405).send({ message: 'Only POST requests allowed' });
+const POST = async (req: NextRequest) => {
+  const body = await req.json();
+  const email: string = isEmpty(body.email) ? '' : body.email;
+  const userid: string = isEmpty(body.userid) ? '' : body.userid;
+  const eventId = isEmpty(body.eventId) ? 0 : Number(body.eventId);
 
-  const email: string = isEmpty(req.body?.email) ? '' : req.body.email;
-  const userid: string = isEmpty(req.body?.userid) ? '' : req.body.userid;
-  const eventId = isEmpty(req?.body?.eventId) ? 0 : Number(req?.body?.eventId);
-
-  const session = await getSession({ req });
-  if (!session || session?.user?.role !== 'ADMIN')
-    return res.status(401).json({
-      statusCode: 401,
-      message: 'Unauthorized',
-    });
-
+  const token = await getToken({ req: req })
+  if (!token || token.role !== 'ADMIN')
+    return NextResponse.json({message:'Unauthorized'}, { status: 401 });
   try {
     // Retrieve user with email
     let id = userid;
@@ -78,16 +74,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       });
     } else throw new Error('User is not registered to the event');
 
-    return res.status(200).json({
-      statusCode: 200,
-      message: `Successfully registered attendance for user with email ${email}`,
-    });
+    return NextResponse.json({message:`Successfully registered attendance for user with email ${email}`}, { status: 201 });
   } catch (error) {
     console.error('[api] /api/checkin/register', getErrorMessage(error));
-    return res
-      .status(200)
-      .json({ statusCode: 500, message: getErrorMessage(error) });
+    return NextResponse.json({message:getErrorMessage(error)}, { status: 500 });
   }
 };
 
-export default handler;
+const GET = async (req: NextRequest) => {
+  return NextResponse.json({message:'Only POST requests are allowed'}, { status: 404 });
+};
+
+export { POST, GET };
