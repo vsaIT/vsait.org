@@ -4,9 +4,9 @@
     "lib": ["dom", "dom.iterable", "esnext"],
     "baseUrl": ".",
     "paths": {
-      "@api/*": ["pages/api/*"],
-      "@lib/*": ["lib/*"],
-      "@components/*": ["lib/components/*"],
+      "@api/*": ["src/app/api/*"],
+      "@lib/*": ["src/lib/*"],
+      "@components/*": ["src/components/*"],
       "@db/*": ["prisma/*"],
       "@db": ["prisma/index"]
     },
@@ -22,9 +22,14 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "noUnusedLocals": false,     // Report unused local variables
-    "noUnusedParameters": false,    // Report unused parameters
+    "noUnusedLocals": false, // Report unused local variables
+    "noUnusedParameters": false, // Report unused parameters
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules", "**/*.gitignore"]
 }

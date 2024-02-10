@@ -1,0 +1,23 @@
+import { LargeHeader } from 'src/components/Header';
+import Wave from 'src/components/Wave';
+import type { NextPage } from 'next';
+
+const Custom404: NextPage = () => {
+  return (
+    <>
+      {/* @ts-expect-error Server Component */}
+      <LargeHeader>
+        <>
+          <h1 className="text-7xl mb-1.5 font-bold text-white">403</h1>
+          <p className="w-9/12 text-white">
+            Du har ikke tilgang til denne ressursen...
+          </p>
+          {/* @ts-expect-error Server Component */}
+          <Wave />
+        </>
+      </LargeHeader>
+    </>
+  );
+};
+
+export default Custom404;

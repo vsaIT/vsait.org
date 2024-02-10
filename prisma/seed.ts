@@ -1,4 +1,4 @@
-import { generateSalt, hashPassword } from '../lib/auth/passwords';
+import { generateSalt, hashPassword } from '../src/lib/auth/passwords';
 import { EventType } from '@prisma/client';
 import prisma from '.';
 
