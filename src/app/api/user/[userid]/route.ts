@@ -32,11 +32,7 @@ const GET = async (
       },
       include: {
         membership: true,
-        userAttendanceList: {
-          select: {
-            event: true,
-          },
-        },
+        userAttendanceList: true,
       },
     });
     return NextResponse.json(user, { status: 200 });
