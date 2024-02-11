@@ -73,8 +73,14 @@ const AdminSideNavigation = () => {
         !toggled ? '!w-20' : ''
       }`}
     >
-      <div className='flex w-full flex-col justify-between gap-2'>
-        <div className='flex w-full flex-col items-start gap-2'>
+      <div
+        key='admin-nav-box2'
+        className='flex w-full flex-col justify-between gap-2'
+      >
+        <div
+          key='admin-nav-box'
+          className='flex w-full flex-col items-start gap-2'
+        >
           <button
             className='mb-12 h-10 w-full rounded-md fill-white px-2 py-1 text-white transition-all duration-300 hover:bg-[rgba(0,0,0,0.3)]'
             onClick={() => setToggled(!toggled)}
@@ -101,24 +107,22 @@ const AdminSideNavigation = () => {
             </div>
           </button>
           {links.map((link) => (
-            <>
-              <Link
-                href={link.href}
-                key={link.href}
-                className={`h-10 w-full rounded-md fill-white px-3 py-2 text-white transition-all duration-300 hover:bg-[rgba(0,0,0,0.3)] ${
-                  pathname.split('/').slice(0, 3).join('/') === link.href
-                    ? 'bg-[rgba(0,0,0,0.3)]'
-                    : ''
-                }`}
-              >
-                <div className='grid grid-cols-sideNavigationButton items-center overflow-hidden text-left'>
-                  {link.icon}
-                  <p className='ml-2 text-sm font-medium [transform:translateY(1.5px)]'>
-                    {link.text}
-                  </p>
-                </div>
-              </Link>
-            </>
+            <Link
+              href={link.href}
+              key={`admin-nav-${link.href}`}
+              className={`h-10 w-full rounded-md fill-white px-3 py-2 text-white transition-all duration-300 hover:bg-[rgba(0,0,0,0.3)] ${
+                pathname.split('/').slice(0, 3).join('/') === link.href
+                  ? 'bg-[rgba(0,0,0,0.3)]'
+                  : ''
+              }`}
+            >
+              <div className='grid grid-cols-sideNavigationButton items-center overflow-hidden text-left'>
+                {link.icon}
+                <p className='ml-2 text-sm font-medium [transform:translateY(1.5px)]'>
+                  {link.text}
+                </p>
+              </div>
+            </Link>
           ))}
         </div>
         <div className='flex w-full flex-col items-start gap-2'>

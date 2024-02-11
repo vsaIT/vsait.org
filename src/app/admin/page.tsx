@@ -1,4 +1,4 @@
-function Admin(): JSX.Element {
+function AdminDashboardPage(): JSX.Element {
   return (
     <>
       <div className='flex h-screen w-full flex-col gap-6 p-6'>
@@ -28,4 +28,4 @@ function Admin(): JSX.Element {
   );
 }
 
-export default Admin;
+export default AdminDashboardPage;

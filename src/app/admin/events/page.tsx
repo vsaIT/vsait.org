@@ -36,19 +36,20 @@ function AdminEvents(): JSX.Element {
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'startTime', desc: true },
   ]);
+  //TODO: Make a tanstack table component
   // Column creation through tanstack column helper for strictly typing header and cells
   const columnHelper = createColumnHelper<EventType>();
   const columns = useMemo(
     () => [
       columnHelper.display({
         id: 'select',
-        header: () => (
+        header: (props) => (
           <div className='flex h-full w-full items-center justify-center'>
             <IndeterminateCheckbox
               {...{
-                checked: table.getIsAllRowsSelected(),
-                indeterminate: table.getIsSomeRowsSelected(),
-                onChange: table.getToggleAllRowsSelectedHandler(),
+                checked: props.table.getIsAllRowsSelected(),
+                indeterminate: props.table.getIsSomeRowsSelected(),
+                onChange: props.table.getToggleAllRowsSelectedHandler(),
                 className: '[filter:hue-rotate(140deg)_saturate(0.85)]',
               }}
             />
@@ -67,6 +68,7 @@ function AdminEvents(): JSX.Element {
           </div>
         ),
       }),
+
       columnHelper.accessor(
         (row) => {
           return { id: row.id, title: row.title };
@@ -179,6 +181,7 @@ function AdminEvents(): JSX.Element {
         }
       ),
     ],
+
     [columnHelper]
   );
 

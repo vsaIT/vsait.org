@@ -62,13 +62,13 @@ const AdminUsers: NextPage = () => {
     () => [
       columnHelper.display({
         id: 'select',
-        header: () => (
+        header: (props) => (
           <div className='flex h-full w-full items-center justify-center'>
             <IndeterminateCheckbox
               {...{
-                checked: table.getIsAllRowsSelected(),
-                indeterminate: table.getIsSomeRowsSelected(),
-                onChange: table.getToggleAllRowsSelectedHandler(),
+                checked: props.table.getIsAllRowsSelected(),
+                indeterminate: props.table.getIsSomeRowsSelected(),
+                onChange: props.table.getToggleAllRowsSelectedHandler(),
                 className: '[filter:hue-rotate(140deg)_saturate(0.85)]',
               }}
             />
@@ -222,7 +222,7 @@ const AdminUsers: NextPage = () => {
     ],
     [columnHelper]
   );
-  
+
   const table = useReactTable({
     data: users.users,
 
