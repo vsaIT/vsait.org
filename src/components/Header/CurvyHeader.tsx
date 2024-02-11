@@ -1,4 +1,3 @@
-
 type HeaderProps = {
   title?: string;
   children?: JSX.Element;
