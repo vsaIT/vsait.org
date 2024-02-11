@@ -16,7 +16,6 @@ Dev: https://dev--jazzy-malasada-b00157.netlify.app
 
 ### 🎨 Figma design
 
-
 https://www.figma.com/file/8WEtfHLJZxjADUfiSiEOKS/VsaIT
 
 ### ☁️ One-click Deploy with Netlify
@@ -25,7 +24,16 @@ https://www.figma.com/file/8WEtfHLJZxjADUfiSiEOKS/VsaIT
 
 ### 💻 Development
 
-TBA
+- git clone
+- npm install
+- fill out .env file
+- npm run db:generate
+- npm run db:seed
+- npm run dev
+
+Linting:
+
+- npm run format:fix
 
 ### 📖 Readings
 

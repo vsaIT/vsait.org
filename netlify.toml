@@ -1,5 +1,5 @@
 [build]
-command = "yarn db:generate && yarn build"
+command = "prisma generate && next build"
 publish = ".next"
 
 [[plugins]]

@@ -1,6 +1,6 @@
-import { generateSalt, hashPassword } from '../lib/auth/passwords';
 import { EventType } from '@prisma/client';
 import prisma from '.';
+import { generateSalt, hashPassword } from '../src/lib/auth/passwords';
 
 async function main() {
   const encryptedPassword = hashPassword('password1234', 12);

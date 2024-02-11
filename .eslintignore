@@ -39,7 +39,3 @@ next-env.d.ts
 # Webstorm
 .idea
 .vscode
-
-# dev db files
-/db/migrations/
-/db/*.db*

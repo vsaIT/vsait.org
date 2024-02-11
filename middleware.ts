@@ -3,7 +3,7 @@ import { getToken } from 'next-auth/jwt';
 import { NextRequest, NextResponse } from 'next/server';
 // paths that require authentication or authorization
 
-const requireAuth: string[] = ['/admin', '/events', '/register', '/profile'];
+const requireAuth: string[] = ['/admin', '/profile'];
 
 export async function middleware(request: NextRequest) {
   const res = NextResponse.next();
