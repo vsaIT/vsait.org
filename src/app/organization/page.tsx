@@ -1,5 +1,4 @@
 import { CurvyHeader } from '@/components/Header';
-import type { NextPage } from 'next';
 import Image from 'next/image';
 
 type BoardType = {

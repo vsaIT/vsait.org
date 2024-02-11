@@ -44,9 +44,6 @@ const studentSelectOptions = [
 ];
 
 const Card = ({ user, session }: CardProps) => {
-  if (session?.user?.id !== user.id) {
-    return null;
-  }
   const [attendanceCount, setAttendanceCount] = useState(5);
   const { register, handleSubmit, setValue } = useForm<UserFormValues>();
   const { register: registerPassword, handleSubmit: handlePasswordSubmit } =
@@ -151,6 +148,10 @@ const Card = ({ user, session }: CardProps) => {
     setValue('student', user.student as string);
     setValue('publicProfile', user.publicProfile);
   }, [user, setValue]);
+
+  if (session?.user?.id !== user.id) {
+    return null;
+  }
 
   return (
     <>

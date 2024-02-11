@@ -86,7 +86,7 @@ const AdminMemberships: NextPage = () => {
         footer: (info) => info.column.id,
       }),
     ],
-    []
+    [columnHelper]
   );
 
   // Create table

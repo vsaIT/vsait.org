@@ -179,7 +179,7 @@ function AdminEvents(): JSX.Element {
         }
       ),
     ],
-    []
+    [columnHelper]
   );
 
   // Create table

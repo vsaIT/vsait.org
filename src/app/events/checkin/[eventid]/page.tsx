@@ -103,7 +103,7 @@ function Checkin({ params }: { params: { eventid: string } }): JSX.Element {
         allowOutsideClick: () => false,
       }).finally(() => setRegistrationEnabled(true));
     },
-    [eventid, setRegistrationEnabled, registrationEnabled]
+    [eventid, setRegistrationEnabled, registrationEnabled, session?.user?.id]
   );
 
   const event: EventType = data?.event;

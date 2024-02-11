@@ -1,8 +1,12 @@
-import { ChildrenProps } from '@/types/types';
 import { forwardRef, LegacyRef } from 'react';
 
+type LargeHeaderProps = {
+  children: JSX.Element;
+  className?: string;
+};
+
 const LargeHeader = (
-  { children, className = '' }: ChildrenProps,
+  { children, className = '' }: LargeHeaderProps,
   ref: LegacyRef<HTMLDivElement>
 ) => {
   return (

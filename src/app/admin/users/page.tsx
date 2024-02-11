@@ -220,8 +220,9 @@ const AdminUsers: NextPage = () => {
         footer: (info) => info.column.id,
       }),
     ],
-    []
+    [columnHelper]
   );
+  
   const table = useReactTable({
     data: users.users,
 
@@ -257,7 +258,7 @@ const AdminUsers: NextPage = () => {
         error.message;
         window.location.href = '/500';
       });
-  }, [session?.user?.id, pageIndex, fetchUser]);
+  }, [session?.user?.id, pageIndex]);
 
   return (
     <>

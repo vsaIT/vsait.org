@@ -144,7 +144,15 @@ function Profile(): JSX.Element {
         if (!result.isConfirmed) setProfileIcon(oldProfileIcon);
       })
       .finally(() => setIsModalOpen(false));
-  }, [session?.user?.id, isModalOpen, setIsModalOpen, avatar, setProfileIcon]);
+  }, [
+    session?.user?.id,
+    isModalOpen,
+    setIsModalOpen,
+    avatar,
+    setProfileIcon,
+    profileIcon,
+    setUser,
+  ]);
 
   useEffect(() => {
     if (!session?.user?.id) return;
@@ -167,14 +175,14 @@ function Profile(): JSX.Element {
         });
     };
     fetchUser().finally();
-  }, [session?.user?.id, setFetching]);
+  }, [session?.user?.id, setFetching, setUser]);
 
   return (
     <>
       <SmallHeader />
       <div className='z-10 mb-32 flex w-full max-w-screen-xl -translate-y-10 transform flex-col gap-6'>
         {status === 'loading' && fetching ? (
-          <>'Loading or not authenticated...'</>
+          <>&apos;Loading or not authenticated...&apos;</>
         ) : (
           <div className='mx-auto box-border flex w-[calc(100%-3rem)] flex-col gap-6 rounded-2xl bg-white p-6 shadow-2xl'>
             <div className='flex items-center'>
