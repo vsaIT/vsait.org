@@ -10,9 +10,27 @@ const Wave = () => {
       const h = canvas.height,
         w = canvas.width;
       const waves = [
-        { x: 1, dx: 1, y: 0.002, dy: 0, color: 'rgba(255,255,255,0.4)' },
-        { x: 1, dx: 0.5, y: 0.002, dy: 0, color: 'rgba(255,255,255,0.6)' },
-        { x: 1, dx: 0.1, y: 0.002, dy: 0, color: 'rgba(255,255,255,1)' },
+        {
+          x: 1,
+          dx: 1,
+          y: 0.002,
+          dy: 0,
+          color: 'rgba(255,255,255,0.4)',
+        },
+        {
+          x: 1,
+          dx: 0.5,
+          y: 0.002,
+          dy: 0,
+          color: 'rgba(255,255,255,0.6)',
+        },
+        {
+          x: 1,
+          dx: 0.1,
+          y: 0.002,
+          dy: 0,
+          color: 'rgba(255,255,255,1)',
+        },
       ];
       const drawWave = (
         ctx: CanvasRenderingContext2D,
@@ -70,7 +88,7 @@ const Wave = () => {
   return (
     <canvas
       ref={canvasRef}
-      className="absolute flex w-full h-52 bottom-0"
+      className='absolute bottom-0 flex h-52 w-full'
     ></canvas>
   );
 };

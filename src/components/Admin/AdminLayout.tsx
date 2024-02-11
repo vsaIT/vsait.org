@@ -1,12 +1,14 @@
-import { ChildrenProps } from 'src/lib/types';
 import AdminSideNavigation from './AdminSideNavigation';
 
-const AdminLayout = ({ children }: ChildrenProps) => {
+type AdminLayoutProps = {
+  children: JSX.Element;
+};
+
+const AdminLayout = ({ children }: AdminLayoutProps) => {
   return (
-    <div className="flex flex-row z-10 w-full bg-stone-100 overflow-y-hidden">
-      {/* @ts-expect-error Server Component */}
+    <div className='z-10 flex w-full flex-row overflow-y-hidden bg-stone-100'>
       <AdminSideNavigation />
-      <div className="flex flex-col relative w-full box-border overflow-y-auto h-screen">
+      <div className='relative box-border flex h-screen w-full flex-col overflow-y-auto'>
         {children}
       </div>
     </div>

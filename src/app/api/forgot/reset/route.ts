@@ -1,7 +1,7 @@
-import prisma from 'prisma';
-import { getErrorMessage } from 'src/lib/utils';
+import prisma from 'prisma/index';
+import { getErrorMessage } from '@/lib/utils';
 import { isEmpty } from 'lodash';
-import { generateSalt, hashPassword } from 'src/lib/auth/passwords';
+import { generateSalt, hashPassword } from '@/lib/auth/passwords';
 import { NextRequest, NextResponse } from 'next/server';
 
 const handler = async (req: NextRequest) => {
@@ -45,7 +45,10 @@ const handler = async (req: NextRequest) => {
     return NextResponse.json(user, { status: 200 });
   } catch (error) {
     console.error('[api] /api/forgot/reset', getErrorMessage(error));
-    return NextResponse.json({ message: getErrorMessage(error) }, { status: 500 });
+    return NextResponse.json(
+      { message: getErrorMessage(error) },
+      { status: 500 }
+    );
   }
 };
 

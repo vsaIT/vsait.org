@@ -51,17 +51,11 @@ export function mapPageTitle(path: string): string {
       return AdminPageTitle.admin;
     } else if (adminPath.startsWith('/statistics')) {
       return AdminPageTitle.stats;
-    } else if (
-      adminPath.startsWith('/users')
-    ) {
+    } else if (adminPath.startsWith('/users')) {
       return AdminPageTitle.users;
-    } else if (
-      adminPath.startsWith('/memberships')
-    ) {
+    } else if (adminPath.startsWith('/memberships')) {
       return AdminPageTitle.membership;
-    } else if (
-      adminPath.startsWith('/events')
-    ) {
+    } else if (adminPath.startsWith('/events')) {
       return AdminPageTitle.event;
     } else {
       return 'Could not find admin page title';

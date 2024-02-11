@@ -1,14 +1,15 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import prisma from 'prisma';
-import { getErrorMessage } from 'src/lib/utils';
+import prisma from 'prisma/index';
+import { getErrorMessage } from '@/lib/utils';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
-const POST = async (req: NextRequest) => {
-  const searchParams = req.nextUrl.searchParams;
+const POST = async (
+  req: NextRequest,
+  { params }: { params: { userid: string } }
+) => {
   const body = await req.json();
-  const userID = searchParams.get('userid') as string;
+  const userID = params.userid;
   const { seed } = body;
   const token = await getToken({ req });
 
@@ -53,7 +54,7 @@ const POST = async (req: NextRequest) => {
   }
 };
 
-const GET = async (req: NextRequest) => {
+const GET = async () => {
   return NextResponse.json('Method Not Allowed', {
     status: 405,
   });

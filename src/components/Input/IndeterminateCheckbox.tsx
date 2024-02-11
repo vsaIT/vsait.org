@@ -1,3 +1,4 @@
+'use client';
 import { HTMLProps, useEffect, useRef } from 'react';
 
 const IndeterminateCheckbox = ({
@@ -10,11 +11,11 @@ const IndeterminateCheckbox = ({
     if (ref.current && typeof indeterminate === 'boolean') {
       ref.current.indeterminate = !rest.checked && indeterminate;
     }
-  }, [ref, indeterminate]);
+  }, [ref, indeterminate, rest.checked]);
 
   return (
     <input
-      type="checkbox"
+      type='checkbox'
       ref={ref}
       className={className + ' cursor-pointer'}
       {...rest}

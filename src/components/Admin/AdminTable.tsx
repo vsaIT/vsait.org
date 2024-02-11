@@ -1,22 +1,22 @@
-import { CaretDown, CaretUp } from 'src/lib/icons';
-import { AdminTableProps } from 'src/lib/types';
+import { CaretDown, CaretUp } from '@/components/icons';
+import { AdminTableProps } from '@/types/types';
 import { flexRender } from '@tanstack/react-table';
 
 const AdminTable = <T extends object>({ table }: AdminTableProps<T>) => {
   return (
-    <table className="w-full rounded-xl text-sm">
-      <thead className="bg-neutral-100 text-left">
+    <table className='w-full rounded-xl text-sm'>
+      <thead className='bg-neutral-100 text-left'>
         {table.getHeaderGroups().map((headerGroup) => (
           <tr
             key={headerGroup.id}
-            className="border-neutral-300 box-border border-collapse"
+            className='box-border border-collapse border-neutral-300'
           >
             {headerGroup.headers.map((header, i) => {
               return (
                 <th
                   key={header.id}
                   colSpan={header.colSpan}
-                  className={`font-medium p-[0.625rem] transition-all ${
+                  className={`p-[0.625rem] font-medium transition-all ${
                     ['asc', 'desc'].includes(
                       header.column.getIsSorted() as string
                     )
@@ -29,7 +29,7 @@ const AdminTable = <T extends object>({ table }: AdminTableProps<T>) => {
                 >
                   {header.isPlaceholder ? null : (
                     <div
-                      className={`flex justify-between items-center fill-neutral-700 ${
+                      className={`flex items-center justify-between fill-neutral-700 ${
                         header.column.getCanSort()
                           ? 'cursor-pointer select-none'
                           : ''
@@ -42,18 +42,18 @@ const AdminTable = <T extends object>({ table }: AdminTableProps<T>) => {
                       )}
                       {header.column.getCanSort() ? (
                         header.column.getIsSorted() === 'asc' ? (
-                          <CaretUp className="h-3 w-3" color="inherit" />
+                          <CaretUp className='h-3 w-3' color='inherit' />
                         ) : header.column.getIsSorted() === 'desc' ? (
-                          <CaretDown className="h-3 w-3" color="inherit" />
+                          <CaretDown className='h-3 w-3' color='inherit' />
                         ) : (
-                          <div className="flex flex-col fill-neutral-400">
+                          <div className='flex flex-col fill-neutral-400'>
                             <CaretUp
-                              className="h-3 w-3 -mb-[2.5px]"
-                              color="inherit"
+                              className='-mb-[2.5px] h-3 w-3'
+                              color='inherit'
                             />
                             <CaretDown
-                              className="h-3 w-3 -mt-[2.5px]"
-                              color="inherit"
+                              className='-mt-[2.5px] h-3 w-3'
+                              color='inherit'
                             />
                           </div>
                         )
@@ -71,13 +71,13 @@ const AdminTable = <T extends object>({ table }: AdminTableProps<T>) => {
           return (
             <tr
               key={row.id}
-              className={`border-t-[1px] border-neutral-300 border-collapse ${
+              className={`border-collapse border-t-[1px] border-neutral-300 ${
                 row.getIsSelected() ? 'bg-secondary bg-opacity-25' : ''
               }`}
             >
               {row.getVisibleCells().map((cell) => {
                 return (
-                  <td key={cell.id} className="p-[0.625rem]">
+                  <td key={cell.id} className='p-[0.625rem]'>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 );

@@ -1,11 +1,13 @@
 import { getToken } from 'next-auth/jwt';
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from 'prisma';
-import { getErrorMessage } from 'src/lib/utils';
+import prisma from 'prisma/index';
+import { getErrorMessage } from '@/lib/utils';
 
-const GET = async (req: NextRequest) => {
-  const searchParams = req.nextUrl.searchParams;
-  const userID = searchParams.get('userid') as string;
+const GET = async (
+  req: NextRequest,
+  { params }: { params: { userid: string } }
+) => {
+  const userID = params.userid;
   const token = await getToken({ req });
 
   if (!token)
@@ -28,17 +30,8 @@ const GET = async (req: NextRequest) => {
       where: {
         id: userID,
       },
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        email: true,
-        birthdate: true,
-        foodNeeds: true,
-        student: true,
-        publicProfile: true,
+      include: {
         membership: true,
-        profileIconSeed: true,
         userAttendanceList: {
           select: {
             event: true,
@@ -56,7 +49,7 @@ const GET = async (req: NextRequest) => {
   }
 };
 
-const POST = async (req: NextRequest) => {
+const POST = async () => {
   return NextResponse.json('Method Not Allowed', {
     status: 405,
   });

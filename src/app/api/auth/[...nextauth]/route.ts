@@ -2,12 +2,14 @@ import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import NextAuth, { AuthOptions, User } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import prisma, { Role } from 'prisma/index';
+import { NextResponse } from 'next/server';
+import chalk from 'chalk';
 
 import {
   generateSalt,
   hashPassword,
   verifyPassword,
-} from 'src/lib/auth/passwords';
+} from '@/lib/auth/passwords';
 
 type RegisterInputType =
   | 'firstName'
@@ -121,10 +123,11 @@ const authOptions: AuthOptions = {
           } else {
             throw new Error('A user with the same email exists');
           }
-          return { ...newUser, membership: [] };
+          return { ...newUser, membership: [], userAttendanceList: [] };
         } catch (error) {
-          console.log(error);
-          throw error;
+          NextResponse.json(error, { status: 401 });
+          console.error(chalk.red(error));
+          return null;
         }
       },
     }),
@@ -143,38 +146,38 @@ const authOptions: AuthOptions = {
           placeholder: 'Your super secure password',
         },
       },
-    async authorize(credentials): Promise<User | null>{
+      async authorize(credentials): Promise<User | null> {
         try {
-            if (!credentials?.password || !credentials?.email) {
-                throw new Error('Invalid Credentials');
+          if (!credentials?.password || !credentials?.email) {
+            throw new Error('Invalid Credentials');
+          }
+          // Check if user exist
+          const maybeUser = (await prisma.user.findFirst({
+            where: {
+              email: credentials.email,
+            },
+            include: {
+              membership: true,
+            },
+          })) as User;
+          if (maybeUser) {
+            const isValid = verifyPassword(
+              credentials.password,
+              maybeUser.password || ''
+            );
+            if (!isValid) {
+              throw new Error('Invalid Credentials');
             }
-            // Check if user exist
-            const maybeUser = await prisma.user.findFirst({
-                where: {
-                    email: credentials.email,
-                }
-            }) as User;
-
-            if (maybeUser) {
-                const isValid = verifyPassword(
-                    credentials.password,
-                    maybeUser.password || ''
-                );
-                if (!isValid) {
-                    throw new Error('Invalid Credentials');
-                }
-            } else {
-                throw new Error('Invalid Credentials');
-            }
-            return {
-                ...maybeUser,
-                mappedMembership: maybeUser.membership.map((m) => m.year),
-            };
+          } else {
+            throw new Error('Invalid Credentials');
+          }
+          return maybeUser;
         } catch (error) {
-            console.log(error);
-            throw error;
+          NextResponse.json(error, { status: 401 });
+          console.error(chalk.red(error));
+          return null;
         }
-    },
+      },
     }),
   ],
   callbacks: {
@@ -227,4 +230,4 @@ const authOptions: AuthOptions = {
 };
 
 const handler = NextAuth(authOptions);
-export { handler as GET, handler as POST }
+export { handler as GET, handler as POST };

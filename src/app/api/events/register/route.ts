@@ -1,20 +1,26 @@
-import prisma from 'prisma';
-import { getErrorMessage, getMembershipYear } from 'src/lib/utils';
+import prisma from 'prisma/index';
+import { getErrorMessage, getMembershipYear } from '@/lib/utils';
 import { isEmpty } from 'lodash';
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
 const POST = async (req: NextRequest) => {
   const searchParams = req.nextUrl.searchParams;
-  const userId: string = isEmpty(searchParams.get("userId")) ? '' : searchParams.get("userId") as string;
-  const eventId = isEmpty(searchParams.get("eventId")) ? 0 : Number(searchParams.get("eventId"));
+  const userId: string = isEmpty(searchParams.get('userId'))
+    ? ''
+    : (searchParams.get('userId') as string);
+  const eventId = isEmpty(searchParams.get('eventId'))
+    ? 0
+    : Number(searchParams.get('eventId'));
 
   const token = await getToken({ req: req });
   if (!token || !token?.user) {
-    return NextResponse.json("Unathorized", { status: 401 });
+    return NextResponse.json('Unathorized', { status: 401 });
   }
   if (userId !== token?.id) {
-    return NextResponse.json("Cannot register event for another user",{ status: 401 });
+    return NextResponse.json('Cannot register event for another user', {
+      status: 401,
+    });
   }
 
   try {
@@ -45,7 +51,7 @@ const POST = async (req: NextRequest) => {
             createdAt: 'asc',
           },
         },
-        attendanceList: token?.role === "ADMIN",
+        attendanceList: token?.role === 'ADMIN',
       },
     });
     if (!event) throw new Error(`Could not find event with id ${eventId}`);
@@ -153,17 +159,20 @@ const POST = async (req: NextRequest) => {
         message = `Successfully registered for event ${eventId}`;
       }
     }
-    return NextResponse.json({message: message}, { status: 200 })
+    return NextResponse.json({ message: message }, { status: 200 });
   } catch (error) {
     console.error('[api] /api/events', getErrorMessage(error));
-    return NextResponse.json({ message: getErrorMessage(error) }, { status: 500 });
+    return NextResponse.json(
+      { message: getErrorMessage(error) },
+      { status: 500 }
+    );
   }
 };
 
-const GET = async (req: NextRequest) => {
+const GET = async () => {
   return NextResponse.json('Method Not Allowed', {
     status: 405,
   });
-}
+};
 
-export { POST, GET }
+export { POST, GET };

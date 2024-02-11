@@ -1,17 +1,18 @@
 datasource db {
-  provider             = "mysql"
-  url                  = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 model Account {
   id                       String   @id @default(cuid())
   createdAt                DateTime @default(now())
   updatedAt                DateTime @updatedAt
-  userId                   String
+  userId                   String   @unique
   type                     String
   provider                 String
   providerAccountId        String
@@ -36,7 +37,7 @@ model Session {
   sessionToken String   @unique
   expires      DateTime
   user         User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId       String?
+  userId       String?  @unique
 }
 
 model User {

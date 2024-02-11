@@ -1,5 +1,5 @@
 import React from 'react';
-import { SelectProps } from 'src/lib/types';
+import { SelectProps } from '@/types/types';
 
 const Select = <T extends object>({
   options,
@@ -10,7 +10,7 @@ const Select = <T extends object>({
     <div>
       <select
         id={id as string}
-        className="w-full py-3 px-4 border-2 border-stone-300 outline-none text-sm text-left leading-6 bg-transparent rounded-xl transition duration-150 ease-in-out invalid:text-placeholder"
+        className='w-full rounded-xl border-2 border-stone-300 bg-transparent px-4 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out invalid:text-placeholder'
         {...(register && id ? register(id) : {})}
       >
         {options.map((option) => (

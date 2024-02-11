@@ -1,17 +1,18 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import prisma from 'prisma';
-import { getErrorMessage } from 'src/lib/utils';
+import prisma from 'prisma/index';
+import { getErrorMessage } from '@/lib/utils';
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
-const POST = async (req: NextRequest) => {
+const POST = async (
+  req: NextRequest,
+  { params }: { params: { userid: string } }
+) => {
   const body = await req.json();
-  const searchParams = req.nextUrl.searchParams;
-  const userID = searchParams.get('userid') as string;
+  const userID = params.userid;
   const { foodNeeds, student, publicProfile } = body;
   const token = await getToken({ req });
 
-  if (!token || !token?.user)
+  if (!token)
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   if (userID !== token?.id && token?.role !== 'ADMIN')
     return NextResponse.json(
@@ -45,7 +46,7 @@ const POST = async (req: NextRequest) => {
   }
 };
 
-const GET = async (req: NextRequest) => {
+const GET = async () => {
   return NextResponse.json('Method Not Allowed', {
     status: 405,
   });

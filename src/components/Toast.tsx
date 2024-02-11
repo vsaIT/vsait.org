@@ -1,5 +1,5 @@
 import React from 'react';
-import { toast } from 'react-toastify';
+import { Bounce, toast } from 'react-toastify';
 
 type ToastMessageType = {
   type: 'info' | 'success' | 'warn' | 'error';
@@ -21,6 +21,7 @@ const ToastMessage = ({ type, message }: ToastMessageType) =>
       draggable: true,
       progress: undefined,
       theme: 'light',
+      transition: Bounce,
     }
   );
 ToastMessage.dismiss = toast.dismiss;

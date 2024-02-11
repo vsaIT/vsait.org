@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from 'prisma';
-import { getErrorMessage } from 'src/lib/utils';
+import prisma from 'prisma/index';
+import { getErrorMessage } from '@/lib/utils';
 
 const GET = async (req: NextRequest) => {
   const page = req.nextUrl.searchParams.get('page');
@@ -28,7 +28,7 @@ const GET = async (req: NextRequest) => {
   }
 };
 
-const POST = async (req: NextRequest) => {
+const POST = async () => {
   return NextResponse.json('Method Not Allowed', {
     status: 405,
   });

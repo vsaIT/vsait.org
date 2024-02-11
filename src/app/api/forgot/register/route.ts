@@ -1,5 +1,5 @@
-import prisma from 'prisma';
-import { getErrorMessage } from 'src/lib/utils';
+import prisma from 'prisma/index';
+import { getErrorMessage } from '@/lib/utils';
 import { isEmpty } from 'lodash';
 import { sendEmail } from './utils';
 import { NextRequest, NextResponse } from 'next/server';
@@ -46,7 +46,7 @@ const POST = async (req: NextRequest) => {
   }
 };
 
-const GET = async (req: NextRequest) => {
+const GET = async () => {
   return NextResponse.json('Method Not Allowed', {
     status: 405,
   });

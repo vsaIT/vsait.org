@@ -1,5 +1,5 @@
 [build]
-command = "yarn db:generate && yarn build"
+command = "npm run build"
 publish = ".next"
 
 [[plugins]]

@@ -1,5 +1,5 @@
-import prisma from 'prisma';
-import { getErrorMessage } from 'src/lib/utils';
+import prisma from 'prisma/index';
+import { getErrorMessage } from '@/lib/utils';
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
@@ -7,7 +7,7 @@ const GET = async (
   req: NextRequest,
   { params }: { params: { year: number } }
 ) => {
-  const year = params.year;
+  const year = Number(params.year);
   const token = await getToken({ req });
 
   if (!token || token?.role !== 'ADMIN')
@@ -31,7 +31,7 @@ const GET = async (
   }
 };
 
-const POST = async (req: NextRequest) => {
+const POST = async () => {
   return NextResponse.json('Method Not Allowed', {
     status: 405,
   });

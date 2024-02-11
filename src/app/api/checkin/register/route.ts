@@ -1,20 +1,17 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import prisma from 'prisma';
-import { getSession } from 'src/lib/auth/session';
-import { getErrorMessage } from 'src/lib/utils';
+import prisma from 'prisma/index';
+import { getErrorMessage } from '@/lib/utils';
 import { isEmpty } from 'lodash';
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
 const POST = async (req: NextRequest) => {
   const body = await req.json();
-  const email: string = isEmpty(body.email) ? '' : body.email;
-  const userid: string = isEmpty(body.userid) ? '' : body.userid;
+  const { email, userid } = body;
   const eventId = isEmpty(body.eventId) ? 0 : Number(body.eventId);
 
-  const token = await getToken({ req: req })
+  const token = await getToken({ req: req });
   if (!token || token.role !== 'ADMIN')
-    return NextResponse.json({message:'Unauthorized'}, { status: 401 });
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   try {
     // Retrieve user with email
     let id = userid;
@@ -74,15 +71,26 @@ const POST = async (req: NextRequest) => {
       });
     } else throw new Error('User is not registered to the event');
 
-    return NextResponse.json({message:`Successfully registered attendance for user with email ${email}`}, { status: 201 });
+    return NextResponse.json(
+      {
+        message: `Successfully registered attendance for user with email ${email}`,
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('[api] /api/checkin/register', getErrorMessage(error));
-    return NextResponse.json({message:getErrorMessage(error)}, { status: 500 });
+    return NextResponse.json(
+      { message: getErrorMessage(error) },
+      { status: 500 }
+    );
   }
 };
 
-const GET = async (req: NextRequest) => {
-  return NextResponse.json({message:'Only POST requests are allowed'}, { status: 404 });
+const GET = async () => {
+  return NextResponse.json(
+    { message: 'Only POST requests are allowed' },
+    { status: 404 }
+  );
 };
 
 export { POST, GET };

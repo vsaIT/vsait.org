@@ -1,12 +1,15 @@
-import prisma from 'prisma';
-import { getErrorMessage, getMembershipYear } from 'src/lib/utils';
-import { RegisteredUserType } from 'src/lib/types';
+import prisma from 'prisma/index';
+import { getErrorMessage, getMembershipYear } from '@/lib/utils';
+import { RegisteredUserType } from '@/types/types';
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
-const handler = async (req: NextRequest, {params}: {params: {eventid: number}}) => {
-    const eventid = params.eventid;
-    const token = await getToken({ req: req });
+const handler = async (
+  req: NextRequest,
+  { params }: { params: { eventid: number } }
+) => {
+  const eventid = params.eventid;
+  const token = await getToken({ req: req });
 
   try {
     // Retrieve events including registrationList, waitingList and attendanceList
@@ -38,7 +41,7 @@ const handler = async (req: NextRequest, {params}: {params: {eventid: number}}) 
           },
         },
         waitingList: true,
-        attendanceList: token?.role === "ADMIN",
+        attendanceList: token?.role === 'ADMIN',
       },
     });
     if (!event) throw new Error(`Could not find event with id ${eventid}`);
@@ -52,10 +55,7 @@ const handler = async (req: NextRequest, {params}: {params: {eventid: number}}) 
       // Map registered users with fields name, email and foodNeeds
       registeredUsers = event?.registrationList.map(({ user }) => {
         if (!user) return { name: '', email: '', foodNeeds: '' };
-        if (
-          token?.role === 'ADMIN' ||
-          token?.email === user.email
-        ) {
+        if (token?.role === 'ADMIN' || token?.email === user.email) {
           return {
             name: `${user.firstName} ${user.lastName}`,
             email: user.email,
@@ -78,18 +78,24 @@ const handler = async (req: NextRequest, {params}: {params: {eventid: number}}) 
           user?.membership.map((m) => m.year).includes(getMembershipYear())
       ).length > 0;
 
-    return NextResponse.json({
-      event: event,
-      registrations: registeredUsers,
-      hasRegistered:
-        userIds.includes(userId) ||
-        event.waitingList.map((r) => r.userId).includes(userId),
-      hasMembership: hasMembership,
-    }, { status: 200 });
+    return NextResponse.json(
+      {
+        event: event,
+        registrations: registeredUsers,
+        hasRegistered:
+          userIds.includes(userId) ||
+          event.waitingList.map((r) => r.userId).includes(userId),
+        hasMembership: hasMembership,
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.error(`[api] /api/events/${eventid}`, getErrorMessage(error));
-    return NextResponse.json({ message: getErrorMessage(error) }, { status: 500 });
+    return NextResponse.json(
+      { message: getErrorMessage(error) },
+      { status: 500 }
+    );
   }
 };
 
-export { handler as GET, handler as POST }
+export { handler as GET, handler as POST };

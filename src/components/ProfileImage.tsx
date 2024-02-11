@@ -1,7 +1,7 @@
 const ProfileImage = () => {
   return (
-    <div className="rounded-full border-8 p-5 w-28 h-28 border-secondary flex items-center justify-center">
-      <div className="rounded-full border-2 p-12  border-gray flex items-center justify-center"></div>
+    <div className='flex h-28 w-28 items-center justify-center rounded-full border-8 border-secondary p-5'>
+      <div className='flex items-center justify-center  rounded-full border-2 border-gray p-12'></div>
     </div>
   );
 };
