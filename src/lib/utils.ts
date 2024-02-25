@@ -1,5 +1,15 @@
 import { AdminPageTitle, PageTitle } from './titleEnum';
 
+export const fetcher = async (url: string) => {
+  const response = await fetch(url);
+  if (!response.ok) {
+    const message = `An error has occured: ${response.status}`;
+    throw new Error(message);
+  }
+  const json = await response.json();
+  return json;
+};
+
 export const getErrorMessage = (error: unknown) => {
   if (error instanceof Error) return error.message;
   return String(error);
