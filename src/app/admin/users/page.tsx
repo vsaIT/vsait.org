@@ -34,6 +34,7 @@ const fetchUser = async (page: number) => {
   const users = await response.json();
   return users;
 };
+
 const AdminUsers: NextPage = () => {
   const { data: session } = useSession({
     required: true,
