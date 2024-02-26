@@ -2,8 +2,6 @@
 import { Accordion } from '@/components/Accordion';
 import { Button } from '@/components/Input';
 import { useUser } from '@/lib/hooks/useUser';
-import { fetcher } from '@/lib/utils';
-import useSWR from 'swr';
 
 type AdminUsersViewProps = {
   params: { userid: string };
@@ -47,8 +45,14 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
                   <div className='mt-1'>
                     <input
                       id={inputFieldData.label.toLowerCase()}
-                      type={inputFieldData.label.toLowerCase() === 'e-post' ? 'email' : 'text'}
-                      autoComplete={inputFieldData.label.toLowerCase().replace('-', '')}
+                      type={
+                        inputFieldData.label.toLowerCase() === 'e-post'
+                          ? 'email'
+                          : 'text'
+                      }
+                      autoComplete={inputFieldData.label
+                        .toLowerCase()
+                        .replace('-', '')}
                       placeholder={inputFieldData.label}
                       value={inputFieldData.data as string}
                       required

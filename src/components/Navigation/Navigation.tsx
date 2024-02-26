@@ -38,7 +38,7 @@ const Navigation = () => {
       ]);
 
     if (userData) setUser((prevState) => ({ ...prevState, ...userData }));
-  }, [userData, session?.user.role]);
+  }, [userData, session?.user.role, setUser]);
 
   return (
     <header className='absolute z-20 w-full'>

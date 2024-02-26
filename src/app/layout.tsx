@@ -1,10 +1,10 @@
-import Head from '@/components/Head';
 import LoadingIndicator from '@/components/LoadingIndicator';
 import Providers from '@/app/Providers';
 import { Suspense } from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '@/styles/globals.css';
+import CustomHead from '@/components/CustomHead';
 
 export default function RootLayout({
   children,
@@ -13,7 +13,7 @@ export default function RootLayout({
 }): JSX.Element {
   return (
     <html lang='no'>
-      <Head />
+      <CustomHead />
       <body>
         <Providers>
           <Suspense fallback={<LoadingIndicator />}>{children}</Suspense>
