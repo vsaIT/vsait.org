@@ -9,9 +9,10 @@ import { UserType } from '@/types';
 
 type ProfileIconProps = {
   user: UserType;
+  onClick?: () => void;
 };
 
-function ProfileIcon({ user }: ProfileIconProps) {
+function ProfileIcon({ user, onClick }: ProfileIconProps) {
   const { data: session } = useSession({ required: false });
   const pathname = usePathname();
   const avatar = createAvatar(bigSmile, {
@@ -19,26 +20,29 @@ function ProfileIcon({ user }: ProfileIconProps) {
     flip: true,
   });
   return (
-    <div className='absolute right-8 hidden w-auto sm:flex'>
+    <div className='flex w-auto'>
       {session ? (
         <>
           <>
             <Link
               href='/profile'
-              className='flex items-center justify-end gap-2 fill-white text-white transition-all duration-300 hover:fill-[#ffffb1] hover:text-[#ffffb1]'
+              onClick={onClick}
+              className='flex items-center justify-end gap-2
+               text-red-500 underline-offset-4 transition-all duration-300 
+              hover:brightness-150 lg:text-white lg:hover:text-secondary'
             >
               <span
                 className={`underline-offset-4 ${
                   pathname.includes('profile')
-                    ? '!fill-secondary !text-secondary underline brightness-150'
+                    ? '!text-tertiary underline brightness-150 lg:!text-secondary'
                     : ''
                 }`}
               >
                 {user.firstName || 'Profil'}
               </span>
-              <div className='flex items-center justify-center overflow-hidden rounded-full bg-white bg-opacity-50 p-1'>
+              <div className='flex items-center justify-center overflow-hidden rounded-full bg-white bg-opacity-50'>
                 <div
-                  className={`relative h-14 w-14 transition-all duration-700 ${
+                  className={`relative h-12 w-12 transition-all duration-700 lg:h-14 lg:w-14 ${
                     !user.profileIconSeed ? 'opacity-0' : ''
                   }`}
                 >

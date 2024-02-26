@@ -1,6 +1,6 @@
 import Head from '@/components/Head';
 import LoadingIndicator from '@/components/LoadingIndicator';
-import Providers from '@/components/Providers';
+import Providers from '@/app/Providers';
 import { Suspense } from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';

@@ -1,19 +1,14 @@
 'use client';
+import { userAtom } from '@/lib/atoms';
+import { useUser } from '@/lib/hooks/useUser';
+import '@/styles/hamburgers.css';
+import { Role } from '@prisma/client';
+import { useAtom } from 'jotai';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { createAvatar } from '@dicebear/core';
-import { bigSmile } from '@dicebear/collection';
 import { usePathname } from 'next/navigation';
-import { useAtom } from 'jotai';
-import { profileIconAtom, userAtom } from '@/lib/atoms';
-import { useEffect, useMemo, useState } from 'react';
-import { UserType } from '@/types/types';
-import { signOut } from 'next-auth/react';
-import { Role } from '@prisma/client';
-import { Briefcase, Envelope } from '../icons';
-import { useUser } from '@/lib/hooks/useUser';
-import '@/styles/hamburgers.css';
+import { useEffect, useState } from 'react';
 import ProfileIcon from './ProfileIcon';
 
 const baseNavigation = [
@@ -53,7 +48,7 @@ const Navigation = () => {
           />
         </Link>
         <div
-          className={`fixed right-4 top-4 flex flex-col justify-end gap-5 rounded-lg rounded-tr-3xl bg-white p-4 text-lg transition duration-500 
+          className={`fixed right-4 top-4 flex flex-col items-center justify-end gap-5 rounded-lg rounded-tr-3xl bg-white p-4 text-lg transition duration-500 
           lg:static lg:w-1/2 lg:translate-x-0 lg:flex-row lg:rounded-none lg:bg-transparent lg:p-0 lg:opacity-100
           ${burgerOpen ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'}`}
         >
@@ -66,7 +61,7 @@ const Navigation = () => {
                 lg:text-white lg:hover:text-secondary
                 ${
                   pathname.split('/')[1] === nav.href.substring(1)
-                    ? 'text-tertiary underline brightness-150 lg:text-secondary'
+                    ? '!text-tertiary underline brightness-150 lg:!text-secondary'
                     : ''
                 }`}
               >
@@ -74,11 +69,11 @@ const Navigation = () => {
               </Link>
             </div>
           ))}
-          <ProfileIcon user={user} />
+          <ProfileIcon user={user} onClick={() => setBurgerOpen(false)} />
         </div>
         <button
-          className={`hamburger hamburger--collapse fixed right-6 top-6 z-30 h-12 w-12 overflow-hidden rounded-full bg-white opacity-100 lg:hidden
-          ${burgerOpen ? 'is-active' : ''} 
+          className={`hamburger hamburger--collapse fixed right-6 top-6 z-30 h-12 w-12 rounded-full
+          ${burgerOpen ? 'is-active' : ''}
           `}
           type='button'
           onClick={() => setBurgerOpen(!burgerOpen)}
