@@ -15,6 +15,7 @@ const config: Config = {
         dark: '#CC2222',
         darker: '#841818',
         secondary: '#F2CF76',
+        tertiary: '#000',
         placeholder: '#9ca3af',
       },
       spacing: {
