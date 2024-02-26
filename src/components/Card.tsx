@@ -413,15 +413,6 @@ const Card = ({ user, session }: CardProps) => {
           </div>
         </Accordion>
       </div>
-      <div className='my-5 flex h-16 flex-col justify-center'>
-        <div className='my-10'>
-          <Button
-            onClick={() => signOut().then(() => (window.location.href = '/'))}
-            text='Logg ut'
-            className='bg-light'
-          />
-        </div>
-      </div>
     </>
   );
 };

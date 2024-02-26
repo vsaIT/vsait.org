@@ -10,7 +10,7 @@ import StyledSwal from '@/components/StyledSwal';
 import { UserType } from '@/types';
 import { getErrorMessage } from '@/lib/utils';
 import { useAtom } from 'jotai';
-import { useSession } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useCallback, useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
@@ -207,6 +207,32 @@ function Profile(): JSX.Element {
             </div>
             <div>
               <Card user={user} session={session} />
+              <div className='my-5 flex h-16 flex-col justify-center'>
+                <div className='my-10'>
+                  <Button
+                    onClick={() =>
+                      signOut().then(() => (window.location.href = '/'))
+                    }
+                    text='Logg ut'
+                    className='bg-light'
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/*Fail-safe if something happens to "old token"*/}
+        {!user.id && (
+          <div className='my-5 flex h-16 flex-col justify-center'>
+            <div className='my-10'>
+              <Button
+                onClick={() =>
+                  signOut().then(() => (window.location.href = '/'))
+                }
+                text='Logg ut'
+                className='bg-light'
+              />
             </div>
           </div>
         )}
