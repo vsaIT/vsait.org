@@ -69,7 +69,7 @@ export default function Home() {
                     <Button text='Logg inn' className='rounded-3xl' inverted />
                   </Link>
                   <Link href='/register'>
-                    <Button text='Register' className='rounded-3xl' />
+                    <Button text='Registrer' className='rounded-3xl' />
                   </Link>
                 </div>
               </>
