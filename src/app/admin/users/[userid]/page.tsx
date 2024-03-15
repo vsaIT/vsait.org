@@ -143,12 +143,22 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
               />
 
               {/* Email confirmation URL */}
-              <p>E-postbekreftelses URL:</p>
-              <input
-                id='email-confirm'
-                type='text'
-                className='my-5 w-full rounded-xl border-2 border-stone-300 bg-transparent p-1 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out'
-              />
+              <div className='relative w-full'>
+                <label
+                  htmlFor='email-confirm'
+                  className='absolute -top-2 left-4 block bg-white px-2 text-left text-sm font-medium text-stone-500'
+                >
+                  E-postbekreftelses URL
+                </label>
+                <div className='mt-1'>
+                  <input
+                    id='email-confirm'
+                    type='text'
+                    className='w-full rounded-xl border-2 border-stone-300 bg-transparent p-1 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out'
+                  />
+                </div>
+              </div>
+
               {/* Checkbox */}
               <div>Rolle</div>
               <SlideCheckbox id='admin-status' label='Administrator' />
