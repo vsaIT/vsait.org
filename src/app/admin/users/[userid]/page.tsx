@@ -2,15 +2,29 @@
 import { Accordion } from '@/components/Accordion';
 import { Button } from '@/components/Input';
 import { useUser } from '@/lib/hooks/useUser';
+import { bigSmile } from '@dicebear/collection';
+import { createAvatar } from '@dicebear/core';
+import { profileIconAtom, userAtom } from '@/lib/atoms';
+import { generateSalt } from '@/lib/auth/passwords';
+import { useSession } from 'next-auth/react';
+import { useState } from 'react';
+import { useAtom } from 'jotai';
+import Image from "next/image";
 
 type AdminUsersViewProps = {
   params: { userid: string };
 };
 
+
 function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
   const { user, isLoading, isError } = useUser(params.userid);
   if (isLoading) return <div>Loading...</div>;
-  console.log(user);
+
+  const avatar = createAvatar(bigSmile, {
+    seed: user?.profileIconSeed,
+    radius: 50,
+    backgroundColor: ['f5f5f5'],
+  });
 
   const userDataInputs = [
     { label: 'Fornavn', data: user?.firstName },
@@ -25,6 +39,17 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
         <div className='flex flex-col'>
           <h1 className='text-xl font-medium'>Brukere</h1>
           <p className='text-sm'>Endre brukeren</p>
+        </div>
+
+        <div className='flex items-center justify-center rounded-full'>
+          <div className='relative h-20 w-20'>
+            <Image
+              id='modal-icon'
+              src={avatar.toDataUriSync()}
+              alt='Profile icon'
+              fill
+            />
+          </div>
         </div>
       </div>
       <div className='w-full rounded-xl bg-white p-6'>
@@ -103,7 +128,13 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
                 <div className='w-full py-5 text-left'>
                   <label
                     className='relative inline-flex cursor-pointer items-center'
-                  >
+                    htmlFor='publicProfile'>
+                    <input
+                      id='publicProfile'
+                      type='checkbox'
+                      className='peer sr-only'
+                    />
+
                     <div className="after:border-gray-300 peer h-6 w-11 rounded-full bg-placeholder after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4"></div>
                     <span className='text-gray-900 ml-3 text-sm font-medium'>
                       Avventende medlemskap
