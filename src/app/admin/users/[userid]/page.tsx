@@ -11,6 +11,7 @@ import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { useAtom } from 'jotai';
 import Image from 'next/image';
+import { useMemberships } from '@/lib/hooks/useMemberships';
 
 type AdminUsersViewProps = {
   params: { userid: string };
@@ -18,7 +19,8 @@ type AdminUsersViewProps = {
 
 function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
   const { user, isLoading, isError } = useUser(params.userid);
-  if (isLoading) return <div>Loading...</div>;
+  const { memberships, isLoading: mLoading } = useMemberships();
+  if (isLoading || mLoading) return <div>Loading...</div>;
 
   const avatar = createAvatar(bigSmile, {
     seed: user?.profileIconSeed,
@@ -117,9 +119,14 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
               <div className='flex flex-col gap-2'>
                 <p>Medlemskap informasjon</p>
                 <div className='flex gap-4'>
-                  <div className='rounded-2xl bg-neutral-100 px-6 py-2'>
-                    2021
-                  </div>
+                  {memberships?.map((membership, index) => (
+                    <div
+                      key={'membership-' + index}
+                      className='rounded-2xl bg-neutral-100 px-6 py-2'
+                    >
+                      {membership.year}
+                    </div>
+                  ))}
                 </div>
               </div>
               {/* Pending membership */}
