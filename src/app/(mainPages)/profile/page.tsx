@@ -165,6 +165,7 @@ function Profile(): JSX.Element {
         })
         .then((data: UserType) => {
           setUser((prevState: UserType) => ({ ...prevState, ...data }));
+          setProfileIcon({seed: data.profileIconSeed, initial: true});
         })
         .catch((error) => {
           console.log(error);
@@ -176,7 +177,7 @@ function Profile(): JSX.Element {
     };
     fetchUser().finally();
   }, [session?.user?.id, setFetching, setUser]);
-
+  
   return (
     <>
       <SmallHeader />
