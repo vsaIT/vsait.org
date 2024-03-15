@@ -186,8 +186,19 @@ const authOptions: AuthOptions = {
       return url.startsWith(baseUrl) ? url : baseUrl;
     },
 
-    async jwt({ token, user }) {
-      if (user) {
+    async jwt({ token, user, session, trigger }) {
+      if (trigger === 'update' && session.user) {
+        console.log(session.user);
+        token.id = session.user.id;
+        token.firstName = session.user.firstName;
+        token.lastName = session.user.lastName;
+        token.role = session.user.role;
+        token.profileIconSeed = session.user.profileIconSeed;
+        token.membership = session.user.membership;
+        token.foodNeeds = session.user.foodNeeds;
+        token.email = session.user.email;
+        token.student = session.user.student;
+      } else if (user) {
         token.id = user.id;
         token.firstName = user.firstName;
         token.lastName = user.lastName;

@@ -7,6 +7,7 @@ import Wave from '@/components/Wave';
 import { EventsQuickView } from '@/components/Events';
 import { LargeHeader } from '@/components/Header';
 import { getMembershipYear } from '@/lib/utils';
+import { useUser } from '@/lib/hooks/useUser';
 
 export default function Home() {
   const { status, data: session } = useSession({
@@ -17,8 +18,20 @@ export default function Home() {
     triggerOnce: true,
     initialInView: false,
   });
+
   const loading = status === 'loading';
   const membershipYear = getMembershipYear();
+  const { user } = useUser(session?.user?.id as string);
+
+  async function updateSession() {
+    if (session && user) {
+      session.user.membership = user?.membership;
+    }
+  }
+
+  if (user) {
+    updateSession();
+  }
 
   return (
     <>
