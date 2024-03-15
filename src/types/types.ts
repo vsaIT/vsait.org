@@ -75,10 +75,8 @@ export type SelectProps<T extends FieldValues> = {
 //   firstName: string;
 //   lastName: string;
 //   email: string;
-//   birthdate: string;
 //   foodNeeds: string;
 //   student: string;
-//   publicProfile: boolean;
 //   membership: {
 //     year: number;
 //   }[];
