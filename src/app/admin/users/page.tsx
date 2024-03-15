@@ -130,14 +130,6 @@ const AdminUsers: NextPage = () => {
 
         footer: (info) => info.column.id,
       }),
-      columnHelper.accessor('birthdate', {
-        id: 'birthdate',
-        header: () => 'Fødselsdato',
-        cell: (info) => (
-          <span>{getLocaleDateString(info.getValue() as Date)}</span>
-        ),
-        footer: (info) => info.column.id,
-      }),
       columnHelper.accessor('createdAt', {
         id: 'createdAt',
         header: () => 'Registeringsdato',

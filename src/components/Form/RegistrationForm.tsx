@@ -10,7 +10,6 @@ type RegistrationFormValues = {
   firstName: string;
   lastName: string;
   email: string;
-  birthdate: Date;
   password: string;
   repeatPassword: string;
   foodNeeds: string;
@@ -118,26 +117,6 @@ const RegistrationForm = () => {
                   placeholder='E-post'
                   required
                   {...register('email')}
-                  className='w-full rounded-xl border-2 border-stone-300 bg-transparent px-4 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out'
-                />
-              </div>
-            </div>
-
-            <div className='relative my-6'>
-              <label
-                htmlFor='birthdate'
-                className='absolute -top-2 left-4 block bg-white px-2 text-left text-sm font-medium text-stone-500'
-              >
-                Fødselsdato
-              </label>
-              <div className='mt-1'>
-                <input
-                  id='birthdate'
-                  type='date'
-                  autoComplete='birthdate'
-                  placeholder='Fødselsdato'
-                  required
-                  {...register('birthdate')}
                   className='w-full rounded-xl border-2 border-stone-300 bg-transparent px-4 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out'
                 />
               </div>
