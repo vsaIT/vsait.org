@@ -21,7 +21,6 @@ import Swal from 'sweetalert2';
 type UserFormValues = {
   foodNeeds: string;
   student: string;
-  publicProfile: boolean;
 };
 
 type PasswordFormValues = {

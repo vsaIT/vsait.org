@@ -51,7 +51,6 @@ async function main() {
       lastName: 'Dummy',
       password: encryptedPassword,
       role: 'USER',
-      publicProfile: true,
       membership: {
         connectOrCreate: {
           where: {
