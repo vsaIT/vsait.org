@@ -1,6 +1,7 @@
 'use client';
 import { Accordion } from '@/components/Accordion';
-import { Button } from '@/components/Input';
+import { Button, IndeterminateCheckbox } from '@/components/Input';
+import SlideCheckbox from '@/components/Input/SlideCheckbox';
 import { useUser } from '@/lib/hooks/useUser';
 
 type AdminUsersViewProps = {
@@ -100,16 +101,10 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
               {/* Pending membership */}
               <div className='flex flex-col'>
                 <p>Avventende medlemskap</p>
-                <div className='w-full py-5 text-left'>
-                  <label
-                    className='relative inline-flex cursor-pointer items-center'
-                  >
-                    <div className="after:border-gray-300 peer h-6 w-11 rounded-full bg-placeholder after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4"></div>
-                    <span className='text-gray-900 ml-3 text-sm font-medium'>
-                      Avventende medlemskap
-                    </span>
-                  </label>
-                </div>
+                <SlideCheckbox
+                  id='pending-membership'
+                  label='Avventende medlemskap'
+                />
               </div>
             </div>
           </div>
@@ -118,22 +113,11 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
             <div>
               <p>E-postbekreftelse</p>
               {/* Checkbox */}
-              <div className='w-full py-5 text-left'>
-                <label
-                  className='relative inline-flex cursor-pointer items-center'
-                  htmlFor='membership'
-                >
-                  <input
-                    id='membership'
-                    type='checkbox'
-                    className='peer sr-only'
-                  />
-                  <div className="after:border-gray-300 peer h-6 w-11 rounded-full bg-placeholder after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4"></div>
-                  <span className='text-gray-900 ml-3 text-sm font-medium'>
-                    Ikke bekreftet/Bekreftet
-                  </span>
-                </label>
-              </div>
+              <SlideCheckbox
+                id='email-confirmation'
+                label='Ikke bekreftet/Bekreftet'
+              />
+
               {/* Email confirmation URL */}
               <p>E-postbekreftelses URL:</p>
               <input
