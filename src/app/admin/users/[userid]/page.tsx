@@ -149,8 +149,9 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
                 type='text'
                 className='my-5 w-full rounded-xl border-2 border-stone-300 bg-transparent p-1 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out'
               />
-
+              {/* Checkbox */}
               <div>Rolle</div>
+              <SlideCheckbox id='admin-status' label='Administrator' />
             </div>
             {/* Accordion for changing password */}
             <Accordion
