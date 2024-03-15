@@ -1,12 +1,13 @@
 'use client';
-import { useInView } from 'react-intersection-observer';
-import { useSession } from 'next-auth/react';
-import Link from 'next/link';
-import Button from '@/components/Input/Button';
-import Wave from '@/components/Wave';
 import { EventsQuickView } from '@/components/Events';
 import { LargeHeader } from '@/components/Header';
+import Button from '@/components/Input/Button';
+import Wave from '@/components/Wave';
+import { useUser } from '@/lib/hooks/useUser';
 import { getMembershipYear } from '@/lib/utils';
+import { useSession } from 'next-auth/react';
+import Link from 'next/link';
+import { useInView } from 'react-intersection-observer';
 
 export default function Home() {
   const { status, data: session } = useSession({
@@ -17,8 +18,20 @@ export default function Home() {
     triggerOnce: true,
     initialInView: false,
   });
+
   const loading = status === 'loading';
   const membershipYear = getMembershipYear();
+  const { user } = useUser(session?.user?.id as string);
+
+  async function updateSession() {
+    if (session && user) {
+      session.user.membership = user?.membership;
+    }
+  }
+
+  if (user) {
+    updateSession();
+  }
 
   return (
     <>

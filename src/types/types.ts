@@ -99,3 +99,7 @@ export type CardProps = {
   user: UserType;
   session: Session | null;
 };
+
+export type MembershipType = Membership & {
+  users: { id: string }[];
+};
