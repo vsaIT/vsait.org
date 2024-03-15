@@ -14,7 +14,6 @@ import {
 type RegisterInputType =
   | 'firstName'
   | 'lastName'
-  | 'birthdate'
   | 'email'
   | 'password'
   | 'repeatPassword'
@@ -46,11 +45,6 @@ const authOptions: AuthOptions = {
           label: 'Last Name',
           type: 'text',
           placeholder: 'Doe',
-        },
-        birthdate: {
-          label: 'Date of Birth',
-          type: 'date',
-          placeholder: '06/09/2000',
         },
         email: {
           label: 'Email Address',
@@ -92,7 +86,6 @@ const authOptions: AuthOptions = {
               !credentials?.firstName ||
               !credentials?.lastName ||
               !credentials?.email ||
-              !credentials?.birthdate ||
               !credentials?.password ||
               !credentials?.repeatPassword ||
               !credentials?.student
@@ -112,7 +105,6 @@ const authOptions: AuthOptions = {
                 firstName: credentials.firstName,
                 lastName: credentials.lastName,
                 email: credentials.email,
-                birthdate: new Date(credentials.birthdate),
                 password: hashPassword(credentials.password, 12),
                 foodNeeds: credentials.foodNeeds,
                 student: credentials.student,

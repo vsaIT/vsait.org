@@ -1,9 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from 'prisma/index';
 import { getErrorMessage } from '@/lib/utils';
+import { getToken } from 'next-auth/jwt';
 
 const GET = async (req: NextRequest) => {
   const page = req.nextUrl.searchParams.get('page');
+
+  const token = await getToken({ req });
+  if (!token)
+    return NextResponse.json(
+      {
+        message: 'Unauthenticated',
+      },
+      { status: 407 }
+    );
+  if (token?.role !== 'ADMIN')
+    return NextResponse.json(
+      {
+        message: 'Unauthorized',
+      },
+      { status: 401 }
+    );
 
   try {
     const [users, userCount] = await prisma.$transaction([

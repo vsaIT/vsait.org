@@ -175,10 +175,6 @@ const Card = ({ user, session }: CardProps) => {
                   <p className='text-stone-500'>E-post:</p>
                   <p>{user.email}</p>
                 </div>
-                <div className='h-fit border-b border-stone-300 py-5 pl-4 text-left sm:border-0'>
-                  <p className='text-stone-500'>Fødselsdato:</p>
-                  <p>{getLocaleDateString(user.birthdate as Date)}</p>
-                </div>
               </div>
               <div className='my-5 flex flex-col px-12'>
                 <div className='pb-3'>

@@ -16,7 +16,6 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
     { label: 'Fornavn', data: user?.firstName },
     { label: 'Etternavn', data: user?.lastName },
     { label: 'E-post', data: user?.email },
-    { label: 'Fødselsdato', data: user?.birthdate },
     { label: 'Matbehov', data: user?.foodNeeds },
   ];
 
