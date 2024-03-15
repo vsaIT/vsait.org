@@ -3,6 +3,14 @@ import { Accordion } from '@/components/Accordion';
 import { Button, IndeterminateCheckbox } from '@/components/Input';
 import SlideCheckbox from '@/components/Input/SlideCheckbox';
 import { useUser } from '@/lib/hooks/useUser';
+import { bigSmile } from '@dicebear/collection';
+import { createAvatar } from '@dicebear/core';
+import { profileIconAtom, userAtom } from '@/lib/atoms';
+import { generateSalt } from '@/lib/auth/passwords';
+import { useSession } from 'next-auth/react';
+import { useState } from 'react';
+import { useAtom } from 'jotai';
+import Image from 'next/image';
 
 type AdminUsersViewProps = {
   params: { userid: string };
@@ -11,7 +19,12 @@ type AdminUsersViewProps = {
 function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
   const { user, isLoading, isError } = useUser(params.userid);
   if (isLoading) return <div>Loading...</div>;
-  console.log(user);
+
+  const avatar = createAvatar(bigSmile, {
+    seed: user?.profileIconSeed,
+    radius: 50,
+    backgroundColor: ['f5f5f5'],
+  });
 
   const userDataInputs = [
     { label: 'Fornavn', data: user?.firstName },
@@ -26,6 +39,17 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
         <div className='flex flex-col'>
           <h1 className='text-xl font-medium'>Brukere</h1>
           <p className='text-sm'>Endre brukeren</p>
+        </div>
+
+        <div className='flex items-center justify-center rounded-full'>
+          <div className='relative h-20 w-20'>
+            <Image
+              id='modal-icon'
+              src={avatar.toDataUriSync()}
+              alt='Profile icon'
+              fill
+            />
+          </div>
         </div>
       </div>
       <div className='w-full rounded-xl bg-white p-6'>
