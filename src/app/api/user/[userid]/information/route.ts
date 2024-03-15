@@ -9,7 +9,7 @@ const POST = async (
 ) => {
   const body = await req.json();
   const userID = params.userid;
-  const { foodNeeds, student, publicProfile } = body;
+  const { foodNeeds, student} = body;
   const token = await getToken({ req });
 
   if (!token)
@@ -28,7 +28,6 @@ const POST = async (
       data: {
         foodNeeds: foodNeeds,
         student: student,
-        publicProfile: publicProfile,
       },
     });
     return NextResponse.json(

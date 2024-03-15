@@ -34,7 +34,6 @@ const handler = async (
                 firstName: true,
                 email: true,
                 foodNeeds: true,
-                publicProfile: true,
                 membership: true,
               },
             },
@@ -63,9 +62,7 @@ const handler = async (
           };
         }
         return {
-          name: user.publicProfile
-            ? `${user.firstName} ${user.lastName}`
-            : 'Anonymous',
+          name:`${user.firstName} ${user.lastName}`,
           email: '',
           foodNeeds: '',
         };
