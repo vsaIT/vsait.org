@@ -134,7 +134,7 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
           </div>
           {/* Email confirmation */}
           <div className='rounded-xl border border-stone-300 p-6 sm:w-1/2'>
-            <div>
+            <div className='flex flex-col'>
               <p>E-postbekreftelse</p>
               {/* Checkbox */}
               <SlideCheckbox
@@ -147,8 +147,9 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
               <input
                 id='email-confirm'
                 type='text'
-                className='w-full rounded-xl border-2 border-stone-300 bg-transparent p-1 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out'
+                className='my-5 w-full rounded-xl border-2 border-stone-300 bg-transparent p-1 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out'
               />
+
               <div>Rolle</div>
             </div>
             {/* Accordion for changing password */}
