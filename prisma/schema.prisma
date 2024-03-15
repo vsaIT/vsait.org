@@ -49,10 +49,8 @@ model User {
   email           String       @unique
   password        String
   emailVerified   Boolean      @default(false)
-  birthdate       DateTime?
   foodNeeds       String       @default("")
   student         String?
-  publicProfile   Boolean      @default(false)
   role            Role         @default(USER)
   accounts        Account[]
   sessions        Session[]
