@@ -8,20 +8,15 @@
  * @returns {JSX.Element} The JSX element representing the Card component.
  */
 
+import { Accordion } from '@/components/Accordion';
 import { Button, Select } from '@/components/Input';
+import StyledSwal from '@/components/StyledSwal';
+import { getLocaleDatetimeString, getMembershipYear } from '@/lib/utils';
 import { ApiResponseType, CardProps } from '@/types/types';
+import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import StyledSwal from '@/components/StyledSwal';
-import {
-  getLocaleDateString,
-  getLocaleDatetimeString,
-  getMembershipYear,
-} from '@/lib/utils';
 import Swal from 'sweetalert2';
-import { signOut } from 'next-auth/react';
-import Link from 'next/link';
-import { Accordion } from '@/components/Accordion';
 
 type UserFormValues = {
   foodNeeds: string;
@@ -146,7 +141,6 @@ const Card = ({ user, session }: CardProps) => {
     if (user.id === '') return;
     setValue('foodNeeds', user.foodNeeds);
     setValue('student', user.student as string);
-    setValue('publicProfile', user.publicProfile);
   }, [user, setValue]);
 
   if (session?.user?.id !== user.id) {
@@ -164,18 +158,19 @@ const Card = ({ user, session }: CardProps) => {
               </h1>
             </div>
             <div className='flex flex-col border-b border-stone-300 sm:grid sm:grid-cols-2'>
-              <div className='grid grid-rows-3 border-r border-stone-300'>
-                <div className='h-fit border-b border-stone-300 py-5 pl-4 text-left'>
+              <div className='grid grid-rows-2 border-r border-stone-300'>
+                <div className='h-full border-b border-stone-300 py-5 pl-4 text-left'>
                   <p className='text-stone-500'>Navn:</p>
                   <p>
                     {user.firstName} {user.lastName}
                   </p>
                 </div>
-                <div className='h-fit border-b border-stone-300 py-5 pl-4 text-left'>
+                <div className='h-full py-5 pl-4 text-left'>
                   <p className='text-stone-500'>E-post:</p>
                   <p>{user.email}</p>
                 </div>
               </div>
+
               <div className='my-5 flex flex-col px-12'>
                 <div className='pb-3'>
                   <label
@@ -214,30 +209,6 @@ const Card = ({ user, session }: CardProps) => {
                       register={register}
                     />
                   </div>
-                </div>
-
-                <div className='w-full py-5 text-left'>
-                  <label
-                    className='relative inline-flex cursor-pointer items-center'
-                    htmlFor='publicProfile'
-                  >
-                    <input
-                      id='publicProfile'
-                      type='checkbox'
-                      className='peer sr-only'
-                      {...register('publicProfile')}
-                    />
-                    <div
-                      className="after:border-gray-300 peer h-6 w-11 rounded-full
-                  bg-placeholder after:absolute after:left-[2px]
-                  after:top-[2px] after:h-5 after:w-5
-                  after:rounded-full after:bg-white after:transition-all after:content-['']
-                 peer-checked:bg-primary peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4"
-                    ></div>
-                    <span className='text-gray-900 ml-3 text-sm font-medium'>
-                      Synlig brukerprofil
-                    </span>
-                  </label>
                 </div>
               </div>
             </div>
