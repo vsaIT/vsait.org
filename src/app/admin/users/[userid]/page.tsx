@@ -161,7 +161,7 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
                   <input
                     id='email-confirm'
                     type='text'
-                    className='w-full rounded-xl border-2 border-stone-300 bg-transparent p-1 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out'
+                    className='mb-5 w-full rounded-xl border-2 border-stone-300 bg-transparent p-1 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out'
                   />
                 </div>
               </div>
