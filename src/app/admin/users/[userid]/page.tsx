@@ -18,12 +18,15 @@ type AdminUsersViewProps = {
   params: { userid: string };
 };
 
-function isMembershipInUser(mem: Membership, userMemberships: Membership[] | undefined): boolean {
+function isMembershipInUser(
+  mem: Membership,
+  userMemberships: Membership[] | undefined
+): boolean {
   if (userMemberships) {
-    const temp = userMemberships.find((m) => m.year === mem.year)
-    return !!temp
+    const temp = userMemberships.find((m) => m.year === mem.year);
+    return !!temp;
   }
-  return false
+  return false;
 }
 
 function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
@@ -163,16 +166,21 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
               <div className='flex flex-col gap-2'>
                 <p>Medlemskap informasjon</p>
                 <DropdownWithCheckboxes
-                  id='memberships'
-                  label='Medlemskap'
+                  label='Velg år'
                   initialItems={
-                    memberships ? memberships.map((membership) => (
-                      {
-                        label: membership.year,
-                        checked: isMembershipInUser(membership, user?.membership)
-                      }
-                    )) : []
+                    memberships
+                      ? memberships.map((membership) => ({
+                          value: membership.year,
+                          checked: isMembershipInUser(
+                            membership,
+                            user?.membership
+                          ),
+                        }))
+                      : []
                   }
+                  onChange={(memberships) => {
+                    setEditUser({ ...editUser, membership: memberships });
+                  }}
                 />
               </div>
               {/* Pending membership */}
@@ -255,7 +263,7 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
           </div>
         </div>
       </div>
-    </div >
+    </div>
   );
 }
 
