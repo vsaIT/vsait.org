@@ -11,8 +11,9 @@ import { bigSmile } from '@dicebear/collection';
 import { createAvatar } from '@dicebear/core';
 import { Membership } from '@prisma/client';
 import { useAtom } from 'jotai';
+import { set } from 'lodash';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 type AdminUsersViewProps = {
   params: { userid: string };
@@ -32,16 +33,14 @@ function isMembershipInUser(
 function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
   const { user, isLoading, isError } = useUser(params.userid);
   const { memberships, isLoading: mLoading } = useMemberships();
-  const [editUser, setEditUser] = useState({} as UserType);
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
+  const [editUser, setEditUser] = useState<UserType | undefined>(undefined);
 
   useEffect(() => {
-    if (user) setEditUser(user);
-  }, [user]);
-
-  useEffect(() => {
-    if (editUser) console.log(editUser);
-  }, [editUser]);
+    if (!isLoading) {
+      setEditUser(user);
+    }
+  }, [isLoading, user]);
 
   if (isLoading || mLoading) return <div>Loading...</div>;
   const avatar = createAvatar(bigSmile, {
@@ -116,12 +115,14 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
                         .replace('-', '')}
                       placeholder={inputFieldData.label}
                       defaultValue={inputFieldData.data}
-                      onChange={(e) =>
-                        setEditUser({
-                          ...editUser,
-                          [inputFieldData.attr]: e.target.value,
-                        })
-                      }
+                      onChange={(e) => {
+                        if (editUser) {
+                          setEditUser({
+                            ...editUser,
+                            [inputFieldData.attr]: e.target.value,
+                          });
+                        }
+                      }}
                       required={
                         inputFieldData.label.toLowerCase() !== 'matbehov'
                       }
@@ -145,9 +146,10 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
                     required
                     className='w-full rounded-xl border-2 border-stone-300 bg-transparent px-4 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out invalid:text-placeholder'
                     defaultValue={user?.student ? user.student : ''}
-                    onChange={(e) =>
-                      setEditUser({ ...editUser, student: e.target.value })
-                    }
+                    onChange={(e) => {
+                      if (editUser)
+                        setEditUser({ ...editUser, student: e.target.value });
+                    }}
                   >
                     <option value='' disabled hidden>
                       Velg student informasjon
@@ -179,7 +181,9 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
                       : []
                   }
                   onChange={(memberships) => {
-                    setEditUser({ ...editUser, membership: memberships });
+                    if (editUser) {
+                      setEditUser({ ...editUser, membership: memberships });
+                    }
                   }}
                 />
               </div>
@@ -272,6 +276,9 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
                 type='submit'
                 text='Lagre endringer'
                 className='bg-light'
+                onClick={() => {
+                  console.log(editUser);
+                }}
               />
               <Button type='submit' text='Slett bruker' className='bg-light' />
             </div>
