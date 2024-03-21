@@ -3,17 +3,14 @@ import { Accordion } from '@/components/Accordion';
 import DropdownWithCheckboxes from '@/components/DropdownWithCheckboxes';
 import { Button } from '@/components/Input';
 import SlideCheckbox from '@/components/Input/SlideCheckbox';
-import { userAtom } from '@/lib/atoms';
 import { useMemberships } from '@/lib/hooks/useMemberships';
 import { useUser } from '@/lib/hooks/useUser';
-import { MembershipType, UserType } from '@/types';
+import { UserType } from '@/types';
 import { bigSmile } from '@dicebear/collection';
 import { createAvatar } from '@dicebear/core';
 import { Membership } from '@prisma/client';
-import { useAtom } from 'jotai';
-import { set } from 'lodash';
 import Image from 'next/image';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type AdminUsersViewProps = {
   params: { userid: string };
