@@ -170,12 +170,12 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
                   initialItems={
                     memberships
                       ? memberships.map((membership) => ({
-                          value: membership.year,
-                          checked: isMembershipInUser(
-                            membership,
-                            user?.membership
-                          ),
-                        }))
+                        value: membership.year,
+                        checked: isMembershipInUser(
+                          membership,
+                          user?.membership
+                        ),
+                      }))
                       : []
                   }
                   onChange={(memberships) => {
@@ -211,7 +211,7 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
                 placeholder='E-postbekreftelses URL'
                 defaultValue={editUser?.emailVerificationUrl}
                 disabled={true}
-                className='text-stone-500 my-5 w-full cursor-text rounded-xl border-2 border-stone-300 bg-transparent p-1 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out'
+                className='text-stone-500 my-5 w-full cursor-text rounded-xl border-2 border-stone-300 bg-transparent px-4 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out'
               />
               {/* Checkbox */}
               <div>Rolle</div>
