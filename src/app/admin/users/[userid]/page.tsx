@@ -43,6 +43,7 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
     if (editUser) console.log(editUser);
   }, [editUser]);
 
+  if (isLoading || mLoading) return <div>Loading...</div>;
   const avatar = createAvatar(bigSmile, {
     seed: user?.profileIconSeed,
     radius: 50,
@@ -52,26 +53,24 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
   const userDataInputs = [
     {
       label: 'Fornavn',
-      data: editUser?.firstName,
+      data: user?.firstName,
       attr: 'firstName',
       disabled: true,
     },
     {
       label: 'Etternavn',
-      data: editUser?.lastName,
+      data: user?.lastName,
       attr: 'lastName',
       disabled: true,
     },
-    { label: 'E-post', data: editUser?.email, attr: 'email', disabled: true },
+    { label: 'E-post', data: user?.email, attr: 'email', disabled: true },
     {
       label: 'Matbehov',
-      data: editUser?.foodNeeds,
+      data: user?.foodNeeds,
       attr: 'foodNeeds',
       disabled: false,
     },
   ];
-
-  if (isLoading || mLoading) return <div>Loading...</div>;
   return (
     <div className='flex h-screen w-full flex-col gap-6 p-6'>
       <div className='flex w-full justify-between gap-6 rounded-xl bg-white p-6'>
