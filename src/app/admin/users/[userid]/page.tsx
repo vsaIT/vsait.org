@@ -1,17 +1,12 @@
 'use client';
 import { Accordion } from '@/components/Accordion';
-import { Button, IndeterminateCheckbox } from '@/components/Input';
+import { Button } from '@/components/Input';
 import SlideCheckbox from '@/components/Input/SlideCheckbox';
+import { useMemberships } from '@/lib/hooks/useMemberships';
 import { useUser } from '@/lib/hooks/useUser';
 import { bigSmile } from '@dicebear/collection';
 import { createAvatar } from '@dicebear/core';
-import { profileIconAtom, userAtom } from '@/lib/atoms';
-import { generateSalt } from '@/lib/auth/passwords';
-import { useSession } from 'next-auth/react';
-import { useState } from 'react';
-import { useAtom } from 'jotai';
 import Image from 'next/image';
-import { useMemberships } from '@/lib/hooks/useMemberships';
 
 type AdminUsersViewProps = {
   params: { userid: string };
@@ -38,9 +33,8 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
   return (
     <div className='flex h-screen w-full flex-col gap-6 p-6'>
       <div className='flex w-full justify-between gap-6 rounded-xl bg-white p-6'>
-        <div className='flex flex-col'>
-          <h1 className='text-xl font-medium'>Brukere</h1>
-          <p className='text-sm'>Endre brukeren</p>
+        <div className='flex flex-col items-center'>
+          <h1 className='text-xl font-medium'>Endre brukeren</h1>
         </div>
 
         <div className='flex items-center justify-center rounded-full'>
@@ -100,7 +94,7 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
                     id='student'
                     required
                     className='w-full rounded-xl border-2 border-stone-300 bg-transparent px-4 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out invalid:text-placeholder'
-                    defaultValue=''
+                    defaultValue={user?.student as string}
                   >
                     <option value='' disabled hidden>
                       Velg student informasjon
