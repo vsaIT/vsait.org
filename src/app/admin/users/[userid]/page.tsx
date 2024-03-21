@@ -1,5 +1,6 @@
 'use client';
 import { Accordion } from '@/components/Accordion';
+import DropdownWithCheckboxes from '@/components/DropdownWithCheckboxes';
 import { Button } from '@/components/Input';
 import SlideCheckbox from '@/components/Input/SlideCheckbox';
 import { userAtom } from '@/lib/atoms';
