@@ -36,10 +36,25 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
   });
 
   const userDataInputs = [
-    { label: 'Fornavn', data: user?.firstName },
-    { label: 'Etternavn', data: user?.lastName },
-    { label: 'E-post', data: user?.email },
-    { label: 'Matbehov', data: user?.foodNeeds },
+    {
+      label: 'Fornavn',
+      data: editUser?.firstName,
+      attr: 'firstName',
+      disabled: true,
+    },
+    {
+      label: 'Etternavn',
+      data: editUser?.lastName,
+      attr: 'lastName',
+      disabled: true,
+    },
+    { label: 'E-post', data: editUser?.email, attr: 'email', disabled: true },
+    {
+      label: 'Matbehov',
+      data: editUser?.foodNeeds,
+      attr: 'foodNeeds',
+      disabled: false,
+    },
   ];
 
   if (isLoading || mLoading) return <div>Loading...</div>;
@@ -87,9 +102,18 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
                         .toLowerCase()
                         .replace('-', '')}
                       placeholder={inputFieldData.label}
-                      value={inputFieldData.data as string}
-                      required
-                      className='w-full rounded-xl border-2 border-stone-300 bg-transparent px-4 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out'
+                      defaultValue={inputFieldData.data}
+                      onChange={(e) =>
+                        setEditUser({
+                          ...editUser,
+                          [inputFieldData.attr]: e.target.value,
+                        })
+                      }
+                      required={
+                        inputFieldData.label.toLowerCase() !== 'matbehov'
+                      }
+                      disabled={inputFieldData.disabled}
+                      className={`w-full cursor-text rounded-xl border-2 border-stone-300 bg-transparent px-4 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out ${inputFieldData.disabled ? 'text-stone-400' : ''}`}
                     />
                   </div>
                 </div>
