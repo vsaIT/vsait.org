@@ -123,7 +123,7 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
                         inputFieldData.label.toLowerCase() !== 'matbehov'
                       }
                       disabled={inputFieldData.disabled}
-                      className={`w-full cursor-text rounded-xl border-2 border-stone-300 bg-transparent px-4 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out ${inputFieldData.disabled ? 'text-stone-400' : ''}`}
+                      className={`w-full cursor-text rounded-xl border-2 border-stone-300 bg-transparent px-4 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out ${inputFieldData.disabled ? 'text-stone-500' : ''}`}
                     />
                   </div>
                 </div>
@@ -200,7 +200,10 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
               <input
                 id='email-confirm'
                 type='text'
-                className='my-5 w-full rounded-xl border-2 border-stone-300 bg-transparent p-1 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out'
+                placeholder='E-postbekreftelses URL'
+                defaultValue={editUser?.emailVerificationUrl}
+                disabled={true}
+                className='text-stone-500 my-5 w-full cursor-text rounded-xl border-2 border-stone-300 bg-transparent p-1 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out'
               />
               {/* Checkbox */}
               <div>Rolle</div>
@@ -209,7 +212,7 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
             {/* Accordion for changing password */}
             <Accordion
               label='Endre passord'
-              labelClassName='text-xl font-medium text-left pl-2 py-4'
+              labelClassName='text-l font-medium text-left pl-2 py-4'
               buttonClassName='bg-neutral-50 shadow-md'
             >
               <form className='px-4 py-4 sm:mx-28 sm:my-10'>
