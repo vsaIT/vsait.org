@@ -41,21 +41,22 @@ model Session {
 }
 
 model User {
-  id              String       @id @default(cuid())
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
-  firstName       String
-  lastName        String
-  email           String       @unique
-  password        String
-  emailVerified   Boolean      @default(false)
-  foodNeeds       String       @default("")
-  student         String?
-  role            Role         @default(USER)
-  accounts        Account[]
-  sessions        Session[]
-  membership      Membership[]
-  profileIconSeed String       @default(cuid())
+  id                String       @id @default(cuid())
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+  firstName         String
+  lastName          String
+  email             String       @unique
+  password          String
+  emailVerified     Boolean      @default(false)
+  foodNeeds         String       @default("")
+  student           String?
+  role              Role         @default(USER)
+  accounts          Account[]
+  sessions          Session[]
+  membership        Membership[]
+  pendingMembership Boolean      @default(false)
+  profileIconSeed   String       @default(cuid())
 
   userRegistrationList Registrations[]
   userWaitingList      Waiting[]

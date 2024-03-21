@@ -54,9 +54,9 @@ const DropdownWithCheckboxes = ({
       label={label}
       labelClassName='text-sm lg:text-base font-medium text-left px-2 py-2'
       buttonClassName='bg-neutral-50 shadow-md'
-      className='w-1/3'
+      className='w-full lg:w-2/5'
     >
-      <div className='relative left-0 z-10 mt-1 w-48 overflow-hidden rounded-md bg-white shadow-lg'>
+      <div className='relative z-10 mt-1 rounded-lg py-3 shadow-lg'>
         {items.map((item) => (
           <div
             key={item.id}

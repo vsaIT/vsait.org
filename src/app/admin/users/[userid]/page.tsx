@@ -1,6 +1,7 @@
 'use client';
 import { Accordion } from '@/components/Accordion';
 import DropdownWithCheckboxes from '@/components/DropdownWithCheckboxes';
+import { Input, SelectField } from '@/components/Form';
 import { Button } from '@/components/Input';
 import SlideCheckbox from '@/components/Input/SlideCheckbox';
 import { useMemberships } from '@/lib/hooks/useMemberships';
@@ -75,7 +76,7 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
         </div>
 
         <div className='flex items-center justify-center rounded-full'>
-          <div className='relative h-20 w-20'>
+          <div className='relative mr-8 h-20 w-20'>
             <Image
               id='modal-icon'
               src={avatar.toDataUriSync()}
@@ -92,75 +93,47 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
               <p>Brukerinformasjon</p>
               {/* Input fields */}
               {userDataInputs.map((inputFieldData, index) => (
-                <div key={index} className='relative w-full'>
-                  <label
-                    htmlFor={inputFieldData.label.toLowerCase()}
-                    className='absolute -top-2 left-4 block bg-white px-2 text-left text-sm font-medium text-stone-500'
-                  >
-                    {inputFieldData.label}
-                  </label>
-                  <div className='mt-1'>
-                    <input
-                      id={inputFieldData.label.toLowerCase()}
-                      type={
-                        inputFieldData.label.toLowerCase() === 'e-post'
-                          ? 'email'
-                          : 'text'
-                      }
-                      autoComplete={inputFieldData.label
-                        .toLowerCase()
-                        .replace('-', '')}
-                      placeholder={inputFieldData.label}
-                      defaultValue={inputFieldData.data}
-                      onChange={(e) => {
-                        if (editUser) {
-                          setEditUser({
-                            ...editUser,
-                            [inputFieldData.attr]: e.target.value,
-                          });
-                        }
-                      }}
-                      required={
-                        inputFieldData.label.toLowerCase() !== 'matbehov'
-                      }
-                      disabled={inputFieldData.disabled}
-                      className={`w-full cursor-text rounded-xl border-2 border-stone-300 bg-transparent px-4 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out ${inputFieldData.disabled ? 'text-stone-500' : ''}`}
-                    />
-                  </div>
-                </div>
+                <Input
+                  id={index.toString()}
+                  label={inputFieldData.label}
+                  type={
+                    inputFieldData.label.toLowerCase() === 'e-post'
+                      ? 'email'
+                      : 'text'
+                  }
+                  defaultValue={inputFieldData.data}
+                  onChange={(e) => {
+                    if (editUser)
+                      setEditUser({
+                        ...editUser,
+                        [inputFieldData.attr]: e.target.value,
+                      });
+                  }}
+                  required={inputFieldData.label.toLowerCase() !== 'matbehov'}
+                  disabled={inputFieldData.disabled}
+                />
               ))}
-              {/* Select field */}
-              <div className='relative'>
-                <label
-                  htmlFor='student'
-                  className='absolute -top-2 left-4 block bg-white px-2 text-left text-sm font-medium text-stone-500'
-                >
-                  Student
-                </label>
-                <div className='mt-1'>
-                  <select
-                    id='student'
-                    required
-                    className='w-full rounded-xl border-2 border-stone-300 bg-transparent px-4 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out invalid:text-placeholder'
-                    defaultValue={user?.student ? user.student : ''}
-                    onChange={(e) => {
-                      if (editUser)
-                        setEditUser({ ...editUser, student: e.target.value });
-                    }}
-                  >
-                    <option value='' disabled hidden>
-                      Velg student informasjon
-                    </option>
-                    <option value='NTNU'>
-                      Norges teknisk-naturvitenskapelige universitet
-                    </option>
-                    <option value='BI'>Handelshøyskolen BI</option>
-                    <option value='DMMH'>Dronning Mauds Minne Høgskole</option>
-                    <option value='Other'>Andre</option>
-                    <option value='Non-student'>Ikke student</option>
-                  </select>
-                </div>
-              </div>
+
+              <SelectField
+                label='Student'
+                name='student'
+                defaultValue={user?.student ? user.student : ''}
+                options={[
+                  {
+                    value: 'NTNU',
+                    label: 'Norges teknisk-naturvitenskapelige universitet',
+                  },
+                  { value: 'BI', label: 'Handelshøyskolen BI' },
+                  { value: 'DMMH', label: 'Dronning Mauds Minne Høgskole' },
+                  { value: 'Other', label: 'Andre' },
+                  { value: 'Non-student', label: 'Ikke student' },
+                ]}
+                onChange={(e) => {
+                  if (editUser)
+                    setEditUser({ ...editUser, student: e.target.value });
+                }}
+              />
+
               {/* Membership information */}
               <div className='flex flex-col gap-2'>
                 <p>Medlemskap informasjon</p>
@@ -169,12 +142,12 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
                   initialItems={
                     memberships
                       ? memberships.map((membership) => ({
-                        value: membership.year,
-                        checked: isMembershipInUser(
-                          membership,
-                          user?.membership
-                        ),
-                      }))
+                          value: membership.year,
+                          checked: isMembershipInUser(
+                            membership,
+                            user?.membership
+                          ),
+                        }))
                       : []
                   }
                   onChange={(memberships) => {
@@ -190,8 +163,15 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
                 <SlideCheckbox
                   id='pending-membership'
                   label='Avventende medlemskap'
-                  checked={true}
-                  onChange={() => { true }}
+                  checked={editUser?.pendingMembership ? true : false}
+                  onChange={() => {
+                    if (editUser) {
+                      setEditUser({
+                        ...editUser,
+                        pendingMembership: !editUser.pendingMembership,
+                      });
+                    }
+                  }}
                 />
               </div>
             </div>
@@ -199,40 +179,47 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
           <div className='flex flex-col justify-between rounded-xl border border-stone-300 p-6 sm:w-1/2'>
             <div>
               <div className='flex flex-col'>
-                <p>E-postbekreftelse</p>
-                {/* Checkbox */}
+                <h2>E-postbekreftelse</h2>
                 <SlideCheckbox
                   id='email-confirmation'
                   label='Ikke bekreftet/Bekreftet'
                   checked={editUser?.emailVerified ? true : false}
                   onChange={() => {
                     if (editUser) {
-                      setEditUser({ ...editUser, emailVerified: !editUser.emailVerified });
+                      setEditUser({
+                        ...editUser,
+                        emailVerified: !editUser.emailVerified,
+                      });
                     }
                   }}
                 />
 
                 {/* Email confirmation URL */}
-                <p>E-postbekreftelses URL:</p>
-                <input
+                <h2>E-postbekreftelses URL:</h2>
+                <Input
                   id='email-confirm'
+                  label='E-postbekreftelses URL'
                   type='text'
-                  placeholder='E-postbekreftelses URL'
                   defaultValue={editUser?.emailVerificationUrl}
-                  disabled={true}
-                  className='my-5 w-full cursor-text rounded-xl border-2 border-stone-300 bg-transparent p-1 py-3 text-left text-sm leading-6 text-stone-500 outline-none transition duration-150 ease-in-out'
+                  showLabel={false}
+                  disabled
+                  className='my-5'
                 />
-                {/* Checkbox */}
-                <div>Rolle</div>
+
+                <h2>Rolle</h2>
                 <SlideCheckbox
                   id='admin-status'
                   label='Administrator'
                   checked={editUser?.role === 'ADMIN'}
                   onChange={() => {
                     if (editUser) {
-                      setEditUser({ ...editUser, role: editUser.role === 'ADMIN' ? 'USER' : 'ADMIN' });
+                      setEditUser({
+                        ...editUser,
+                        role: editUser.role === 'ADMIN' ? 'USER' : 'ADMIN',
+                      });
                     }
-                  }} />
+                  }}
+                />
               </div>
               {/* Accordion for changing password */}
               <Accordion
@@ -240,50 +227,36 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
                 labelClassName='text-l font-medium text-left pl-2 py-4'
                 buttonClassName='bg-neutral-50 shadow-md'
                 onClick={() => setChangePasswordOpen(!changePasswordOpen)}
-                className=''
+                className='mb-5'
               >
-                <form className='px-4 py-4 sm:mx-28 sm:my-10'>
-                  <div className='sm:mx-5'>
-                    <label
-                      htmlFor='new-password'
-                      className='relative left-4 top-3 block w-fit bg-white px-2 text-left text-sm font-medium text-stone-500'
-                    >
-                      Nytt passord*
-                    </label>
-                    <input
-                      id='new-password'
-                      minLength={8}
-                      type='password'
-                      className='w-full rounded-xl border-2 border-stone-300 bg-transparent px-4 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out'
+                <form className='flex-col space-y-8 px-4 py-4 sm:mx-28 sm:my-10'>
+                  <Input
+                    id='new-password'
+                    minLength={8}
+                    label='Nytt passord*'
+                    type='password'
+                    required
+                  />
+
+                  <Input
+                    id='confirm-password'
+                    minLength={8}
+                    label='Bekreft nytt passord*'
+                    type='password'
+                    required
+                  />
+
+                  <div className='my-10 flex justify-start'>
+                    <Button
+                      type='submit'
+                      text='Bytt passord'
+                      className='bg-light'
                     />
-                  </div>
-                  <div className='sm:mx-5'>
-                    <label
-                      htmlFor='confirm-password'
-                      className='relative left-4 top-3 block w-fit bg-white px-2 text-left text-sm font-medium text-stone-500'
-                    >
-                      Bekreft nytt passord*
-                    </label>
-                    <input
-                      id='confirm-password'
-                      minLength={8}
-                      type='password'
-                      className='w-full rounded-xl border-2 border-stone-300 bg-transparent px-4 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out'
-                    />
-                  </div>
-                  <div className='my-5 flex h-16 flex-col justify-center'>
-                    <div className='my-10'>
-                      <Button
-                        type='submit'
-                        text='Bytt passord'
-                        className='bg-light'
-                      />
-                    </div>
                   </div>
                 </form>
               </Accordion>
             </div>
-            <div className='mb-4 flex w-full space-x-10'>
+            <div className='my-4 flex w-full flex-col justify-start space-x-0 space-y-4 lg:flex-row lg:space-x-10 lg:space-y-0'>
               <Button
                 type='submit'
                 text='Lagre endringer'
