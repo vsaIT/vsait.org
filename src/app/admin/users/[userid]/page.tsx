@@ -94,7 +94,7 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
                     id='student'
                     required
                     className='w-full rounded-xl border-2 border-stone-300 bg-transparent px-4 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out invalid:text-placeholder'
-                    defaultValue={user?.student as string}
+                    defaultValue={user?.student ? user.student : ''}
                   >
                     <option value='' disabled hidden>
                       Velg student informasjon
