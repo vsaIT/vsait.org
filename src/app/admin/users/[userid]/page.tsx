@@ -7,6 +7,7 @@ import { useUser } from '@/lib/hooks/useUser';
 import { bigSmile } from '@dicebear/collection';
 import { createAvatar } from '@dicebear/core';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 type AdminUsersViewProps = {
   params: { userid: string };
@@ -16,6 +17,8 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
   const { user, isLoading, isError } = useUser(params.userid);
   const { memberships, isLoading: mLoading } = useMemberships();
   if (isLoading || mLoading) return <div>Loading...</div>;
+
+  const [student, setStudent] = useState(user?.student ? user.student : '');
 
   const avatar = createAvatar(bigSmile, {
     seed: user?.profileIconSeed,
@@ -94,7 +97,8 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
                     id='student'
                     required
                     className='w-full rounded-xl border-2 border-stone-300 bg-transparent px-4 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out invalid:text-placeholder'
-                    defaultValue={user?.student ? user.student : ''}
+                    defaultValue={student}
+                    onChange={(e) => setStudent(e.target.value as string)}
                   >
                     <option value='' disabled hidden>
                       Velg student informasjon
