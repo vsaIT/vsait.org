@@ -189,6 +189,8 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
                 <SlideCheckbox
                   id='pending-membership'
                   label='Avventende medlemskap'
+                  checked={true}
+                  onChange={() => { true }}
                 />
               </div>
             </div>
@@ -201,6 +203,10 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
               <SlideCheckbox
                 id='email-confirmation'
                 label='Ikke bekreftet/Bekreftet'
+                checked={editUser.emailVerified}
+                onChange={() => {
+                  setEditUser({ ...editUser, emailVerified: !editUser.emailVerified });
+                }}
               />
 
               {/* Email confirmation URL */}
@@ -215,7 +221,13 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
               />
               {/* Checkbox */}
               <div>Rolle</div>
-              <SlideCheckbox id='admin-status' label='Administrator' />
+              <SlideCheckbox
+                id='admin-status'
+                label='Administrator'
+                checked={editUser?.role === 'ADMIN' ? true : false}
+                onChange={() => {
+                  setEditUser({ ...editUser, role: (editUser.role ? 'ADMIN' : 'USER') });
+                }} />
             </div>
             {/* Accordion for changing password */}
             <Accordion
