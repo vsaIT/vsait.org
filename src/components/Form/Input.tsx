@@ -1,5 +1,3 @@
-import { randomUUID } from 'crypto';
-
 type InputProps = {
   id?: string;
   label: string;
@@ -14,7 +12,6 @@ type InputProps = {
 };
 
 function Input({
-  id = randomUUID(),
   label,
   type,
   minLength = 0,
@@ -26,7 +23,7 @@ function Input({
   showLabel = true,
 }: InputProps) {
   return (
-    <div key={id} id={id} className='relative w-full'>
+    <div className='relative w-full'>
       {showLabel && (
         <label
           htmlFor={label.toLowerCase()}

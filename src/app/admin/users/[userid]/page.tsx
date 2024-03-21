@@ -28,8 +28,19 @@ function isMembershipInUser(
   return false;
 }
 
+const studentOptions = [
+  {
+    value: 'NTNU',
+    label: 'Norges teknisk-naturvitenskapelige universitet',
+  },
+  { value: 'BI', label: 'Handelshøyskolen BI' },
+  { value: 'DMMH', label: 'Dronning Mauds Minne Høgskole' },
+  { value: 'Other', label: 'Andre' },
+  { value: 'Non-student', label: 'Ikke student' },
+];
+
 function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
-  const { user, isLoading, isError } = useUser(params.userid);
+  const { user, isLoading } = useUser(params.userid);
   const { memberships, isLoading: mLoading } = useMemberships();
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const [editUser, setEditUser] = useState<UserType | undefined>(undefined);
@@ -41,6 +52,16 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
   }, [isLoading, user]);
 
   if (isLoading || mLoading) return <div>Loading...</div>;
+
+  function handleChange<T>(attr: string, value: T) {
+    if (editUser) {
+      setEditUser({
+        ...editUser,
+        [attr]: value,
+      });
+    }
+  }
+
   const avatar = createAvatar(bigSmile, {
     seed: user?.profileIconSeed,
     radius: 50,
@@ -50,21 +71,30 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
   const userDataInputs = [
     {
       label: 'Fornavn',
-      data: user?.firstName,
+      defaultValue: user?.firstName,
       attr: 'firstName',
+      type: 'text',
       disabled: true,
     },
     {
       label: 'Etternavn',
-      data: user?.lastName,
+      defaultValue: user?.lastName,
       attr: 'lastName',
+      type: 'text',
       disabled: true,
     },
-    { label: 'E-post', data: user?.email, attr: 'email', disabled: true },
+    {
+      label: 'E-post',
+      defaultValue: user?.email,
+      attr: 'email',
+      type: 'email',
+      disabled: true,
+    },
     {
       label: 'Matbehov',
-      data: user?.foodNeeds,
+      defaultValue: user?.foodNeeds,
       attr: 'foodNeeds',
+      type: 'text',
       disabled: false,
     },
   ];
@@ -90,51 +120,24 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
         <div className='flex w-full flex-col gap-3 sm:flex-row'>
           <div className='rounded-xl border border-stone-300 sm:w-1/2'>
             <div className='flex flex-col gap-5 p-6'>
-              <p>Brukerinformasjon</p>
-              {/* Input fields */}
+              <h2>Brukerinformasjon</h2>
               {userDataInputs.map((inputFieldData, index) => (
                 <Input
-                  id={index.toString()}
-                  label={inputFieldData.label}
-                  type={
-                    inputFieldData.label.toLowerCase() === 'e-post'
-                      ? 'email'
-                      : 'text'
+                  key={index.toString()}
+                  {...inputFieldData}
+                  onChange={(e) =>
+                    handleChange(inputFieldData.attr, e.target.value)
                   }
-                  defaultValue={inputFieldData.data}
-                  onChange={(e) => {
-                    if (editUser)
-                      setEditUser({
-                        ...editUser,
-                        [inputFieldData.attr]: e.target.value,
-                      });
-                  }}
-                  required={inputFieldData.label.toLowerCase() !== 'matbehov'}
-                  disabled={inputFieldData.disabled}
                 />
               ))}
 
               <SelectField
                 label='Student'
                 name='student'
-                defaultValue={user?.student ? user.student : ''}
-                options={[
-                  {
-                    value: 'NTNU',
-                    label: 'Norges teknisk-naturvitenskapelige universitet',
-                  },
-                  { value: 'BI', label: 'Handelshøyskolen BI' },
-                  { value: 'DMMH', label: 'Dronning Mauds Minne Høgskole' },
-                  { value: 'Other', label: 'Andre' },
-                  { value: 'Non-student', label: 'Ikke student' },
-                ]}
-                onChange={(e) => {
-                  if (editUser)
-                    setEditUser({ ...editUser, student: e.target.value });
-                }}
+                defaultValue={user?.student ? user.student : 'Non-student'}
+                options={studentOptions}
+                onChange={(e) => handleChange('student', e.target.value)}
               />
-
-              {/* Membership information */}
               <div className='flex flex-col gap-2'>
                 <p>Medlemskap informasjon</p>
                 <DropdownWithCheckboxes
@@ -150,28 +153,18 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
                         }))
                       : []
                   }
-                  onChange={(memberships) => {
-                    if (editUser) {
-                      setEditUser({ ...editUser, membership: memberships });
-                    }
-                  }}
+                  onChange={(memberships) =>
+                    handleChange('membership', memberships)
+                  }
                 />
               </div>
-              {/* Pending membership */}
               <div className='flex flex-col'>
                 <p>Avventende medlemskap</p>
                 <SlideCheckbox
                   id='pending-membership'
                   label='Avventende medlemskap'
                   checked={editUser?.pendingMembership ? true : false}
-                  onChange={() => {
-                    if (editUser) {
-                      setEditUser({
-                        ...editUser,
-                        pendingMembership: !editUser.pendingMembership,
-                      });
-                    }
-                  }}
+                  onChange={() => handleChange('pendingMembership', true)}
                 />
               </div>
             </div>
@@ -184,17 +177,10 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
                   id='email-confirmation'
                   label='Ikke bekreftet/Bekreftet'
                   checked={editUser?.emailVerified ? true : false}
-                  onChange={() => {
-                    if (editUser) {
-                      setEditUser({
-                        ...editUser,
-                        emailVerified: !editUser.emailVerified,
-                      });
-                    }
-                  }}
+                  onChange={() =>
+                    handleChange('emailVerified', !editUser?.emailVerified)
+                  }
                 />
-
-                {/* Email confirmation URL */}
                 <h2>E-postbekreftelses URL:</h2>
                 <Input
                   id='email-confirm'
@@ -211,17 +197,14 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
                   id='admin-status'
                   label='Administrator'
                   checked={editUser?.role === 'ADMIN'}
-                  onChange={() => {
-                    if (editUser) {
-                      setEditUser({
-                        ...editUser,
-                        role: editUser.role === 'ADMIN' ? 'USER' : 'ADMIN',
-                      });
-                    }
-                  }}
+                  onChange={() =>
+                    handleChange(
+                      'role',
+                      editUser?.role === 'ADMIN' ? 'USER' : 'ADMIN'
+                    )
+                  }
                 />
               </div>
-              {/* Accordion for changing password */}
               <Accordion
                 label='Endre passord'
                 labelClassName='text-l font-medium text-left pl-2 py-4'
