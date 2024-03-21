@@ -1,7 +1,7 @@
 import { getToken } from 'next-auth/jwt';
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from 'prisma/index';
-import { getErrorMessage } from '@/lib/utils';
+import { exclude, getErrorMessage } from '@/lib/utils';
 
 const GET = async (
   req: NextRequest,
@@ -26,15 +26,18 @@ const GET = async (
     );
 
   try {
-    const user = await prisma.user.findFirst({
-      where: {
-        id: userID,
-      },
-      include: {
-        membership: true,
-        userAttendanceList: true,
-      },
-    });
+    const user = exclude(
+      await prisma.user.findFirst({
+        where: {
+          id: userID,
+        },
+        include: {
+          membership: true,
+          userAttendanceList: true,
+        },
+      }),
+      ['password']
+    );
     return NextResponse.json(user, { status: 200 });
   } catch (error) {
     console.error(`[api] /api/user`, getErrorMessage(error));

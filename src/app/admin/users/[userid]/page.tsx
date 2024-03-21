@@ -164,7 +164,12 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
                   id='pending-membership'
                   label='Avventende medlemskap'
                   checked={editUser?.pendingMembership ? true : false}
-                  onChange={() => handleChange('pendingMembership', true)}
+                  onChange={() =>
+                    handleChange(
+                      'pendingMembership',
+                      !editUser?.pendingMembership
+                    )
+                  }
                 />
               </div>
             </div>
@@ -212,7 +217,14 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
                 onClick={() => setChangePasswordOpen(!changePasswordOpen)}
                 className='mb-5'
               >
-                <form className='flex-col space-y-8 px-4 py-4 sm:mx-28 sm:my-10'>
+                <form
+                  className='flex-col space-y-8 px-4 py-4 sm:mx-28 sm:my-10'
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    //TODO implement password change
+                    console.log('password changed');
+                  }}
+                >
                   <Input
                     id='new-password'
                     minLength={8}
