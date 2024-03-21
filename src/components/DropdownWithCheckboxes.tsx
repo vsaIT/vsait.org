@@ -1,6 +1,6 @@
 import { Membership } from '@prisma/client';
-import React, { useEffect, useMemo, useState } from 'react';
-import { CaretDown, CaretUp } from './icons';
+import { useEffect, useMemo, useState } from 'react';
+import { Accordion } from './Accordion';
 
 type Item = {
   id?: number;
@@ -50,31 +50,13 @@ const DropdownWithCheckboxes = ({
   };
 
   return (
-    <div className='relative inline-block'>
-      <button
-        onClick={toggleDropdown}
-        className='flex w-full justify-between rounded-md border-stone-300 bg-neutral-50 px-3 py-3 text-sm font-medium text-black shadow-md hover:bg-slate-200 lg:w-1/3 lg:text-base'
-      >
-        {label}
-        <div className='mx-5 flex items-center gap-2 fill-slate-600 text-xs font-medium text-slate-600'>
-          {isOpen ? (
-            <>
-              Lukke <CaretUp color='inherit' />
-            </>
-          ) : (
-            <>
-              Åpne
-              <CaretDown color='inherit' />
-            </>
-          )}
-        </div>
-      </button>
-
-      <div
-        className={`relative left-0 z-10 mt-2 w-48 overflow-hidden rounded-md bg-white shadow-lg transition duration-500 
-        ${isOpen ? 'h-fit -translate-y-0 opacity-100' : 'h-0 -translate-y-8 opacity-0'}
-      `}
-      >
+    <Accordion
+      label={label}
+      labelClassName='text-sm lg:text-base font-medium text-left px-2 py-2'
+      buttonClassName='bg-neutral-50 shadow-md'
+      className='w-1/3'
+    >
+      <div className='relative left-0 z-10 mt-1 w-48 overflow-hidden rounded-md bg-white shadow-lg'>
         {items.map((item) => (
           <div
             key={item.id}
@@ -97,7 +79,7 @@ const DropdownWithCheckboxes = ({
           </div>
         ))}
       </div>
-    </div>
+    </Accordion>
   );
 };
 

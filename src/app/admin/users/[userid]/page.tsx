@@ -33,6 +33,7 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
   const { user, isLoading, isError } = useUser(params.userid);
   const { memberships, isLoading: mLoading } = useMemberships();
   const [editUser, setEditUser] = useState({} as UserType);
+  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
 
   useEffect(() => {
     if (user) setEditUser(user);
@@ -194,75 +195,87 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
             </div>
           </div>
           {/* Email confirmation */}
-          <div className='rounded-xl border border-stone-300 p-6 sm:w-1/2'>
-            <div className='flex flex-col'>
-              <p>E-postbekreftelse</p>
-              {/* Checkbox */}
-              <SlideCheckbox
-                id='email-confirmation'
-                label='Ikke bekreftet/Bekreftet'
-              />
+          <div className='flex flex-col justify-between rounded-xl border border-stone-300 p-6 sm:w-1/2'>
+            <div>
+              <div className='flex flex-col'>
+                <p>E-postbekreftelse</p>
+                {/* Checkbox */}
+                <SlideCheckbox
+                  id='email-confirmation'
+                  label='Ikke bekreftet/Bekreftet'
+                />
 
-              {/* Email confirmation URL */}
-              <p>E-postbekreftelses URL:</p>
-              <input
-                id='email-confirm'
-                type='text'
-                placeholder='E-postbekreftelses URL'
-                defaultValue={editUser?.emailVerificationUrl}
-                disabled={true}
-                className='text-stone-500 my-5 w-full cursor-text rounded-xl border-2 border-stone-300 bg-transparent p-1 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out'
-              />
-              {/* Checkbox */}
-              <div>Rolle</div>
-              <SlideCheckbox id='admin-status' label='Administrator' />
-            </div>
-            {/* Accordion for changing password */}
-            <Accordion
-              label='Endre passord'
-              labelClassName='text-l font-medium text-left pl-2 py-4'
-              buttonClassName='bg-neutral-50 shadow-md'
-            >
-              <form className='px-4 py-4 sm:mx-28 sm:my-10'>
-                <div className='sm:mx-5'>
-                  <label
-                    htmlFor='new-password'
-                    className='relative left-4 top-3 block w-fit bg-white px-2 text-left text-sm font-medium text-stone-500'
-                  >
-                    Nytt passord*
-                  </label>
-                  <input
-                    id='new-password'
-                    minLength={8}
-                    type='password'
-                    className='w-full rounded-xl border-2 border-stone-300 bg-transparent px-4 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out'
-                  />
-                </div>
-                <div className='sm:mx-5'>
-                  <label
-                    htmlFor='confirm-password'
-                    className='relative left-4 top-3 block w-fit bg-white px-2 text-left text-sm font-medium text-stone-500'
-                  >
-                    Bekreft nytt passord*
-                  </label>
-                  <input
-                    id='confirm-password'
-                    minLength={8}
-                    type='password'
-                    className='w-full rounded-xl border-2 border-stone-300 bg-transparent px-4 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out'
-                  />
-                </div>
-                <div className='my-5 flex h-16 flex-col justify-center'>
-                  <div className='my-10'>
-                    <Button
-                      type='submit'
-                      text='Bytt passord'
-                      className='bg-light'
+                {/* Email confirmation URL */}
+                <p>E-postbekreftelses URL:</p>
+                <input
+                  id='email-confirm'
+                  type='text'
+                  placeholder='E-postbekreftelses URL'
+                  defaultValue={editUser?.emailVerificationUrl}
+                  disabled={true}
+                  className='my-5 w-full cursor-text rounded-xl border-2 border-stone-300 bg-transparent p-1 py-3 text-left text-sm leading-6 text-stone-500 outline-none transition duration-150 ease-in-out'
+                />
+                {/* Checkbox */}
+                <div>Rolle</div>
+                <SlideCheckbox id='admin-status' label='Administrator' />
+              </div>
+              {/* Accordion for changing password */}
+              <Accordion
+                label='Endre passord'
+                labelClassName='text-l font-medium text-left pl-2 py-4'
+                buttonClassName='bg-neutral-50 shadow-md'
+                onClick={() => setChangePasswordOpen(!changePasswordOpen)}
+                className=''
+              >
+                <form className='px-4 py-4 sm:mx-28 sm:my-10'>
+                  <div className='sm:mx-5'>
+                    <label
+                      htmlFor='new-password'
+                      className='relative left-4 top-3 block w-fit bg-white px-2 text-left text-sm font-medium text-stone-500'
+                    >
+                      Nytt passord*
+                    </label>
+                    <input
+                      id='new-password'
+                      minLength={8}
+                      type='password'
+                      className='w-full rounded-xl border-2 border-stone-300 bg-transparent px-4 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out'
                     />
                   </div>
-                </div>
-              </form>
-            </Accordion>
+                  <div className='sm:mx-5'>
+                    <label
+                      htmlFor='confirm-password'
+                      className='relative left-4 top-3 block w-fit bg-white px-2 text-left text-sm font-medium text-stone-500'
+                    >
+                      Bekreft nytt passord*
+                    </label>
+                    <input
+                      id='confirm-password'
+                      minLength={8}
+                      type='password'
+                      className='w-full rounded-xl border-2 border-stone-300 bg-transparent px-4 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out'
+                    />
+                  </div>
+                  <div className='my-5 flex h-16 flex-col justify-center'>
+                    <div className='my-10'>
+                      <Button
+                        type='submit'
+                        text='Bytt passord'
+                        className='bg-light'
+                      />
+                    </div>
+                  </div>
+                </form>
+              </Accordion>
+            </div>
+            <div className='mb-4 flex w-full space-x-10'>
+              <Button
+                type='submit'
+                text='Lagre endringer'
+                className='bg-light'
+              />
+              <Button type='submit' text='Slett bruker' className='bg-light' />
+            </div>
           </div>
         </div>
       </div>
