@@ -2,10 +2,13 @@
 import { Accordion } from '@/components/Accordion';
 import { Button } from '@/components/Input';
 import SlideCheckbox from '@/components/Input/SlideCheckbox';
+import { userAtom } from '@/lib/atoms';
 import { useMemberships } from '@/lib/hooks/useMemberships';
 import { useUser } from '@/lib/hooks/useUser';
+import { UserType } from '@/types';
 import { bigSmile } from '@dicebear/collection';
 import { createAvatar } from '@dicebear/core';
+import { useAtom } from 'jotai';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
@@ -16,9 +19,15 @@ type AdminUsersViewProps = {
 function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
   const { user, isLoading, isError } = useUser(params.userid);
   const { memberships, isLoading: mLoading } = useMemberships();
-  if (isLoading || mLoading) return <div>Loading...</div>;
+  const [editUser, setEditUser] = useState({} as UserType);
 
-  const [student, setStudent] = useState(user?.student ? user.student : '');
+  useEffect(() => {
+    if (user) setEditUser(user);
+  }, [user]);
+
+  useEffect(() => {
+    if (editUser) console.log(editUser);
+  }, [editUser]);
 
   const avatar = createAvatar(bigSmile, {
     seed: user?.profileIconSeed,
@@ -33,6 +42,7 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
     { label: 'Matbehov', data: user?.foodNeeds },
   ];
 
+  if (isLoading || mLoading) return <div>Loading...</div>;
   return (
     <div className='flex h-screen w-full flex-col gap-6 p-6'>
       <div className='flex w-full justify-between gap-6 rounded-xl bg-white p-6'>
@@ -97,8 +107,10 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
                     id='student'
                     required
                     className='w-full rounded-xl border-2 border-stone-300 bg-transparent px-4 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out invalid:text-placeholder'
-                    defaultValue={student}
-                    onChange={(e) => setStudent(e.target.value as string)}
+                    defaultValue={user?.student ? user.student : ''}
+                    onChange={(e) =>
+                      setEditUser({ ...editUser, student: e.target.value })
+                    }
                   >
                     <option value='' disabled hidden>
                       Velg student informasjon
