@@ -1,18 +1,31 @@
 import React, { useState } from 'react';
 
 type Item = {
-  id: number;
-  label: string;
+  id?: number;
+  label: number;
   checked: boolean;
 };
 
-const DropdownWithCheckboxes = () => {
+type DropdownCheckboxProps = {
+  id: string,
+  label: string,
+  initialItems: Item[]
+}
+
+const DropdownWithCheckboxes = ({
+  id,
+  label,
+  initialItems,
+}: DropdownCheckboxProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [items, setItems] = useState([
-    { id: 1, label: 'Option 1', checked: false },
-    { id: 2, label: 'Option 2', checked: false },
-    { id: 3, label: 'Option 3', checked: false },
-  ]);
+  const temp: Item[] = []
+  initialItems.forEach((item, index) => {
+    temp.push({
+      ...item,
+      id: index
+    })
+  })
+  const [items, setItems] = useState(temp)
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
@@ -28,9 +41,9 @@ const DropdownWithCheckboxes = () => {
     <div className='relative inline-block'>
       <button
         onClick={toggleDropdown}
-        className='border-gray-300 bg-gray-200 focus:ring-gray-500 rounded-md border px-4 py-2 font-medium text-black focus:outline-none focus:ring-2 focus:ring-opacity-50'
+        className='bg-neutral-50 border-stone-300 shadow-md rounded-md font-medium text-black texy-xl text-left pl-2 py-4'
       >
-        Select Options
+        {label}
       </button>
       {isOpen && (
         <div className='absolute left-0 z-10 mt-2 w-48 overflow-hidden rounded-md bg-white shadow-lg'>

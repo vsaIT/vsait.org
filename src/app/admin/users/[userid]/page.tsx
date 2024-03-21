@@ -6,9 +6,10 @@ import SlideCheckbox from '@/components/Input/SlideCheckbox';
 import { userAtom } from '@/lib/atoms';
 import { useMemberships } from '@/lib/hooks/useMemberships';
 import { useUser } from '@/lib/hooks/useUser';
-import { UserType } from '@/types';
+import { MembershipType, UserType } from '@/types';
 import { bigSmile } from '@dicebear/collection';
 import { createAvatar } from '@dicebear/core';
+import { Membership } from '@prisma/client';
 import { useAtom } from 'jotai';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
@@ -16,6 +17,14 @@ import { useEffect, useState } from 'react';
 type AdminUsersViewProps = {
   params: { userid: string };
 };
+
+function isMembershipInUser(mem: Membership, userMemberships: Membership[] | undefined): boolean {
+  if (userMemberships) {
+    const temp = userMemberships.find((m) => m.year === mem.year)
+    return !!temp
+  }
+  return false
+}
 
 function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
   const { user, isLoading, isError } = useUser(params.userid);
@@ -153,16 +162,18 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
               {/* Membership information */}
               <div className='flex flex-col gap-2'>
                 <p>Medlemskap informasjon</p>
-                <div className='flex gap-4'>
-                  {memberships?.map((membership, index) => (
-                    <div
-                      key={'membership-' + index}
-                      className='rounded-2xl bg-neutral-100 px-6 py-2'
-                    >
-                      {membership.year}
-                    </div>
-                  ))}
-                </div>
+                <DropdownWithCheckboxes
+                  id='memberships'
+                  label='Medlemskap'
+                  initialItems={
+                    memberships ? memberships.map((membership) => (
+                      {
+                        label: membership.year,
+                        checked: isMembershipInUser(membership, user?.membership)
+                      }
+                    )) : []
+                  }
+                />
               </div>
               {/* Pending membership */}
               <div className='flex flex-col'>
@@ -244,7 +255,7 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 }
 
