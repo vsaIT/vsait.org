@@ -28,10 +28,7 @@ export const postFetcher = async (
   return json;
 };
 
-export const putFetcher = async (
-  url: string,
-  data: unknown
-): Promise<ApiResponseType> => {
+export async function putFetcher<T>(url: string, data: unknown): Promise<T> {
   const response = await fetch(url, {
     method: 'PUT',
     headers: {
@@ -39,12 +36,12 @@ export const putFetcher = async (
     },
     body: JSON.stringify(data),
   });
-  const json = await response.json();
+  const json: T = await response.json();
   if (!response.ok) {
-    throw new Error(json.message);
+    throw new Error((json as ApiResponseType).message);
   }
   return json;
-};
+}
 
 export const getErrorMessage = (error: unknown) => {
   if (error instanceof Error) return error.message;

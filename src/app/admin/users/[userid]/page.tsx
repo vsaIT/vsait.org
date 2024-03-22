@@ -101,7 +101,11 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
         preConfirm: async () => {
           try {
             if (!putUser) throw new Error('No user data');
-            await putFetcher(`/api/user/${params.userid}`, putUser);
+            const response = await putFetcher<UserType>(
+              `/api/user/${params.userid}`,
+              putUser
+            );
+            setEditUser(response);
             swalSuccess('Brukeren ble oppdatert');
           } catch (error) {
             swalError(
