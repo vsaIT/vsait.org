@@ -1,22 +1,19 @@
-type InputProps = {
-  id?: string;
-  label: string;
-  type: string;
-  minLength?: number;
-  defaultValue?: string | number | undefined;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  required?: boolean;
-  disabled?: boolean;
-  className?: string;
-  showLabel?: boolean;
-};
+import { UseFormRegisterReturn } from 'react-hook-form';
 
-function Input({
+type InputProps = {
+  label: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  showLabel?: boolean;
+  formRegisterReturn?: UseFormRegisterReturn;
+} & React.InputHTMLAttributes<HTMLInputElement>;
+
+function FormInput({
   label,
   type,
-  minLength = 0,
+  minLength,
+  onChange,
+  formRegisterReturn,
   defaultValue = '',
-  onChange = () => {},
   required = false,
   disabled = false,
   className = '',
@@ -34,6 +31,7 @@ function Input({
       )}
       <div className='mt-1'>
         <input
+          {...formRegisterReturn}
           id={label.toLowerCase()}
           type={type}
           minLength={minLength}
@@ -50,4 +48,4 @@ function Input({
   );
 }
 
-export default Input;
+export default FormInput;

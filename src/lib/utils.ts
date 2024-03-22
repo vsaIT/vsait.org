@@ -1,3 +1,5 @@
+import { ApiResponseType } from '@/types';
+
 export const fetcher = async (url: string) => {
   const response = await fetch(url);
   if (!response.ok) {
@@ -5,6 +7,42 @@ export const fetcher = async (url: string) => {
     throw new Error(message);
   }
   const json = await response.json();
+  return json;
+};
+
+export const postFetcher = async (
+  url: string,
+  data: unknown
+): Promise<ApiResponseType> => {
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+  const json = await response.json();
+  if (!response.ok) {
+    throw new Error(json.message);
+  }
+  return json;
+};
+
+export const putFetcher = async (
+  url: string,
+  data: unknown
+): Promise<ApiResponseType> => {
+  const response = await fetch(url, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+  const json = await response.json();
+  if (!response.ok) {
+    throw new Error(json.message);
+  }
   return json;
 };
 

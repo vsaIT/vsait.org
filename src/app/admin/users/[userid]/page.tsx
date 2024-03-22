@@ -1,20 +1,30 @@
 'use client';
 import { Accordion } from '@/components/Accordion';
 import DropdownWithCheckboxes from '@/components/DropdownWithCheckboxes';
-import { Input, SelectField } from '@/components/Form';
+import { FormInput, SelectField } from '@/components/Form';
 import { Button } from '@/components/Input';
 import SlideCheckbox from '@/components/Input/SlideCheckbox';
+import StyledSwal from '@/components/StyledSwal';
 import { useMemberships } from '@/lib/hooks/useMemberships';
 import { useUser } from '@/lib/hooks/useUser';
+import { swalError, swalSuccess } from '@/lib/swal';
+import { postFetcher, putFetcher } from '@/lib/utils';
 import { UserType } from '@/types';
 import { bigSmile } from '@dicebear/collection';
 import { createAvatar } from '@dicebear/core';
 import { Membership } from '@prisma/client';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import Swal from 'sweetalert2';
 
 type AdminUsersViewProps = {
   params: { userid: string };
+};
+
+type PasswordFormValues = {
+  newPassword: string;
+  confirmPassword: string;
 };
 
 function isMembershipInUser(
@@ -42,8 +52,71 @@ const studentOptions = [
 function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
   const { user, isLoading } = useUser(params.userid);
   const { memberships, isLoading: mLoading } = useMemberships();
-  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const [editUser, setEditUser] = useState<UserType | undefined>(undefined);
+  const { register, reset, handleSubmit } = useForm<PasswordFormValues>();
+
+  const updateUserPassword = useCallback(
+    (data: PasswordFormValues) => {
+      StyledSwal.fire({
+        text: '',
+        showConfirmButton: false,
+        showLoaderOnConfirm: true,
+        didOpen: () => {
+          StyledSwal.getConfirmButton()?.click();
+        },
+        preConfirm: async () => {
+          try {
+            if (data.newPassword !== data.confirmPassword)
+              throw new Error('Passordene er ikke like');
+            await postFetcher(`/api/user/${params.userid}/password`, {
+              newPassword: data.newPassword,
+              confirmPassword: data.confirmPassword,
+            });
+            swalSuccess('Passordet ble oppdatert');
+            reset();
+          } catch (error) {
+            swalError(
+              'Passordet ble ikke oppdatert',
+              error as Error,
+              5000,
+              true
+            );
+          }
+        },
+        allowOutsideClick: () => !Swal.isLoading(),
+      });
+    },
+    [params.userid]
+  );
+
+  const updateUser = useCallback(
+    (putUser: UserType | undefined) => {
+      StyledSwal.fire({
+        text: '',
+        showConfirmButton: false,
+        showLoaderOnConfirm: true,
+        didOpen: () => {
+          StyledSwal.getConfirmButton()?.click();
+        },
+        preConfirm: async () => {
+          try {
+            if (!putUser) throw new Error('No user data');
+            await putFetcher(`/api/user/${params.userid}`, putUser);
+            swalSuccess('Brukeren ble oppdatert');
+          } catch (error) {
+            swalError(
+              'Brukeren ble ikke oppdatert',
+              error as Error,
+              5000,
+              true
+            );
+          }
+        },
+        allowOutsideClick: () => !Swal.isLoading(),
+      });
+    },
+    [params.userid]
+  );
 
   useEffect(() => {
     if (!isLoading) {
@@ -122,7 +195,7 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
             <div className='flex flex-col gap-5 p-6'>
               <h2>Brukerinformasjon</h2>
               {userDataInputs.map((inputFieldData, index) => (
-                <Input
+                <FormInput
                   key={index.toString()}
                   {...inputFieldData}
                   onChange={(e) =>
@@ -187,7 +260,7 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
                   }
                 />
                 <h2>E-postbekreftelses URL:</h2>
-                <Input
+                <FormInput
                   id='email-confirm'
                   label='E-postbekreftelses URL'
                   type='text'
@@ -214,36 +287,35 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
                 label='Endre passord'
                 labelClassName='text-l font-medium text-left pl-2 py-4'
                 buttonClassName='bg-neutral-50 shadow-md'
-                onClick={() => setChangePasswordOpen(!changePasswordOpen)}
                 className='mb-5'
               >
                 <form
+                  id='password-form'
                   className='flex-col space-y-8 px-4 py-4 sm:mx-28 sm:my-10'
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    //TODO implement password change
-                    console.log('password changed');
-                  }}
+                  onSubmit={handleSubmit(updateUserPassword)}
                 >
-                  <Input
+                  <FormInput
                     id='new-password'
-                    minLength={8}
+                    formRegisterReturn={register('newPassword')}
                     label='Nytt passord*'
                     type='password'
                     required
+                    className=':invalid-border-red'
                   />
 
-                  <Input
+                  <FormInput
                     id='confirm-password'
-                    minLength={8}
+                    formRegisterReturn={register('confirmPassword')}
                     label='Bekreft nytt passord*'
                     type='password'
                     required
+                    className=':invalid-border-red'
                   />
 
                   <div className='my-10 flex justify-start'>
                     <Button
                       type='submit'
+                      form='password-form'
                       text='Bytt passord'
                       className='bg-light'
                     />
@@ -254,13 +326,17 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
             <div className='my-4 flex w-full flex-col justify-start space-x-0 space-y-4 lg:flex-row lg:space-x-10 lg:space-y-0'>
               <Button
                 type='submit'
+                form='user-form'
                 text='Lagre endringer'
                 className='bg-light'
-                onClick={() => {
-                  console.log(editUser);
-                }}
+                onClick={() => updateUser(editUser)}
               />
-              <Button type='submit' text='Slett bruker' className='bg-light' />
+              <Button
+                type='submit'
+                form='user-form'
+                text='Slett bruker'
+                className='bg-light'
+              />
             </div>
           </div>
         </div>

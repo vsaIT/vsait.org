@@ -13,6 +13,7 @@ export type ExtendedComponentProps = {
 };
 
 export type ApiResponseType = {
+  status: number;
   message?: string;
 };
 
