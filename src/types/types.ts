@@ -91,8 +91,3 @@ export type CardProps = {
 export type MembershipType = Membership & {
   users: { id: string }[];
 };
-
-export type DBUserType = User & {
-  membership?: Membership[];
-  userAttendanceList?: Attendances[];
-};

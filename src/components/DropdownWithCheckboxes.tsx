@@ -67,7 +67,6 @@ const DropdownWithCheckboxes = ({
               type='checkbox'
               checked={items.find((i) => i.id === item.id)?.checked}
               onChange={(e) => handleCheckboxChange(item.id as number)}
-              // onChange={() => {}}
               className='form-checkbox text-gray-600 h-5 w-5'
             />
             <label

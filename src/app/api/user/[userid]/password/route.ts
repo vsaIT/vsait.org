@@ -58,7 +58,7 @@ const POST = async (
       });
       const hashedPassword = user?.password || '';
       if (!verifyPassword(oldPassword, hashedPassword))
-        throw new Error('Gammelt passord er samsvarer ikke!');
+        throw new Error('Gammelt passord samsvarer ikke!');
     }
 
     await prisma.user.update({
@@ -86,7 +86,6 @@ const POST = async (
 };
 
 const GET = async () => {
-  // GET method placeholder
   return NextResponse.json('Method Not Allowed', {
     status: 405,
   });
