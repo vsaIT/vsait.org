@@ -1,7 +1,7 @@
 import { Session } from 'next-auth';
 import { Table } from '@tanstack/react-table';
 import { FieldValues, Path, UseFormRegister } from 'react-hook-form';
-import { Event, Membership, User } from '@prisma/client';
+import { Attendances, Event, Membership, User } from '@prisma/client';
 
 export type AuthenticatedPage = {
   role?: string;
@@ -13,6 +13,7 @@ export type ExtendedComponentProps = {
 };
 
 export type ApiResponseType = {
+  status: number;
   message?: string;
 };
 
@@ -70,20 +71,6 @@ export type SelectProps<T extends FieldValues> = {
   register?: UseFormRegister<T>;
 };
 
-// export type UserType = {
-//   id: string;
-//   firstName: string;
-//   lastName: string;
-//   email: string;
-//   foodNeeds: string;
-//   student: string;
-//   membership: {
-//     year: number;
-//   }[];
-//   profileIconSeed: string;
-//   userAttendanceList?: { event: EventType }[];
-// };
-
 export type AttendancesType = {
   user: UserType;
   event: EventType;
@@ -91,6 +78,7 @@ export type AttendancesType = {
 };
 
 export type UserType = User & {
+  password?: string;
   userAttendanceList: AttendancesType[];
   membership: Membership[];
 };

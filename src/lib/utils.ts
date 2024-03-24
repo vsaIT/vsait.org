@@ -1,4 +1,4 @@
-import { AdminPageTitle, PageTitle } from './titleEnum';
+import { ApiResponseType } from '@/types';
 
 export const fetcher = async (url: string) => {
   const response = await fetch(url);
@@ -9,6 +9,39 @@ export const fetcher = async (url: string) => {
   const json = await response.json();
   return json;
 };
+
+export const postFetcher = async (
+  url: string,
+  data: unknown
+): Promise<ApiResponseType> => {
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+  const json = await response.json();
+  if (!response.ok) {
+    throw new Error(json.message);
+  }
+  return json;
+};
+
+export async function putFetcher<T>(url: string, data: unknown): Promise<T> {
+  const response = await fetch(url, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+  const json: T = await response.json();
+  if (!response.ok) {
+    throw new Error((json as ApiResponseType).message);
+  }
+  return json;
+}
 
 export const getErrorMessage = (error: unknown) => {
   if (error instanceof Error) return error.message;
@@ -54,55 +87,9 @@ export const getLocaleDateString = (cdate: Date) => {
   } ${date.getFullYear()}`;
 };
 
-export function mapPageTitle(path: string): string {
-  if (path.startsWith('/admin')) {
-    const adminPath = path.slice(6);
-    if (adminPath === '') {
-      return AdminPageTitle.admin;
-    } else if (adminPath.startsWith('/statistics')) {
-      return AdminPageTitle.stats;
-    } else if (adminPath.startsWith('/users')) {
-      return AdminPageTitle.users;
-    } else if (adminPath.startsWith('/memberships')) {
-      return AdminPageTitle.membership;
-    } else if (adminPath.startsWith('/events')) {
-      return AdminPageTitle.event;
-    } else {
-      return 'Could not find admin page title';
-    }
-  }
-  switch (path) {
-    // Basics
-    case '/':
-      return PageTitle.home;
-    case '/login':
-      return PageTitle.login;
-    case '/register':
-      return PageTitle.register;
-    case '/profile':
-      return PageTitle.profile;
-    case '/organization':
-      return PageTitle.org;
-    case '/retningslinjer':
-      return PageTitle.guidelines;
-    case '/forgot':
-      return PageTitle.forgotPassword;
-    case '/forgot/[resetid]':
-      return PageTitle.resetPassword;
-    // Events
-    case '/events':
-    case '/events/[eventid]':
-      return PageTitle.event;
-    case '/events/checkin/[eventid]':
-      return PageTitle.checkin;
-    // Errors
-    case '/404':
-      return PageTitle.error404;
-    case '/500':
-      return PageTitle.error500;
-    case '/403':
-      return PageTitle.error403;
-    default:
-      return 'Could not find page title';
-  }
+export function exclude<T>(obj: T | null, keys: string[]) {
+  if (!obj) return null;
+  return Object.fromEntries(
+    Object.entries(obj).filter(([key]) => !keys.includes(key))
+  );
 }

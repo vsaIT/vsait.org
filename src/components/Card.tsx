@@ -11,6 +11,7 @@
 import { Accordion } from '@/components/Accordion';
 import { Button, Select } from '@/components/Input';
 import StyledSwal from '@/components/StyledSwal';
+import { swalError, swalSuccess } from '@/lib/swal';
 import { getLocaleDatetimeString, getMembershipYear } from '@/lib/utils';
 import { ApiResponseType, CardProps } from '@/types/types';
 import Link from 'next/link';
@@ -66,23 +67,8 @@ const Card = ({ user, session }: CardProps) => {
               const data: ApiResponseType = await response.json();
               return data;
             })
-            .then((_data) => {
-              StyledSwal.fire({
-                icon: 'success',
-                title: 'Passord ble oppdatert',
-                showConfirmButton: false,
-                timer: 2000,
-              });
-            })
-            .catch((error) => {
-              console.log(error);
-              StyledSwal.fire({
-                icon: 'error',
-                title: 'Brukerinformasjon ble ikke oppdatert',
-                text: error.message,
-                timer: 2000,
-              });
-            });
+            .then((_data) => swalSuccess('Passord ble oppdatert'))
+            .catch((error) => swalError('Passord ble ikke oppdatert', error));
         },
         allowOutsideClick: () => !Swal.isLoading(),
       });
@@ -97,7 +83,6 @@ const Card = ({ user, session }: CardProps) => {
         showConfirmButton: false,
         showLoaderOnConfirm: true,
         didOpen: () => {
-          // Confirm immediately when open swal
           StyledSwal.getConfirmButton()?.click();
         },
         preConfirm: async () => {
@@ -113,22 +98,10 @@ const Card = ({ user, session }: CardProps) => {
               const data: ApiResponseType = await response.json();
               return data;
             })
-            .then((_data) => {
-              StyledSwal.fire({
-                icon: 'success',
-                title: 'Brukerinformasjonen ble oppdatert',
-                showConfirmButton: false,
-                timer: 2000,
-              });
-            })
-            .catch((_error) => {
-              StyledSwal.fire({
-                icon: 'error',
-                title: 'Brukerinformasjon ble ikke oppdatert',
-                text: 'Ser ut som det var noe som gikk galt',
-                timer: 2000,
-              });
-            });
+            .then((_data) => swalSuccess('Brukerinformasjonen ble oppdatert'))
+            .catch((_error) =>
+              swalError('Brukerinformasjon ble ikke oppdatert', _error)
+            );
         },
         allowOutsideClick: () => !Swal.isLoading(),
       });

@@ -24,6 +24,7 @@ type AccordionProps = {
   labelClassName?: string;
   buttonClassName?: string;
   startToggled?: boolean;
+  onClick?: () => void;
 } & ExtendedComponentProps;
 
 const Accordion = ({
@@ -33,6 +34,7 @@ const Accordion = ({
   labelClassName = '',
   buttonClassName = '',
   className = '',
+  onClick = () => {},
 }: AccordionProps) => {
   const [toggled, setToggled] = useState(startToggled);
 
@@ -40,7 +42,10 @@ const Accordion = ({
     <div className={className}>
       <button
         className={`flex w-full items-center justify-between rounded-xl p-2 ${buttonClassName}`}
-        onClick={() => setToggled(!toggled)}
+        onClick={() => {
+          setToggled(!toggled);
+          onClick();
+        }}
       >
         <div className={labelClassName}>{label}</div>
         <div className='mx-5 flex items-center gap-2 fill-slate-600 text-xs font-medium text-slate-600'>

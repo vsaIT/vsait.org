@@ -36,41 +36,13 @@ const authOptions: AuthOptions = {
       id: 'app-register',
       name: 'App Register',
       credentials: {
-        firstName: {
-          label: 'First Name',
-          type: 'text',
-          placeholder: 'John',
-        },
-        lastName: {
-          label: 'Last Name',
-          type: 'text',
-          placeholder: 'Doe',
-        },
-        email: {
-          label: 'Email Address',
-          type: 'email',
-          placeholder: 'john.doe@example.com',
-        },
-        password: {
-          label: 'Password',
-          type: 'password',
-          placeholder: 'Your super secure password',
-        },
-        repeatPassword: {
-          label: 'Repeat password',
-          type: 'password',
-          placeholder: 'Your super secure password again',
-        },
-        foodNeeds: {
-          label: 'Food Needs',
-          type: 'text',
-          placeholder: 'Your food needs / allergies',
-        },
-        student: {
-          label: 'Student',
-          type: 'text',
-          placeholder: 'Student status',
-        },
+        firstName: {},
+        lastName: {},
+        email: {},
+        password: {},
+        repeatPassword: {},
+        foodNeeds: {},
+        student: {},
       },
       async authorize(credentials): Promise<User | null> {
         try {
@@ -127,16 +99,8 @@ const authOptions: AuthOptions = {
       id: 'app-login',
       name: 'App Login',
       credentials: {
-        email: {
-          label: 'Email Address',
-          type: 'email',
-          placeholder: 'john.doe@example.com',
-        },
-        password: {
-          label: 'Password',
-          type: 'password',
-          placeholder: 'Your super secure password',
-        },
+        email: {},
+        password: {},
       },
       async authorize(credentials): Promise<User | null> {
         try {

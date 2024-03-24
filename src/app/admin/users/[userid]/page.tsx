@@ -1,26 +1,143 @@
 'use client';
 import { Accordion } from '@/components/Accordion';
-import { Button, IndeterminateCheckbox } from '@/components/Input';
+import DropdownWithCheckboxes from '@/components/DropdownWithCheckboxes';
+import { FormInput, SelectField } from '@/components/Form';
+import { Button } from '@/components/Input';
 import SlideCheckbox from '@/components/Input/SlideCheckbox';
+import StyledSwal from '@/components/StyledSwal';
+import { useMemberships } from '@/lib/hooks/useMemberships';
 import { useUser } from '@/lib/hooks/useUser';
+import { swalError, swalSuccess } from '@/lib/swal';
+import { postFetcher, putFetcher } from '@/lib/utils';
+import { UserType } from '@/types';
 import { bigSmile } from '@dicebear/collection';
 import { createAvatar } from '@dicebear/core';
-import { profileIconAtom, userAtom } from '@/lib/atoms';
-import { generateSalt } from '@/lib/auth/passwords';
-import { useSession } from 'next-auth/react';
-import { useState } from 'react';
-import { useAtom } from 'jotai';
+import { Membership } from '@prisma/client';
 import Image from 'next/image';
-import { useMemberships } from '@/lib/hooks/useMemberships';
+import { useCallback, useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import Swal from 'sweetalert2';
 
 type AdminUsersViewProps = {
   params: { userid: string };
 };
 
+type PasswordFormValues = {
+  newPassword: string;
+  confirmPassword: string;
+};
+
+function isMembershipInUser(
+  mem: Membership,
+  userMemberships: Membership[] | undefined
+): boolean {
+  if (userMemberships) {
+    const temp = userMemberships.find((m) => m.year === mem.year);
+    return !!temp;
+  }
+  return false;
+}
+
+const studentOptions = [
+  {
+    value: 'NTNU',
+    label: 'Norges teknisk-naturvitenskapelige universitet',
+  },
+  { value: 'BI', label: 'Handelshøyskolen BI' },
+  { value: 'DMMH', label: 'Dronning Mauds Minne Høgskole' },
+  { value: 'Other', label: 'Andre' },
+  { value: 'Non-student', label: 'Ikke student' },
+];
+
 function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
-  const { user, isLoading, isError } = useUser(params.userid);
+  const { user, isLoading } = useUser(params.userid);
   const { memberships, isLoading: mLoading } = useMemberships();
+  const [editUser, setEditUser] = useState<UserType | undefined>(undefined);
+  const { register, reset, handleSubmit } = useForm<PasswordFormValues>();
+
+  const updateUserPassword = useCallback(
+    (data: PasswordFormValues) => {
+      StyledSwal.fire({
+        text: '',
+        showConfirmButton: false,
+        showLoaderOnConfirm: true,
+        didOpen: () => {
+          StyledSwal.getConfirmButton()?.click();
+        },
+        preConfirm: async () => {
+          try {
+            if (data.newPassword !== data.confirmPassword)
+              throw new Error('Passordene er ikke like');
+            await postFetcher(`/api/user/${params.userid}/password`, {
+              newPassword: data.newPassword,
+              confirmPassword: data.confirmPassword,
+            });
+            swalSuccess('Passordet ble oppdatert');
+            reset();
+          } catch (error) {
+            swalError(
+              'Passordet ble ikke oppdatert',
+              error as Error,
+              5000,
+              true
+            );
+          }
+        },
+        allowOutsideClick: () => !Swal.isLoading(),
+      });
+    },
+    [params.userid]
+  );
+
+  const updateUser = useCallback(
+    (putUser: UserType | undefined) => {
+      StyledSwal.fire({
+        text: '',
+        showConfirmButton: false,
+        showLoaderOnConfirm: true,
+        didOpen: () => {
+          StyledSwal.getConfirmButton()?.click();
+        },
+        preConfirm: async () => {
+          try {
+            if (!putUser) throw new Error('No user data');
+            const response = await putFetcher<UserType>(
+              `/api/user/${params.userid}`,
+              putUser
+            );
+            setEditUser(response);
+            swalSuccess('Brukeren ble oppdatert');
+          } catch (error) {
+            swalError(
+              'Brukeren ble ikke oppdatert',
+              error as Error,
+              5000,
+              true
+            );
+          }
+        },
+        allowOutsideClick: () => !Swal.isLoading(),
+      });
+    },
+    [params.userid]
+  );
+
+  useEffect(() => {
+    if (!isLoading) {
+      setEditUser(user);
+    }
+  }, [isLoading, user]);
+
   if (isLoading || mLoading) return <div>Loading...</div>;
+
+  function handleChange<T>(attr: string, value: T) {
+    if (editUser) {
+      setEditUser({
+        ...editUser,
+        [attr]: value,
+      });
+    }
+  }
 
   const avatar = createAvatar(bigSmile, {
     seed: user?.profileIconSeed,
@@ -29,22 +146,44 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
   });
 
   const userDataInputs = [
-    { label: 'Fornavn', data: user?.firstName },
-    { label: 'Etternavn', data: user?.lastName },
-    { label: 'E-post', data: user?.email },
-    { label: 'Matbehov', data: user?.foodNeeds },
+    {
+      label: 'Fornavn',
+      defaultValue: user?.firstName,
+      attr: 'firstName',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      label: 'Etternavn',
+      defaultValue: user?.lastName,
+      attr: 'lastName',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      label: 'E-post',
+      defaultValue: user?.email,
+      attr: 'email',
+      type: 'email',
+      disabled: true,
+    },
+    {
+      label: 'Matbehov',
+      defaultValue: user?.foodNeeds,
+      attr: 'foodNeeds',
+      type: 'text',
+      disabled: false,
+    },
   ];
-
   return (
     <div className='flex h-screen w-full flex-col gap-6 p-6'>
       <div className='flex w-full justify-between gap-6 rounded-xl bg-white p-6'>
-        <div className='flex flex-col'>
-          <h1 className='text-xl font-medium'>Brukere</h1>
-          <p className='text-sm'>Endre brukeren</p>
+        <div className='flex flex-col items-center'>
+          <h1 className='text-xl font-medium'>Endre brukeren</h1>
         </div>
 
         <div className='flex items-center justify-center rounded-full'>
-          <div className='relative h-20 w-20'>
+          <div className='relative mr-8 h-20 w-20'>
             <Image
               id='modal-icon'
               src={avatar.toDataUriSync()}
@@ -58,164 +197,151 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
         <div className='flex w-full flex-col gap-3 sm:flex-row'>
           <div className='rounded-xl border border-stone-300 sm:w-1/2'>
             <div className='flex flex-col gap-5 p-6'>
-              <p>Brukerinformasjon</p>
-              {/* Input fields */}
+              <h2>Brukerinformasjon</h2>
               {userDataInputs.map((inputFieldData, index) => (
-                <div key={index} className='relative w-full'>
-                  <label
-                    htmlFor={inputFieldData.label.toLowerCase()}
-                    className='absolute -top-2 left-4 block bg-white px-2 text-left text-sm font-medium text-stone-500'
-                  >
-                    {inputFieldData.label}
-                  </label>
-                  <div className='mt-1'>
-                    <input
-                      id={inputFieldData.label.toLowerCase()}
-                      type={
-                        inputFieldData.label.toLowerCase() === 'e-post'
-                          ? 'email'
-                          : 'text'
-                      }
-                      autoComplete={inputFieldData.label
-                        .toLowerCase()
-                        .replace('-', '')}
-                      placeholder={inputFieldData.label}
-                      value={inputFieldData.data as string}
-                      required
-                      className='w-full rounded-xl border-2 border-stone-300 bg-transparent px-4 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out'
-                    />
-                  </div>
-                </div>
+                <FormInput
+                  key={index.toString()}
+                  {...inputFieldData}
+                  onChange={(e) =>
+                    handleChange(inputFieldData.attr, e.target.value)
+                  }
+                />
               ))}
-              {/* Select field */}
-              <div className='relative'>
-                <label
-                  htmlFor='student'
-                  className='absolute -top-2 left-4 block bg-white px-2 text-left text-sm font-medium text-stone-500'
-                >
-                  Student
-                </label>
-                <div className='mt-1'>
-                  <select
-                    id='student'
-                    required
-                    className='w-full rounded-xl border-2 border-stone-300 bg-transparent px-4 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out invalid:text-placeholder'
-                    defaultValue=''
-                  >
-                    <option value='' disabled hidden>
-                      Velg student informasjon
-                    </option>
-                    <option value='NTNU'>
-                      Norges teknisk-naturvitenskapelige universitet
-                    </option>
-                    <option value='BI'>Handelshøyskolen BI</option>
-                    <option value='DMMH'>Dronning Mauds Minne Høgskole</option>
-                    <option value='Other'>Andre</option>
-                    <option value='Non-student'>Ikke student</option>
-                  </select>
-                </div>
-              </div>
-              {/* Membership information */}
+
+              <SelectField
+                label='Student'
+                name='student'
+                defaultValue={user?.student ? user.student : 'Non-student'}
+                options={studentOptions}
+                onChange={(e) => handleChange('student', e.target.value)}
+              />
               <div className='flex flex-col gap-2'>
                 <p>Medlemskap informasjon</p>
-                <div className='flex gap-4'>
-                  {memberships?.map((membership, index) => (
-                    <div
-                      key={'membership-' + index}
-                      className='rounded-2xl bg-neutral-100 px-6 py-2'
-                    >
-                      {membership.year}
-                    </div>
-                  ))}
-                </div>
+                <DropdownWithCheckboxes
+                  label='Velg år'
+                  initialItems={
+                    memberships
+                      ? memberships.map((membership) => ({
+                          value: membership.year,
+                          checked: isMembershipInUser(
+                            membership,
+                            user?.membership
+                          ),
+                        }))
+                      : []
+                  }
+                  onChange={(memberships) =>
+                    handleChange('membership', memberships)
+                  }
+                />
               </div>
-              {/* Pending membership */}
               <div className='flex flex-col'>
                 <p>Avventende medlemskap</p>
                 <SlideCheckbox
                   id='pending-membership'
                   label='Avventende medlemskap'
+                  checked={editUser?.pendingMembership ? true : false}
+                  onChange={() =>
+                    handleChange(
+                      'pendingMembership',
+                      !editUser?.pendingMembership
+                    )
+                  }
                 />
               </div>
             </div>
           </div>
-          {/* Email confirmation */}
-          <div className='rounded-xl border border-stone-300 p-6 sm:w-1/2'>
-            <div className='flex flex-col'>
-              <p>E-postbekreftelse</p>
-              {/* Checkbox */}
-              <SlideCheckbox
-                id='email-confirmation'
-                label='Ikke bekreftet/Bekreftet'
-              />
+          <div className='flex flex-col justify-between rounded-xl border border-stone-300 p-6 sm:w-1/2'>
+            <div>
+              <div className='flex flex-col'>
+                <h2>E-postbekreftelse</h2>
+                <SlideCheckbox
+                  id='email-confirmation'
+                  label='Ikke bekreftet/Bekreftet'
+                  checked={editUser?.emailVerified ? true : false}
+                  onChange={() =>
+                    handleChange('emailVerified', !editUser?.emailVerified)
+                  }
+                />
+                <h2>E-postbekreftelses URL:</h2>
+                <FormInput
+                  id='email-confirm'
+                  label='E-postbekreftelses URL'
+                  type='text'
+                  defaultValue={editUser?.emailVerificationUrl}
+                  showLabel={false}
+                  disabled
+                  className='my-5'
+                />
 
-              {/* Email confirmation URL */}
-              <div className='relative w-full'>
-                <label
-                  htmlFor='email-confirm'
-                  className='absolute -top-2 left-4 block bg-white px-2 text-left text-sm font-medium text-stone-500'
-                >
-                  E-postbekreftelses URL
-                </label>
-                <div className='mt-1'>
-                  <input
-                    id='email-confirm'
-                    type='text'
-                    className='mb-5 w-full rounded-xl border-2 border-stone-300 bg-transparent p-1 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out'
-                  />
-                </div>
+                <h2>Rolle</h2>
+                <SlideCheckbox
+                  id='admin-status'
+                  label='Administrator'
+                  checked={editUser?.role === 'ADMIN'}
+                  onChange={() =>
+                    handleChange(
+                      'role',
+                      editUser?.role === 'ADMIN' ? 'USER' : 'ADMIN'
+                    )
+                  }
+                />
               </div>
-
-              {/* Checkbox */}
-              <div>Rolle</div>
-              <SlideCheckbox id='admin-status' label='Administrator' />
-            </div>
-            {/* Accordion for changing password */}
-            <Accordion
-              label='Endre passord'
-              labelClassName='text-xl font-medium text-left pl-2 py-4'
-              buttonClassName='bg-neutral-50 shadow-md'
-            >
-              <form className='px-4 py-4 sm:mx-28 sm:my-10'>
-                <div className='sm:mx-5'>
-                  <label
-                    htmlFor='new-password'
-                    className='relative left-4 top-3 block w-fit bg-white px-2 text-left text-sm font-medium text-stone-500'
-                  >
-                    Nytt passord*
-                  </label>
-                  <input
+              <Accordion
+                label='Endre passord'
+                labelClassName='text-l font-medium text-left pl-2 py-4'
+                buttonClassName='bg-neutral-50 shadow-md'
+                className='mb-5'
+              >
+                <form
+                  id='password-form'
+                  className='flex-col space-y-8 px-4 py-4 sm:mx-28 sm:my-10'
+                  onSubmit={handleSubmit(updateUserPassword)}
+                >
+                  <FormInput
                     id='new-password'
-                    minLength={8}
+                    formRegisterReturn={register('newPassword')}
+                    label='Nytt passord*'
                     type='password'
-                    className='w-full rounded-xl border-2 border-stone-300 bg-transparent px-4 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out'
+                    required
+                    className=':invalid-border-red'
                   />
-                </div>
-                <div className='sm:mx-5'>
-                  <label
-                    htmlFor='confirm-password'
-                    className='relative left-4 top-3 block w-fit bg-white px-2 text-left text-sm font-medium text-stone-500'
-                  >
-                    Bekreft nytt passord*
-                  </label>
-                  <input
+
+                  <FormInput
                     id='confirm-password'
-                    minLength={8}
+                    formRegisterReturn={register('confirmPassword')}
+                    label='Bekreft nytt passord*'
                     type='password'
-                    className='w-full rounded-xl border-2 border-stone-300 bg-transparent px-4 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out'
+                    required
+                    className=':invalid-border-red'
                   />
-                </div>
-                <div className='my-5 flex h-16 flex-col justify-center'>
-                  <div className='my-10'>
+
+                  <div className='my-10 flex justify-start'>
                     <Button
                       type='submit'
+                      form='password-form'
                       text='Bytt passord'
                       className='bg-light'
                     />
                   </div>
-                </div>
-              </form>
-            </Accordion>
+                </form>
+              </Accordion>
+            </div>
+            <div className='my-4 flex w-full flex-col justify-start space-x-0 space-y-4 lg:flex-row lg:space-x-10 lg:space-y-0'>
+              <Button
+                type='submit'
+                form='user-form'
+                text='Lagre endringer'
+                className='bg-light'
+                onClick={() => updateUser(editUser)}
+              />
+              <Button
+                type='submit'
+                form='user-form'
+                text='Slett bruker'
+                className='bg-light'
+              />
+            </div>
           </div>
         </div>
       </div>
