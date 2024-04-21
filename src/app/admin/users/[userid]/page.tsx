@@ -59,12 +59,13 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
     (data: PasswordFormValues) => {
       StyledSwal.fire({
         text: '',
-        showConfirmButton: false,
+        showConfirmButton: true,
+        showCancelButton: true,
         showLoaderOnConfirm: true,
-        didOpen: () => {
-          StyledSwal.getConfirmButton()?.click();
-        },
-        preConfirm: async () => {
+        confirmButtonText: 'Lagre',
+        cancelButtonText: 'Avbryt',
+      }).then(async (result) => {
+        if (result.isConfirmed) {
           try {
             if (data.newPassword !== data.confirmPassword)
               throw new Error('Passordene er ikke like');
@@ -82,8 +83,7 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
               true
             );
           }
-        },
-        allowOutsideClick: () => !Swal.isLoading(),
+        }
       });
     },
     [params.userid]
