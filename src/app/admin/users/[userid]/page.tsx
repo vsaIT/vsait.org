@@ -86,7 +86,7 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
         }
       });
     },
-    [params.userid]
+    [params.userid, reset]
   );
 
   const updateUser = useCallback(
@@ -141,6 +141,7 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
               `/api/user/${params.userid}`,
               delUser
             );
+            if (!response.ok) throw new Error(response.message);
             swalSuccess('Brukeren ble slettet');
           } catch (error) {
             swalError('Brukeren ble ikke slettet', error as Error, 5000, true);

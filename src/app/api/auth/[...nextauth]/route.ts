@@ -140,12 +140,8 @@ const authOptions: AuthOptions = {
           }
           return maybeUser;
         } catch (error) {
-          NextResponse.json(
-            { message: getErrorMessage(error) },
-            { status: 401 }
-          );
           console.error(chalk.red(error));
-          return null;
+          throw new Error(getErrorMessage(error));
         }
       },
     }),

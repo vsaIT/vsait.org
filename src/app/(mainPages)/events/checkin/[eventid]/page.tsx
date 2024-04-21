@@ -66,11 +66,12 @@ function Checkin({ params }: { params: { eventid: string } }): JSX.Element {
               email: email,
               eventId: eventid,
             }),
-          }).then(async (response) => {
-            if (!response.ok) throw new Error(response.statusText);
-            const data: ApiResponseType = await response.json();
-            return data;
           })
+            .then(async (response) => {
+              if (!response.ok) throw new Error(response.statusText);
+              const data: ApiResponseType = await response.json();
+              return data;
+            })
             .then(async (data) => {
               console.log('Success:', data);
               await StyledSwal.fire({

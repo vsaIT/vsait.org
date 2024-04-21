@@ -19,7 +19,7 @@ const DropdownWithCheckboxes = ({
   initialItems,
   onChange,
 }: DropdownCheckboxProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+  //const [isOpen, setIsOpen] = useState(false);
   const [items, setItems] = useState<Item[]>(() =>
     initialItems.map((item, index) => ({
       ...item,
@@ -38,9 +38,9 @@ const DropdownWithCheckboxes = ({
         return { year: item.value };
       })
     );
-  }, [filteredItems]);
+  }, [filteredItems, onChange]);
 
-  const toggleDropdown = () => setIsOpen(!isOpen);
+  //const toggleDropdown = () => setIsOpen(!isOpen);
 
   const handleCheckboxChange = (id: number) => {
     const updatedItems = items.map((item) =>
@@ -66,7 +66,7 @@ const DropdownWithCheckboxes = ({
               id={`checkbox-${item.id}`}
               type='checkbox'
               checked={items.find((i) => i.id === item.id)?.checked}
-              onChange={(e) => handleCheckboxChange(item.id as number)}
+              onChange={(_) => handleCheckboxChange(item.id as number)}
               className='form-checkbox text-gray-600 h-5 w-5'
             />
             <label

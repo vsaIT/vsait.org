@@ -62,7 +62,7 @@ const handler = async (
           };
         }
         return {
-          name:`${user.firstName} ${user.lastName}`,
+          name: `${user.firstName} ${user.lastName}`,
           email: '',
           foodNeeds: '',
         };

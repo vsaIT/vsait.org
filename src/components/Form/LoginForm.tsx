@@ -35,7 +35,10 @@ const LoginForm = () => {
         console.log('Success');
       } else if (res.error) {
         console.error('Server side:', res.error);
-        ToastMessage({ type: 'error', message: "Logininfo er feil eller så er epost ikke bekreftet" });
+        ToastMessage({
+          type: 'error',
+          message: res.error,
+        });
         setTimeout(() => {
           setSubmitting(false);
         }, MINIMUM_ACTIVITY_TIMEOUT);

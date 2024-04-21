@@ -1,7 +1,7 @@
 import { Session } from 'next-auth';
 import { Table } from '@tanstack/react-table';
 import { FieldValues, Path, UseFormRegister } from 'react-hook-form';
-import { Attendances, Event, Membership, User } from '@prisma/client';
+import { Event, Membership, User } from '@prisma/client';
 
 export type AuthenticatedPage = {
   role?: string;
@@ -13,7 +13,7 @@ export type ExtendedComponentProps = {
 };
 
 export type ApiResponseType = {
-  ok: any;
+  ok: boolean;
   statusText: string | undefined;
   json(): ApiResponseType | PromiseLike<ApiResponseType>;
   status: number;

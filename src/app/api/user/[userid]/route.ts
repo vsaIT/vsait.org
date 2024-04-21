@@ -1,8 +1,8 @@
 import { exclude, getErrorMessage } from '@/lib/utils';
-import { AttendancesType, UserType } from '@/types';
+import { UserType } from '@/types';
 import { getToken } from 'next-auth/jwt';
 import { NextRequest, NextResponse } from 'next/server';
-import prisma, { Attendances, Membership, User } from 'prisma/index';
+import prisma, { User } from 'prisma/index';
 import { updateUserMemberships } from './utils';
 
 const GET = async (
@@ -158,4 +158,4 @@ const DELETE = async (
   }
 };
 
-export { GET, POST, PUT, DELETE };
+export { DELETE, GET, POST, PUT };

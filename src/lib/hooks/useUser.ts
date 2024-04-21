@@ -1,8 +1,8 @@
+import { UserType } from '@/types';
 import useSWR from 'swr';
 import { fetcher } from '../utils';
-import { UserType } from '@/types';
 
-export function useUser(id: string) {
+export function useUser(id: string | undefined) {
   const { data, error, isLoading } = useSWR<UserType>(
     `/api/user/${id}`,
     fetcher
