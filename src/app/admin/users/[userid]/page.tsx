@@ -132,7 +132,7 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
         confirmButtonText: 'Slett bruker',
         showCancelButton: true,
         cancelButtonText: 'Angre',
-        showLoaderOnConfirm: true
+        showLoaderOnConfirm: true,
       }).then(async (result) => {
         if (result.isConfirmed) {
           try {
@@ -143,23 +143,18 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
             );
             swalSuccess('Brukeren ble slettet');
           } catch (error) {
-            swalError(
-              'Brukeren ble ikke slettet',
-              error as Error,
-              5000,
-              true
-            );
+            swalError('Brukeren ble ikke slettet', error as Error, 5000, true);
             StyledSwal.fire({
-              title: "Slettet bruker",
-              text: "Brukeren er permanent slettet",
+              title: 'Slettet bruker',
+              text: 'Brukeren er permanent slettet',
             });
           }
         } else if (result.dismiss === Swal.DismissReason.cancel) {
           StyledSwal.fire({
-            title: "Angret",
-            text: "Brukeren ble ikke slettet",
+            title: 'Angret',
+            text: 'Brukeren ble ikke slettet',
           });
-        };
+        }
       });
     },
     [params.userid]
@@ -265,12 +260,12 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
                   initialItems={
                     memberships
                       ? memberships.map((membership) => ({
-                        value: membership.year,
-                        checked: isMembershipInUser(
-                          membership,
-                          user?.membership
-                        ),
-                      }))
+                          value: membership.year,
+                          checked: isMembershipInUser(
+                            membership,
+                            user?.membership
+                          ),
+                        }))
                       : []
                   }
                   onChange={(memberships) =>

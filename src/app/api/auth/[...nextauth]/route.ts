@@ -11,6 +11,7 @@ import {
   verifyPassword,
 } from '@/lib/auth/passwords';
 import { getErrorMessage } from '@/lib/utils';
+import { sendConfirmEmail } from './utils';
 
 type RegisterInputType =
   | 'firstName'
@@ -65,9 +66,9 @@ const authOptions: AuthOptions = {
             ) {
               throw new Error(
                 'Missing fields: ' +
-                Object.keys(credentials)
-                  .filter((k) => !credentials[k as RegisterInputType])
-                  .join(', ')
+                  Object.keys(credentials)
+                    .filter((k) => !credentials[k as RegisterInputType])
+                    .join(', ')
               );
             }
             if (credentials.password !== credentials.repeatPassword) {
@@ -85,6 +86,13 @@ const authOptions: AuthOptions = {
                 passwordResetUrl: generateSalt(12),
               },
             });
+            if (newUser) {
+              await sendConfirmEmail(
+                `${newUser.firstName} ${newUser.lastName}`,
+                newUser.email,
+                newUser.emailVerificationUrl
+              );
+            }
           } else {
             throw new Error('A user with the same email exists');
           }
@@ -124,16 +132,18 @@ const authOptions: AuthOptions = {
             );
             if (!isValid) {
               throw new Error('Feil brukernavn eller passord');
-            }
-            else if (!maybeUser.emailVerified) {
-              throw new Error('Vennligst bekreft eposten din')
+            } else if (!maybeUser.emailVerified) {
+              throw new Error('Vennligst bekreft eposten din');
             }
           } else {
             throw new Error('Feil brukernavn eller passord');
           }
           return maybeUser;
         } catch (error) {
-          NextResponse.json({ message: getErrorMessage(error) }, { status: 401 });
+          NextResponse.json(
+            { message: getErrorMessage(error) },
+            { status: 401 }
+          );
           console.error(chalk.red(error));
           return null;
         }
