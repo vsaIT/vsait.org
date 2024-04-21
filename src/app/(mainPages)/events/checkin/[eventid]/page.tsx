@@ -4,7 +4,7 @@ import { SmallHeader } from '@/components/Header';
 import { Button } from '@/components/Input';
 import StyledSwal from '@/components/StyledSwal';
 import { Person } from '@/components/icons';
-import { getErrorMessage } from '@/lib/utils';
+import { getErrorMessage, postFetcher } from '@/lib/utils';
 import { ApiResponseType, AttendingUserType, EventType } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
@@ -56,7 +56,7 @@ function Checkin({ params }: { params: { eventid: string } }): JSX.Element {
           const cancelButton = StyledSwal.getCancelButton();
           if (cancelButton) cancelButton.style.opacity = '0';
           // Send registration request
-          await fetch('/api/checkin/register', {
+          await postFetcher('/api/checkin/register', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -66,12 +66,11 @@ function Checkin({ params }: { params: { eventid: string } }): JSX.Element {
               email: email,
               eventId: eventid,
             }),
+          }).then(async (response) => {
+            if (!response.ok) throw new Error(response.statusText);
+            const data: ApiResponseType = await response.json();
+            return data;
           })
-            .then(async (response) => {
-              if (!response.ok) throw new Error(response.statusText);
-              const data: ApiResponseType = await response.json();
-              return data;
-            })
             .then(async (data) => {
               console.log('Success:', data);
               await StyledSwal.fire({

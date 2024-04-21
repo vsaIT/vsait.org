@@ -8,7 +8,7 @@ import StyledSwal from '@/components/StyledSwal';
 import { useMemberships } from '@/lib/hooks/useMemberships';
 import { useUser } from '@/lib/hooks/useUser';
 import { swalError, swalSuccess } from '@/lib/swal';
-import { postFetcher, putFetcher } from '@/lib/utils';
+import { deleteFetcher, postFetcher, putFetcher } from '@/lib/utils';
 import { UserType } from '@/types';
 import { bigSmile } from '@dicebear/collection';
 import { createAvatar } from '@dicebear/core';
@@ -122,6 +122,49 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
     [params.userid]
   );
 
+  const deleteUser = useCallback(
+    (delUser: UserType | undefined) => {
+      StyledSwal.fire({
+        title: 'Er du sikker?',
+        text: 'Denne brukeren vil bli permanent slettet',
+        icon: 'warning',
+        showConfirmButton: true,
+        confirmButtonText: 'Slett bruker',
+        showCancelButton: true,
+        cancelButtonText: 'Angre',
+        showLoaderOnConfirm: true
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            if (!delUser) throw new Error('No user data');
+            const response = await deleteFetcher(
+              `/api/user/${params.userid}`,
+              delUser
+            );
+            swalSuccess('Brukeren ble slettet');
+          } catch (error) {
+            swalError(
+              'Brukeren ble ikke slettet',
+              error as Error,
+              5000,
+              true
+            );
+            StyledSwal.fire({
+              title: "Slettet bruker",
+              text: "Brukeren er permanent slettet",
+            });
+          }
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          StyledSwal.fire({
+            title: "Angret",
+            text: "Brukeren ble ikke slettet",
+          });
+        };
+      });
+    },
+    [params.userid]
+  );
+
   useEffect(() => {
     if (!isLoading) {
       setEditUser(user);
@@ -222,12 +265,12 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
                   initialItems={
                     memberships
                       ? memberships.map((membership) => ({
-                          value: membership.year,
-                          checked: isMembershipInUser(
-                            membership,
-                            user?.membership
-                          ),
-                        }))
+                        value: membership.year,
+                        checked: isMembershipInUser(
+                          membership,
+                          user?.membership
+                        ),
+                      }))
                       : []
                   }
                   onChange={(memberships) =>
@@ -340,6 +383,7 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
                 form='user-form'
                 text='Slett bruker'
                 className='bg-light'
+                onClick={() => deleteUser(editUser)}
               />
             </div>
           </div>

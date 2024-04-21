@@ -132,16 +132,11 @@ const DELETE = async (
         id: userID,
       },
     });
-    await prisma.membership.deleteMany({
-      where: {
-        users: { every: { id: userID } },
-      },
-    });
-    await prisma.attendances.deleteMany({
-      where: {
-        userId: userID,
-      },
-    });
+    // await prisma.attendances.deleteMany({
+    //   where: {
+    //     userId: userID,
+    //   },
+    // });
     await prisma.registrations.deleteMany({
       where: {
         userId: userID,

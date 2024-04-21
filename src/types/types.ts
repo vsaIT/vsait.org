@@ -13,6 +13,9 @@ export type ExtendedComponentProps = {
 };
 
 export type ApiResponseType = {
+  ok: any;
+  statusText: string | undefined;
+  json(): ApiResponseType | PromiseLike<ApiResponseType>;
   status: number;
   message?: string;
 };

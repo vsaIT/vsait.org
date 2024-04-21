@@ -24,7 +24,7 @@ const LoginForm = () => {
   const onSubmit = async (data: LoginFormValues) => {
     setSubmitting(true);
     console.log(csrfToken);
-    signIn('app-login', {
+    await signIn('app-login', {
       email: data.email,
       password: data.password,
       redirect: false,
@@ -35,7 +35,7 @@ const LoginForm = () => {
         console.log('Success');
       } else if (res.error) {
         console.error('Server side:', res.error);
-        ToastMessage({ type: 'error', message: res.error });
+        ToastMessage({ type: 'error', message: "Logininfo er feil eller så er epost ikke bekreftet" });
         setTimeout(() => {
           setSubmitting(false);
         }, MINIMUM_ACTIVITY_TIMEOUT);

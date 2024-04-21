@@ -40,10 +40,7 @@ export function mapPageTitle(path: string): string {
       return PageTitle.resetPassword;
     // Events
     case '/events':
-    case '/events/[eventid]':
       return PageTitle.event;
-    case '/events/checkin/[eventid]':
-      return PageTitle.checkin;
     // Errors
     case '/404':
       return PageTitle.error404;
@@ -52,6 +49,11 @@ export function mapPageTitle(path: string): string {
     case '/403':
       return PageTitle.error403;
     default:
+      if (path.startsWith("/events/"))
+        return PageTitle.event
+      if (path.startsWith("/events/checkin/"))
+        return PageTitle.checkin
+
       return 'Could not find page title';
   }
 }
