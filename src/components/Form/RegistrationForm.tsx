@@ -33,7 +33,7 @@ const RegistrationForm = () => {
       if (!res) return;
       if (res.ok) {
         console.log('Success');
-        window.location.replace('/');
+        window.location.replace('/confirm-email');
       } else if (res.error) {
         console.error(res.error);
         ToastMessage({ type: 'error', message: res.error });

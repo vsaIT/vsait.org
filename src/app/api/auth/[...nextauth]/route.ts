@@ -65,14 +65,14 @@ const authOptions: AuthOptions = {
               !credentials?.student
             ) {
               throw new Error(
-                'Missing fields: ' +
+                'Manglende felt: ' +
                   Object.keys(credentials)
                     .filter((k) => !credentials[k as RegisterInputType])
                     .join(', ')
               );
             }
             if (credentials.password !== credentials.repeatPassword) {
-              throw new Error('Passwords do not match');
+              throw new Error('Passord er ikke like');
             }
             newUser = await prisma.user.create({
               data: {
@@ -96,11 +96,10 @@ const authOptions: AuthOptions = {
           } else {
             throw new Error('A user with the same email exists');
           }
-          return { ...newUser, membership: [], userAttendanceList: [] };
-        } catch (error) {
-          NextResponse.json(error, { status: 401 });
-          console.error(chalk.red(error));
           return null;
+        } catch (error) {
+          console.error(chalk.red(error));
+          throw new Error(getErrorMessage(error));
         }
       },
     }),
