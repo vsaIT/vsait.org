@@ -68,7 +68,7 @@ const Organization: NextPage = () => {
         </div>
 
         <div className="flex flex-col justify-center w-full p-8 my-12">
-          <h2 className="text-3xl font-bold text-center mb-4">Vår fokus</h2>
+          <h2 className="text-3xl font-bold text-center mb-4">Vårt fokus</h2>
           <div className="flex justify-between w-full gap-4">
             <div className="grid grid-rows-organizationfocus w-full max-w-xs">
               <div className="justify-items-center w-3/4 m-auto mb-3">
@@ -103,8 +103,7 @@ const Organization: NextPage = () => {
               <div className="w-3/4 m-auto">
                 <h3 className="font-bold text-xl">Kultur</h3>
                 <p>
-                  Bevare og fremme vietnamesisk kultur blant vietnamesiske
-                  studenter
+                  Bevare og fremme vietnamesisk kultur blant studenter i Trondheim
                 </p>
               </div>
             </div>
