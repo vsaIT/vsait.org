@@ -40,7 +40,7 @@ const Footer = () => {
         </div>
         <div className="flex h-7 w-7">
           <a
-            href="https://discord.gg/2NMDrfDK"
+            href="https://discord.gg/5qw6fzHXE3"
             className="fill-white hover:fill-secondary transition-all"
           >
             <Discord color="inherit" className="flex h-7 w-7" />
