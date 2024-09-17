@@ -69,27 +69,25 @@ const Navigation = () => {
             {/* @ts-expect-error Server Component */}
             <Link
               href={nav.href}
-              className={`text-white transition-all duration-300 underline-offset-4 hover:text-secondary hover:brightness-150 ${
-                router.pathname.split('/')[1] === nav.href.substring(1)
-                  ? 'underline text-secondary brightness-150'
-                  : ''
-              }`}
+              className={`text-white transition-all duration-300 underline-offset-4 hover:text-secondary hover:brightness-150 ${router.pathname.split('/')[1] === nav.href.substring(1)
+                ? 'underline text-secondary brightness-150'
+                : ''
+                }`}
             >
               {nav.text}
             </Link>
           </div>
         ))}
         {/*admin nav*/}
-        {session?.user?.role === Role.ADMIN && (
+        {session?.user?.role === 'ADMIN' && (
           <div key="admin">
             {/* @ts-expect-error Server Component */}
             <Link
               href="/admin"
-              className={`text-white transition-all duration-300 underline-offset-4 hover:text-secondary hover:brightness-150 ${
-                router.pathname.split('/')[1] === 'admin'
-                  ? 'underline text-secondary brightness-150'
-                  : ''
-              }`}
+              className={`text-white transition-all duration-300 underline-offset-4 hover:text-secondary hover:brightness-150 ${router.pathname.split('/')[1] === 'admin'
+                ? 'underline text-secondary brightness-150'
+                : ''
+                }`}
             >
               Admin
             </Link>
@@ -106,19 +104,17 @@ const Navigation = () => {
                 className="flex items-center justify-end gap-2 text-white fill-white transition-all duration-300 hover:text-[#ffffb1] hover:fill-[#ffffb1]"
               >
                 <span
-                  className={`underline-offset-4 ${
-                    router.pathname.includes('profile')
-                      ? 'underline !text-secondary brightness-150 !fill-secondary'
-                      : ''
-                  }`}
+                  className={`underline-offset-4 ${router.pathname.includes('profile')
+                    ? 'underline !text-secondary brightness-150 !fill-secondary'
+                    : ''
+                    }`}
                 >
                   {user.firstName || 'Profil'}
                 </span>
                 <div className="flex items-center justify-center rounded-full overflow-hidden bg-white bg-opacity-50 p-1">
                   <div
-                    className={`relative w-14 h-14 transition-all duration-700 ${
-                      !profileIcon.initial ? 'opacity-0' : ''
-                    }`}
+                    className={`relative w-14 h-14 transition-all duration-700 ${!profileIcon.initial ? 'opacity-0' : ''
+                      }`}
                   >
                     {/* @ts-expect-error Server Component */}
                     <Image
