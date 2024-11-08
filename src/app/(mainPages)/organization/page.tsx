@@ -6,19 +6,17 @@ type BoardType = {
   role: string;
 };
 const board: BoardType[] = [
-  { name: 'Yara Masri', role: 'Styreleder' },
-  { name: 'Anton Tran', role: 'Nestleder' },
+  { name: 'Daniel', role: 'Styreleder' },
+  { name: 'Elvis', role: 'Nestleder' },
   { name: 'Minh Dinh', role: 'Økonomiansvarlig' },
-  { name: 'Vivi Thi Pham', role: 'Sekretær' },
-  { name: 'Tommy Luu', role: 'IT-ansvarlig' },
-  { name: 'Daniel Duy Nguyen', role: 'Planleggingsansvarlig' },
+  { name: 'Gia Hy', role: 'Sekretær' },
+  { name: 'Adelin', role: 'IT-ansvarlig' },
+  { name: 'Raj', role: 'Logistikkansvarlig' },
   { name: 'Aina Vy', role: 'Matansvarlig' },
-  { name: 'Gia Hy Nguyen', role: 'PR-ansvarlig' },
+  { name: 'Ninni', role: 'PR-ansvarlig' },
   { name: 'Nina Hoang', role: 'Designansvarlig' },
-  { name: 'Younes Bouhmidi', role: 'Styremedlem' },
-  { name: 'Adelin Evergreen', role: 'Styremedlem' },
-  { name: 'Sofia Kamali', role: 'Styremedlem' },
-  { name: 'Elvis T. D. Le', role: 'Styremedlem' },
+  { name: 'Vivi', role: 'Styremedlem' },
+  { name: 'Daniel 2.0', role: 'Styremedlem' },
 ];
 
 const BigTextBox = ({ title, content }: { title: string; content: string }) => (
@@ -112,8 +110,8 @@ export default function Organization(): JSX.Element {
               <div className='m-auto w-3/4'>
                 <h3 className='text-xl font-bold'>Kultur</h3>
                 <p>
-                  Bevare og fremme vietnamesisk kultur blant vietnamesiske
-                  studenter
+                  Bevare og fremme vietnamesisk kultur blant
+                  studenter i Trondheim
                 </p>
               </div>
             </div>
