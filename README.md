@@ -45,3 +45,4 @@ Linting:
 ### 💡 Misc
 
 - The avatar style Big Smile is based on: Custom Avatar by Ashley Seo, licensed under CC BY 4.0 . / Remix of the original.
+tri
