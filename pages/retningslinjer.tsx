@@ -402,24 +402,32 @@ const Organization: NextPage = () => {
           <p>På generalforsamlingen behandles følgende saker:</p>
           <ol className="list-decimal mb-2">
             <li className="ml-7">
-              1. Styrets melding om VSAiT virksomhet i det foregående skoleår.
+              Styrets melding om VSAiT virksomhet i det foregående skoleår.
             </li>
             <li className="ml-7">
-              2. Vedta handlingsplan for det følgende skoleår.
+              Vedta handlingsplan for det følgende skoleår.
             </li>
             <li className="ml-7">
-              3. Gjennomgå og ta VSAiT regnskap til orientering.
-            </li>
-            <li className="ml-7">4. Vedta fastsettelse av kontigent.</li>
-            <li className="ml-7">
-              5. Vedta forslag til budsjett for kommende skoleår.
+              Gjennomgå og ta VSAiT regnskap til orientering.
             </li>
             <li className="ml-7">
-              6. Eventuelle vedtekts- og retningslinjeendringer.
+              Vedta fastsettelse av kontigent.
             </li>
-            <li className="ml-7">7. Valg av styrets medlemmer.</li>
-            <li className="ml-7">8. Utnevnelse av komiteer.</li>
-            <li className="ml-7">9. Saker som er satt opp på dagsorden.</li>
+            <li className="ml-7">
+              Vedta forslag til budsjett for kommende skoleår.
+            </li>
+            <li className="ml-7">
+              Eventuelle vedtekts- og retningslinjeendringer.
+            </li>
+            <li className="ml-7">
+              Valg av styrets medlemmer.
+            </li>
+            <li className="ml-7">
+              Utnevnelse av komiteer.
+            </li>
+            <li className="ml-7">
+              Saker som er satt opp på dagsorden.
+            </li>
           </ol>
         </div>
 
