@@ -7,18 +7,17 @@ type BoardType = {
   role: string;
 };
 const board: BoardType[] = [
-  { name: 'Daniel Nguyen', role: 'Styreleder' },
-  { name: 'Elvis T. D. Le', role: 'Nestleder' },
+  { name: 'Elvis T. D. Le', role: 'Styreleder' },
+  { name: 'Rajneel Patil', role: 'Nestleder' },
   { name: 'Minh Dinh', role: 'Økonomiansvarlig' },
-  { name: 'Gia Hy Nguyen', role: 'Sekretær' },
+  { name: 'Daniel Danh Phan', role: 'Sekretær' },
   { name: 'Adelin Evergreen', role: 'IT-ansvarlig' },
-  { name: 'Rajneel Patil', role: 'Logistikkansvarlig' },
+  { name: 'David	Nguyen', role: 'Logistikkansvarlig' },
   { name: 'Aina Vy', role: 'Matansvarlig' },
-  { name: 'Ninni Chen', role: 'PR-ansvarlig' },
+  { name: 'Lisa Yu', role: 'PR-ansvarlig' },
   { name: 'Nina Hoang', role: 'Designansvarlig' },
-  { name: 'Younes Bouhmidi', role: 'Styremedlem' },
-  { name: 'Kasper Li', role: 'Styremedlem' },
-  { name: 'Yara Masri', role: 'Styremedlem' },
+  { name: 'Supattra Wongsamal', role: 'Nest-designansvarlig' },
+  { name: 'Daniel Nguyen', role: 'Styremedlem' },
 ];
 
 const Organization: NextPage = () => {
