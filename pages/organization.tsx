@@ -18,6 +18,7 @@ const board: BoardType[] = [
   { name: 'Nina Hoang', role: 'Designansvarlig' },
   { name: 'Supattra Wongsamal', role: 'Nest-designansvarlig' },
   { name: 'Daniel Nguyen', role: 'Styremedlem' },
+  { name: 'Vivi	Thi Pham', role: 'Styremedlem' }
 ];
 
 const Organization: NextPage = () => {
