@@ -1,5 +1,5 @@
 import { Membership } from '@prisma/client';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Accordion } from './Accordion';
 
 type Item = {
@@ -32,22 +32,20 @@ const DropdownWithCheckboxes = ({
     [items]
   );
 
-  useEffect(() => {
-    onChange(
-      filteredItems.map((item) => {
-        return { year: item.value };
-      })
-    );
-  }, [filteredItems, onChange]);
-
-  //const toggleDropdown = () => setIsOpen(!isOpen);
-
-  const handleCheckboxChange = (id: number) => {
-    const updatedItems = items.map((item) =>
-      item.id === id ? { ...item, checked: !item.checked } : item
-    );
-    setItems(updatedItems);
-  };
+  const handleCheckboxChange = useCallback(
+    (id: number) => {
+      const updatedItems = items.map((item) =>
+        item.id === id ? { ...item, checked: !item.checked } : item
+      );
+      setItems(updatedItems);
+      onChange(
+        updatedItems
+          .filter((item) => item.checked)
+          .map((item) => ({ year: item.value }))
+      );
+    },
+    [items, onChange]
+  );
 
   return (
     <Accordion
