@@ -38,7 +38,8 @@ export type AttendingUserType = {
   checked: boolean;
 };
 
-export type EventType = Event & {
+export type EventType = {
+  event: Event;
   registrationList: string[];
   waitingList: string[];
   attendanceList: string[];
