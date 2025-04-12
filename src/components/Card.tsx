@@ -325,14 +325,14 @@ const Card = ({ user, session }: CardProps) => {
               )
               .map(({ event }) => (
                 <Link
-                  key={event.id}
-                  href={`/events/${event.id}`}
+                  key={event.event.id}
+                  href={`/events/${event.event.id}`}
                   className='text-bold flex w-full justify-between rounded-lg border border-stone-200 bg-stone-200 px-6 py-3 text-left text-sm text-stone-700'
                 >
-                  <span>{event.title}</span>
+                  <span>{event.event.title}</span>
                   <span>{`${getLocaleDatetimeString(
-                    event.startTime
-                  )} - ${getLocaleDatetimeString(event.endTime)}`}</span>
+                    event.event.startTime
+                  )} - ${getLocaleDatetimeString(event.event.endTime)}`}</span>
                 </Link>
               ))}
 
