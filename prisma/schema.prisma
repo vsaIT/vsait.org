@@ -1,11 +1,11 @@
-datasource db {
-  provider     = "postgresql"
-  url          = env("DATABASE_URL")
-  relationMode = "prisma"
-}
-
 generator client {
   provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "postgresql"
+  url          = "postgres://default:kjTJNnM54VcY@ep-young-union-a2nbaf8m.eu-central-1.aws.neon.tech:5432/verceldb?sslmode=require"
+  relationMode = "prisma"
 }
 
 model Account {
@@ -22,12 +22,11 @@ model Account {
   expires_at               Int?
   token_type               String?
   scope                    String?
-  id_token                 String?  @db.Text
+  id_token                 String?
   session_state            String?
   oauth_token_secret       String?
   oauth_token              String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -36,88 +35,82 @@ model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique
   expires      DateTime
-  user         User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId       String?  @unique
+  user         User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model User {
-  id                String       @id @default(cuid())
-  createdAt         DateTime     @default(now())
-  updatedAt         DateTime     @updatedAt
-  firstName         String
-  lastName          String
-  email             String       @unique
-  password          String
-  emailVerified     Boolean      @default(false)
-  foodNeeds         String       @default("")
-  student           String?
-  role              Role         @default(USER)
-  accounts          Account[]
-  sessions          Session[]
-  membership        Membership[]
-  pendingMembership Boolean      @default(false)
-  someConsent       DateTime?
-  profileIconSeed   String       @default(cuid())
-
+  id                   String          @id @default(cuid())
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+  firstName            String
+  lastName             String
+  email                String          @unique
+  password             String
+  emailVerified        Boolean         @default(false)
+  foodNeeds            String          @default("")
+  student              String?
+  role                 Role            @default(USER)
+  pendingMembership    Boolean         @default(false)
+  someConsent          DateTime?
+  profileIconSeed      String          @default(cuid())
+  emailVerificationUrl String
+  passwordResetUrl     String
+  accounts             Account[]
+  sessions             Session[]
+  membership           Membership[]
   userRegistrationList Registrations[]
   userWaitingList      Waiting[]
   userAttendanceList   Attendances[]
-
-  emailVerificationUrl String
-  passwordResetUrl     String
 }
 
 model Event {
-  id          Int      @id @default(autoincrement())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  title       String   @db.VarChar(500)
-  description String   @db.VarChar(12000)
-  image       String?  @db.VarChar(500)
-
+  id                   Int             @id @default(autoincrement())
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+  title                String          @db.VarChar(500)
+  description          String          @db.VarChar(12000)
+  image                String?         @db.VarChar(500)
   startTime            DateTime
   endTime              DateTime
   registrationDeadline DateTime
   cancellationDeadline DateTime
-
-  location  String?
-  eventType EventType? @default(MEMBERSHIP)
-
-  maxRegistrations Int?
-  registrationList Registrations[]
-  waitingList      Waiting[]
-  attendanceList   Attendances[]
-
-  isDraft     Boolean @default(false)
-  isCancelled Boolean @default(false)
+  location             String?
+  eventType            EventType?      @default(MEMBERSHIP)
+  maxRegistrations     Int?
+  isDraft              Boolean         @default(false)
+  isCancelled          Boolean         @default(false)
+  registrationList     Registrations[]
+  waitingList          Waiting[]
+  attendanceList       Attendances[]
 }
 
 model Registrations {
-  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
-  event     Event?   @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId   Int
   createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event     Event?   @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
   @@id([userId, eventId])
 }
 
 model Waiting {
-  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
-  event     Event?   @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId   Int
   createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event     Event?   @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
   @@id([userId, eventId])
 }
 
 model Attendances {
-  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
-  event     Event?   @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId   Int
   createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event     Event?   @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
   @@id([userId, eventId])
 }
@@ -133,6 +126,15 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model MembershipToUser {
+  A Int
+  B String
+
+  @@id([A, B], map: "_MembershipToUser_AB_pkey")
+  @@index([B], map: "_MembershipToUser_B_index")
+  @@map("_MembershipToUser")
 }
 
 enum Role {

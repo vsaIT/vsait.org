@@ -17,9 +17,6 @@
     "db:push": "prisma db push",
     "db:studio": "prisma studio"
   },
-  "prisma": {
-    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
-  },
   "dependencies": {
     "@dicebear/collection": "^7.0.4",
     "@dicebear/core": "^7.0.4",
@@ -34,7 +31,6 @@
     "next": "14.1.0",
     "next-auth": "^4.24.7",
     "prettier-plugin-tailwindcss": "^0.5.11",
-    "prisma": "^5.9.1",
     "react": "^18",
     "react-animate-height": "^3.2.3",
     "react-dom": "^18",
@@ -61,6 +57,7 @@
     "eslint-config-prettier": "^9.1.0",
     "postcss": "^8",
     "prettier": "^3.2.5",
+    "prisma": "^6.16.2",
     "tailwindcss": "^3.3.0",
     "typescript": "^5.3.3"
   }
