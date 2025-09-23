@@ -3,18 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "postinstall": "npm run db:generate",
+    "postinstall": "npm run db:generate && npm run db:migrate-deploy",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --check .",
     "format:fix": "prettier --write --list-different .",
-    "db:migrate": "prisma migrate dev",
+    "db:migrate-dev": "prisma migrate dev",
+    "db:migrate-deploy": "prisma migrate deploy",
     "db:generate": "prisma generate",
-    "db:reset": "prisma db push --force-reset && npx prisma db seed",
     "db:seed": "npx prisma db seed",
-    "db:push": "prisma db push",
     "db:studio": "prisma studio"
   },
   "dependencies": {
