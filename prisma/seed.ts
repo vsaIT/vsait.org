@@ -15,6 +15,7 @@ async function main() {
       role: 'ADMIN',
       emailVerificationUrl: generateSalt(12),
       passwordResetUrl: generateSalt(12),
+      emailVerified: true,
     },
   });
 
@@ -39,6 +40,7 @@ async function main() {
       },
       emailVerificationUrl: generateSalt(12),
       passwordResetUrl: generateSalt(12),
+      emailVerified: true,
     },
   });
 
@@ -63,6 +65,7 @@ async function main() {
       },
       emailVerificationUrl: generateSalt(12),
       passwordResetUrl: generateSalt(12),
+      emailVerified: true,
     },
   });
   await prisma.membership.upsert({

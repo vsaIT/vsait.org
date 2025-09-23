@@ -8,6 +8,7 @@ import {
 import { CircleCheck, CircleXMark, Search } from '@/components/icons';
 import { getLocaleDatetimeString } from '@/lib/utils';
 import { EventType } from '@/types';
+import { Event } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
 import {
   ColumnFiltersState,
@@ -25,7 +26,7 @@ import { useMemo, useState } from 'react';
 function AdminEvents(): JSX.Element {
   const { isLoading, error, isFetching, data } = useQuery({
     queryKey: ['events'],
-    queryFn: () => fetch('/api/events/?all=true').then((res) => res.json()),
+    queryFn: () => fetch('/api/events?all=true').then((res) => res.json()),
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     staleTime: 60000,
@@ -38,7 +39,7 @@ function AdminEvents(): JSX.Element {
   ]);
   //TODO: Make a tanstack table component
   // Column creation through tanstack column helper for strictly typing header and cells
-  const columnHelper = createColumnHelper<EventType>();
+  const columnHelper = createColumnHelper<Event>();
   const columns = useMemo(
     () => [
       columnHelper.display({
