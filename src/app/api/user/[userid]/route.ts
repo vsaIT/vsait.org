@@ -127,16 +127,26 @@ const DELETE = async (
     );
 
   try {
+    const userToDelete = await prisma.user.findUnique({
+      where: { id: userID },
+      select: { role: true },
+    });
+    if (!userToDelete) {
+      return NextResponse.json({ message: 'User not found' }, { status: 404 });
+    }
+
+    if (userToDelete.role === 'ADMIN') {
+      return NextResponse.json(
+        { message: 'Cannot delete admins' },
+        { status: 403 }
+      );
+    }
+
     await prisma.user.delete({
       where: {
         id: userID,
       },
     });
-    // await prisma.attendances.deleteMany({
-    //   where: {
-    //     userId: userID,
-    //   },
-    // });
     await prisma.registrations.deleteMany({
       where: {
         userId: userID,

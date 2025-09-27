@@ -5,6 +5,7 @@ import { FormInput, SelectField } from '@/components/Form';
 import { Button } from '@/components/Input';
 import SlideCheckbox from '@/components/Input/SlideCheckbox';
 import StyledSwal from '@/components/StyledSwal';
+import { studentOptions } from '@/lib/constants';
 import { useMemberships } from '@/lib/hooks/useMemberships';
 import { useUser } from '@/lib/hooks/useUser';
 import { swalError, swalSuccess } from '@/lib/swal';
@@ -13,7 +14,9 @@ import { UserType } from '@/types';
 import { bigSmile } from '@dicebear/collection';
 import { createAvatar } from '@dicebear/core';
 import { Membership } from '@prisma/client';
+import { NavigateOptions } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Swal from 'sweetalert2';
@@ -38,22 +41,12 @@ function isMembershipInUser(
   return false;
 }
 
-const studentOptions = [
-  {
-    value: 'NTNU',
-    label: 'Norges teknisk-naturvitenskapelige universitet',
-  },
-  { value: 'BI', label: 'Handelshøyskolen BI' },
-  { value: 'DMMH', label: 'Dronning Mauds Minne Høgskole' },
-  { value: 'Other', label: 'Andre' },
-  { value: 'Non-student', label: 'Ikke student' },
-];
-
 function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
   const { user, isLoading } = useUser(params.userid);
   const { memberships, isLoading: mLoading } = useMemberships();
   const [editUser, setEditUser] = useState<UserType | undefined>(undefined);
   const { register, reset, handleSubmit } = useForm<PasswordFormValues>();
+  const router = useRouter();
 
   const updateUserPassword = useCallback(
     (data: PasswordFormValues) => {
@@ -73,7 +66,7 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
               newPassword: data.newPassword,
               confirmPassword: data.confirmPassword,
             });
-            swalSuccess('Passordet ble oppdatert');
+            await swalSuccess('Passordet ble oppdatert');
             reset();
           } catch (error) {
             swalError(
@@ -106,7 +99,7 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
               putUser
             );
             setEditUser(response);
-            swalSuccess('Brukeren ble oppdatert');
+            await swalSuccess('Brukeren ble oppdatert');
           } catch (error) {
             swalError(
               'Brukeren ble ikke oppdatert',
@@ -137,18 +130,11 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
         if (result.isConfirmed) {
           try {
             if (!delUser) throw new Error('No user data');
-            const response = await deleteFetcher(
-              `/api/user/${params.userid}`,
-              delUser
-            );
-            if (!response.ok) throw new Error(response.message);
-            swalSuccess('Brukeren ble slettet');
+            await deleteFetcher(`/api/user/${params.userid}`, delUser);
+            await swalSuccess('Brukeren ble slettet');
+            router.replace('/admin/users');
           } catch (error) {
             swalError('Brukeren ble ikke slettet', error as Error, 5000, true);
-            StyledSwal.fire({
-              title: 'Slettet bruker',
-              text: 'Brukeren er permanent slettet',
-            });
           }
         } else if (result.dismiss === Swal.DismissReason.cancel) {
           StyledSwal.fire({

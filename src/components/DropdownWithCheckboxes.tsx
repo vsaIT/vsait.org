@@ -19,7 +19,6 @@ const DropdownWithCheckboxes = ({
   initialItems,
   onChange,
 }: DropdownCheckboxProps) => {
-  //const [isOpen, setIsOpen] = useState(false);
   const [items, setItems] = useState<Item[]>(() =>
     initialItems.map((item, index) => ({
       ...item,
@@ -52,7 +51,7 @@ const DropdownWithCheckboxes = ({
       label={label}
       labelClassName='text-sm lg:text-base font-medium text-left px-2 py-2'
       buttonClassName='bg-neutral-50 shadow-md'
-      className='w-full lg:w-2/5'
+      className='w-full md:w-3/5 lg:w-2/5'
     >
       <div className='relative z-10 mt-1 rounded-lg py-3 shadow-lg'>
         {items.map((item) => (

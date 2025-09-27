@@ -42,7 +42,8 @@ const Accordion = ({
     <div className={className}>
       <button
         className={`flex w-full items-center justify-between rounded-xl p-2 ${buttonClassName}`}
-        onClick={() => {
+        onClick={(event) => {
+          event.preventDefault();
           setToggled(!toggled);
           onClick();
         }}
