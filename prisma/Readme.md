@@ -37,9 +37,9 @@ npx prisma migrate dev --name add-bio-to-user-model
 
 ### What this command does:
 
-  * **Compares Schemas:** It compares your updated `schema.prisma` file with the current state of your development database.
-  * **Generates SQL:** It automatically creates a new migration file in the `prisma/migrations` folder containing the SQL needed to sync your database.
-  * **Applies Changes:** It immediately applies this new migration to your development database.
+- **Compares Schemas:** It compares your updated `schema.prisma` file with the current state of your development database.
+- **Generates SQL:** It automatically creates a new migration file in the `prisma/migrations` folder containing the SQL needed to sync your database.
+- **Applies Changes:** It immediately applies this new migration to your development database.
 
 ## 3\. Commit Your Changes to Git
 
@@ -47,16 +47,16 @@ After the command runs successfully, you **must** commit the changes to your ver
 
 Make sure you commit:
 
-  * The updated **`prisma/schema.prisma`** file.
-  * The newly created migration file located in **`prisma/migrations/<timestamp>_<migration_name>/migration.sql`**.
+- The updated **`prisma/schema.prisma`** file.
+- The newly created migration file located in **`prisma/migrations/<timestamp>_<migration_name>/migration.sql`**.
 
------
+---
 
 ### Important Notes
 
-  * **Production:** For production environments, **do not** use `prisma migrate dev`. Instead, run `prisma migrate deploy` to apply pending migrations that are already committed to your repository.
-  * **Destructive Changes:** If you delete a model or field, Prisma will prompt you for confirmation to prevent accidental data loss. Always be careful when making destructive changes.
-  * **Renaming:** If you need to rename a field or model, use the `@map()` attribute to avoid losing data. This tells Prisma to map the new name to the old database column name.
+- **Production:** For production environments, **do not** use `prisma migrate dev`. Instead, run `prisma migrate deploy` to apply pending migrations that are already committed to your repository.
+- **Destructive Changes:** If you delete a model or field, Prisma will prompt you for confirmation to prevent accidental data loss. Always be careful when making destructive changes.
+- **Renaming:** If you need to rename a field or model, use the `@map()` attribute to avoid losing data. This tells Prisma to map the new name to the old database column name.
 
 <!-- end list -->
 

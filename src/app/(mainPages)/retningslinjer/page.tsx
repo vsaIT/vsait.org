@@ -414,24 +414,16 @@ export default function Page(): JSX.Element {
             <li className='ml-7'>
               Gjennomgå og ta VSAiT regnskap til orientering.
             </li>
-            <li className='ml-7'>
-              Vedta fastsettelse av kontigent.
-            </li>
+            <li className='ml-7'>Vedta fastsettelse av kontigent.</li>
             <li className='ml-7'>
               Vedta forslag til budsjett for kommende skoleår.
             </li>
             <li className='ml-7'>
               Eventuelle vedtekts- og retningslinjeendringer.
             </li>
-            <li className='ml-7'>
-              Valg av styrets medlemmer.
-            </li>
-            <li className='ml-7'>
-              Utnevnelse av komiteer.
-            </li>
-            <li className='ml-7'>
-              Saker som er satt opp på dagsorden.
-            </li>
+            <li className='ml-7'>Valg av styrets medlemmer.</li>
+            <li className='ml-7'>Utnevnelse av komiteer.</li>
+            <li className='ml-7'>Saker som er satt opp på dagsorden.</li>
           </ol>
         </div>
 

@@ -6,7 +6,6 @@ import { FormInput, FormImageInput, SelectField } from '@/components/Form';
 import { useState } from 'react';
 import { timeEnd } from 'node:console';
 
-
 function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
   const { eventid } = params;
   const { event, isLoading } = useEvent('2');
@@ -51,14 +50,21 @@ function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
         key: 'start-date',
         label: 'Dato',
         type: 'date',
-        defaultValue: event?.event.startTime ? new Date(event.event.startTime).toISOString().split('T')[0] : ''
+        defaultValue: event?.event.startTime
+          ? new Date(event.event.startTime).toISOString().split('T')[0]
+          : '',
       },
       time: {
         key: 'start-time',
         label: 'Tid',
         type: 'time',
-        defaultValue: event?.event.startTime ? new Date(event.event.startTime).toISOString().split('T')[1].slice(0, 5) : ''
-      }
+        defaultValue: event?.event.startTime
+          ? new Date(event.event.startTime)
+              .toISOString()
+              .split('T')[1]
+              .slice(0, 5)
+          : '',
+      },
     },
     {
       name: 'Sluttid:',
@@ -67,14 +73,21 @@ function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
         key: 'end-date',
         label: 'Dato',
         type: 'date',
-        defaultValue: event?.event.endTime ? new Date(event.event.endTime).toISOString().split('T')[0] : ''
+        defaultValue: event?.event.endTime
+          ? new Date(event.event.endTime).toISOString().split('T')[0]
+          : '',
       },
       time: {
         key: 'end-time',
         label: 'Tid',
         type: 'time',
-        defaultValue: event?.event.endTime ? new Date(event.event.endTime).toISOString().split('T')[1].slice(0, 5) : ''
-      }
+        defaultValue: event?.event.endTime
+          ? new Date(event.event.endTime)
+              .toISOString()
+              .split('T')[1]
+              .slice(0, 5)
+          : '',
+      },
     },
     {
       name: 'Registreringsfrist:',
@@ -83,14 +96,23 @@ function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
         key: 'registration-date',
         label: 'Dato',
         type: 'date',
-        defaultValue: event?.event.registrationDeadline ? new Date(event.event.registrationDeadline).toISOString().split('T')[0] : ''
+        defaultValue: event?.event.registrationDeadline
+          ? new Date(event.event.registrationDeadline)
+              .toISOString()
+              .split('T')[0]
+          : '',
       },
       time: {
         key: 'registration-time',
         label: 'Tid',
         type: 'time',
-        defaultValue: event?.event.registrationDeadline ? new Date(event.event.registrationDeadline).toISOString().split('T')[1].slice(0, 5) : ''
-      }
+        defaultValue: event?.event.registrationDeadline
+          ? new Date(event.event.registrationDeadline)
+              .toISOString()
+              .split('T')[1]
+              .slice(0, 5)
+          : '',
+      },
     },
     {
       name: 'Avmeldingsfrist:',
@@ -99,16 +121,25 @@ function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
         key: 'cancellation-date',
         label: 'Dato',
         type: 'date',
-        defaultValue: event?.event.cancellationDeadline ? new Date(event.event.cancellationDeadline).toISOString().split('T')[0] : ''
+        defaultValue: event?.event.cancellationDeadline
+          ? new Date(event.event.cancellationDeadline)
+              .toISOString()
+              .split('T')[0]
+          : '',
       },
       time: {
         key: 'cancellation-time',
         label: 'Tid',
         type: 'time',
-        defaultValue: event?.event.cancellationDeadline ? new Date(event.event.cancellationDeadline).toISOString().split('T')[1].slice(0, 5) : ''
-      }
+        defaultValue: event?.event.cancellationDeadline
+          ? new Date(event.event.cancellationDeadline)
+              .toISOString()
+              .split('T')[1]
+              .slice(0, 5)
+          : '',
+      },
     },
-  ]
+  ];
 
   const eventTypeOptions = [
     {
@@ -119,10 +150,15 @@ function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
       value: 'MEMBERSHIP',
       label: 'Medlemskap kreves',
     },
-  ]
+  ];
 
-  console.log(event?.event.startTime)
-  console.log(new Date(event?.event.startTime || '').toISOString().split('T')[1].slice(0, 5))
+  console.log(event?.event.startTime);
+  console.log(
+    new Date(event?.event.startTime || '')
+      .toISOString()
+      .split('T')[1]
+      .slice(0, 5)
+  );
 
   return (
     <div className='flex h-screen w-full flex-col gap-6 p-6'>
@@ -131,8 +167,8 @@ function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
           Endre arrangement: {event?.event.title}
         </h1>
       </div>
-      <div className='flex flex-row items-stretch justify-evenly space-x-3 w-full rounded-xl bg-white p-6'>
-        <div className='flex-col col-span-full space-y-4 w-2/3 rounded-xl border border-stone-300 p-6'>
+      <div className='flex w-full flex-row items-stretch justify-evenly space-x-3 rounded-xl bg-white p-6'>
+        <div className='col-span-full w-2/3 flex-col space-y-4 rounded-xl border border-stone-300 p-6'>
           <div className=''>
             <h2 className='text-xl'>Detaljer:</h2>
           </div>
@@ -146,13 +182,13 @@ function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
 
           <div>
             <h2>Banner:</h2>
-            <div className='flex border border-stone-300 p-2 max-h-70 justify-evenly gap-3'>
-              <div className={'flex-col w-1/2'}>
+            <div className='max-h-70 flex justify-evenly gap-3 border border-stone-300 p-2'>
+              <div className={'w-1/2 flex-col'}>
                 <h3>Nåværende:</h3>
                 {/*<img src={event?.event.image || ''} alt="Forhåndsvisning" className="mt-2 max-h-45 rounded-lg object-contain" />*/}
                 {event?.event.image}
               </div>
-              <div className={'flex-col w-1/2'}>
+              <div className={'w-1/2 flex-col'}>
                 <h3>Endre:</h3>
                 <FormImageInput
                   key={'image'}
@@ -189,21 +225,25 @@ function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
             />
           </div>
         </div>
-        <div className='flex-col col-span-full space-y-4 w-1/3 rounded-xl border border-stone-300 p-6'>
+        <div className='col-span-full w-1/3 flex-col space-y-4 rounded-xl border border-stone-300 p-6'>
           <div>
             <h2 className='text-xl'>Dato og tid:</h2>
           </div>
           {timeDataInputs.map((inputFieldData) => (
             <div className='flex flex-col space-y-1 pb-2'>
-              <h2 className='p-2 text-l'>{inputFieldData.name}</h2>
-              <div className='flex flex-row flex-auto space-x-3'>
+              <h2 className='text-l p-2'>{inputFieldData.name}</h2>
+              <div className='flex flex-auto flex-row space-x-3'>
                 <FormInput
                   {...inputFieldData.date}
-                  onChange={(e) => handleTimeChange(inputFieldData.attr, e.target.value)}
+                  onChange={(e) =>
+                    handleTimeChange(inputFieldData.attr, e.target.value)
+                  }
                 />
                 <FormInput
                   {...inputFieldData.time}
-                  onChange={(e) => handleTimeChange(inputFieldData.attr, e.target.value)}
+                  onChange={(e) =>
+                    handleTimeChange(inputFieldData.attr, e.target.value)
+                  }
                 />
               </div>
             </div>
