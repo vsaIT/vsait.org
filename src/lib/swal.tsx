@@ -1,11 +1,11 @@
 import StyledSwal from '@/components/StyledSwal';
 
-export function swalSuccess(
+export async function swalSuccess(
   msg: string,
   timer = 2000,
   showConfirmButton = false
 ) {
-  StyledSwal.fire({
+  return StyledSwal.fire({
     icon: 'success',
     title: msg,
     showConfirmButton,
@@ -13,13 +13,13 @@ export function swalSuccess(
   });
 }
 
-export function swalError(
+export async function swalError(
   msg: string,
   error: Error,
   timer = 2000,
   showConfirmButton = false
 ) {
-  StyledSwal.fire({
+  return StyledSwal.fire({
     icon: 'error',
     title: msg,
     text: error.message,

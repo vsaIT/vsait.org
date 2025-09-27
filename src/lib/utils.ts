@@ -10,10 +10,10 @@ export const fetcher = async (url: string) => {
   return json;
 };
 
-export const postFetcher = async (
+export const postFetcher = async <T>(
   url: string,
   data: unknown
-): Promise<ApiResponseType> => {
+): Promise<T> => {
   const response = await fetch(url, {
     method: 'POST',
     headers: {
