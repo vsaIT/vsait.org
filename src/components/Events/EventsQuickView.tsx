@@ -39,9 +39,12 @@ const EventsDisplay = ({ className = '' }: ExtendedComponentProps) => {
               key={index}
               className='relative mx-auto my-4 w-full max-w-screen-lg items-center justify-center overflow-hidden rounded-xl'
             >
-              <Link href={`/events/${event.id}`} className='flex flex-col'>
+              <Link
+                href={`/events/${event?.event.id}`}
+                className='flex flex-col'
+              >
                 <Image
-                  src={event.image as string}
+                  src={event?.event.image as string}
                   alt='image src'
                   width={1352}
                   height={564}
@@ -52,23 +55,23 @@ const EventsDisplay = ({ className = '' }: ExtendedComponentProps) => {
                   }}
                 />
                 <p className='absolute left-4 top-4 rounded-md bg-black bg-opacity-50 px-2 py-1 text-2xl font-bold text-white'>
-                  {event.title}
+                  {event?.event.title}
                 </p>
                 <p className='absolute bottom-10 right-4 -translate-y-20 transform rounded-sm bg-black bg-opacity-80 px-2 py-1 text-base font-bold text-white'>
-                  {event.location}
+                  {event?.event.location}
                 </p>
                 <p className='absolute bottom-10 right-4 -translate-y-10 transform rounded-sm bg-black bg-opacity-80 px-2 py-1 text-base font-bold text-white'>
-                  {new Date(event.startTime).toDateString()}
+                  {new Date(event?.event.startTime).toDateString()}
                 </p>
                 <p className='absolute bottom-10 right-4 rounded-sm bg-black bg-opacity-80 px-2 py-1 text-base font-bold text-white'>
-                  {event.eventType === 'MEMBERSHIP'
+                  {event?.event.eventType === 'MEMBERSHIP'
                     ? 'Krever medlemsskap'
                     : 'Åpen for alle'}
                 </p>
                 <div className='w-full bg-light'>
                   <p className='m-1 box-border w-full text-white'>
                     Antall påmeldte {event.registrationList.length}/
-                    {event.maxRegistrations}
+                    {event?.event.maxRegistrations}
                   </p>
                 </div>
               </Link>

@@ -53,13 +53,13 @@ function Events(): JSX.Element {
             ))
           : data?.events?.map((event: EventType, index: number) => (
               <>
-                <Link href={`/events/${event.id}`} key={index}>
+                <Link href={`/events/${event?.event.id}`} key={index}>
                   <div className='rounded-2xl border-2 border-primary p-3'>
                     <div className='relative mx-auto grid w-full grid-cols-layout gap-3 rounded-2xl bg-white p-3 shadow-lg'>
                       <div className='flex w-full'>
                         <div className='w-full overflow-hidden rounded-l-2xl'>
                           <Image
-                            src={event.image as string}
+                            src={event?.event.image as string}
                             alt='event image'
                             width={1352}
                             height={564}
@@ -74,28 +74,28 @@ function Events(): JSX.Element {
                       <div className='h-full w-full rounded-lg bg-primary'></div>
                       <div className='flex w-full flex-col text-left'>
                         <h2 className='mb-3 text-2xl font-bold'>
-                          {event.title}
+                          {event?.event.title}
                         </h2>
                         <div className='flex flex-col gap-3'>
                           <div className='grid grid-cols-event gap-3'>
                             <Calendar className='justify-self-center' />
                             <p className='flex flex-col justify-center'>
-                              {new Date(event.startTime).toDateString()} -{' '}
-                              {new Date(event.endTime).toDateString()}
+                              {new Date(event?.event.startTime).toDateString()}{' '}
+                              - {new Date(event?.event.endTime).toDateString()}
                             </p>
                           </div>
 
                           <div className='grid grid-cols-event gap-3'>
                             <Place className='justify-self-center' />
                             <p className='flex flex-col justify-center'>
-                              {event.location}
+                              {event?.event.location}
                             </p>
                           </div>
                           <div className='grid grid-cols-event gap-3'>
                             <Person className='justify-self-center' />
                             <p className='flex flex-col justify-center'>
                               Antall påmeldte: {event.registrationList.length}/
-                              {event.maxRegistrations}
+                              {event?.event.maxRegistrations}
                             </p>
                           </div>
                         </div>

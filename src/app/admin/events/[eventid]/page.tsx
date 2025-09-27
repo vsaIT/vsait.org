@@ -229,8 +229,8 @@ function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
           <div>
             <h2 className='text-xl'>Dato og tid:</h2>
           </div>
-          {timeDataInputs.map((inputFieldData) => (
-            <div className='flex flex-col space-y-1 pb-2'>
+          {timeDataInputs.map((inputFieldData, index) => (
+            <div key={index} className='flex flex-col space-y-1 pb-2'>
               <h2 className='text-l p-2'>{inputFieldData.name}</h2>
               <div className='flex flex-auto flex-row space-x-3'>
                 <FormInput

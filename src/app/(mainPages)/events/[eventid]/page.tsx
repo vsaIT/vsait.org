@@ -139,7 +139,7 @@ function Event({ params }: { params: { eventid: string } }): JSX.Element {
           <div className='flex w-full rounded-2xl bg-white p-6 shadow-2xl'>
             <div className='w-full overflow-hidden'>
               <Image
-                src={event.image as string}
+                src={event?.event.image as string}
                 alt='Vercel Logo'
                 width={1352}
                 height={564}
@@ -158,34 +158,36 @@ function Event({ params }: { params: { eventid: string } }): JSX.Element {
 
               <div className='flex flex-col gap-2'>
                 <p>
-                  <b>Starttid:</b> {new Date(event.startTime).toDateString()}
+                  <b>Starttid:</b>{' '}
+                  {new Date(event?.event.startTime).toDateString()}
                 </p>
                 <p>
-                  <b>Sluttid:</b> {new Date(event.endTime).toDateString()}
+                  <b>Sluttid:</b>{' '}
+                  {new Date(event?.event.endTime).toDateString()}
                 </p>
                 <p>
                   <b>Påmeldingsfrist:</b>{' '}
-                  {new Date(event.registrationDeadline).toDateString()}
+                  {new Date(event?.event.registrationDeadline).toDateString()}
                 </p>
                 <p>
                   <b>Avmeldingsfrist:</b>{' '}
-                  {new Date(event.cancellationDeadline).toDateString()}
+                  {new Date(event?.event.cancellationDeadline).toDateString()}
                 </p>
                 <p>
-                  <b>Sted:</b> {event.location}
+                  <b>Sted:</b> {event?.event.location}
                 </p>
                 <p>
                   <b>Åpent for:</b>{' '}
-                  {event.eventType === 'OPEN' ? 'Alle' : 'Medlemmer'}
+                  {event?.event.eventType === 'OPEN' ? 'Alle' : 'Medlemmer'}
                 </p>
               </div>
             </div>
             <div className='flex w-full flex-col rounded-2xl bg-white p-6 shadow-2xl'>
-              <h2 className='mb-4 text-2xl font-bold'>{event.title}</h2>
+              <h2 className='mb-4 text-2xl font-bold'>{event?.event.title}</h2>
               <p className='mb-2 italic'>
                 Last edited: {new Date().toDateString()}
               </p>
-              <p>{event.description}</p>
+              <p>{event?.event.description}</p>
             </div>
           </div>
 
@@ -196,7 +198,7 @@ function Event({ params }: { params: { eventid: string } }): JSX.Element {
                 <div className='flex flex-col gap-2'>
                   <p>
                     <b>Antall påmeldte:</b> {event.registrationList.length} /{' '}
-                    {event.maxRegistrations}
+                    {event?.event.maxRegistrations}
                   </p>
                   <p>
                     <b>Venteliste:</b> {event.waitingList.length}
@@ -208,19 +210,20 @@ function Event({ params }: { params: { eventid: string } }): JSX.Element {
                           onClick={() => showRegistrations()}
                           text='Se andre påmeldte'
                         />
-                        {new Date() >= new Date(event.registrationDeadline) ? (
+                        {new Date() >=
+                        new Date(event?.event.registrationDeadline) ? (
                           <p className='text-center'>
                             Arrangementet er ikke åpent for påmelding!
                           </p>
                         ) : new Date() >=
-                            new Date(event.cancellationDeadline) &&
+                            new Date(event?.event.cancellationDeadline) &&
                           data.hasRegistered ? (
                           <p className='text-center'>
                             Arrangementet er ikke lenger åpent for avmelding!
                           </p>
                         ) : (data.hasMembership &&
-                            event.eventType === 'MEMBERSHIP') ||
-                          event.eventType === 'OPEN' ? (
+                            event?.event.eventType === 'MEMBERSHIP') ||
+                          event?.event.eventType === 'OPEN' ? (
                           data.hasRegistered ? (
                             <>
                               <Button

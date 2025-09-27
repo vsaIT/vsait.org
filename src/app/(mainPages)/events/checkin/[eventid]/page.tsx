@@ -4,6 +4,7 @@ import { SmallHeader } from '@/components/Header';
 import { Button } from '@/components/Input';
 import StyledSwal from '@/components/StyledSwal';
 import { Person } from '@/components/icons';
+import { swalError, swalSuccess } from '@/lib/swal';
 import { getErrorMessage, postFetcher } from '@/lib/utils';
 import { ApiResponseType, AttendingUserType, EventType } from '@/types';
 import { useQuery } from '@tanstack/react-query';
@@ -56,52 +57,26 @@ function Checkin({ params }: { params: { eventid: string } }): JSX.Element {
           const cancelButton = StyledSwal.getCancelButton();
           if (cancelButton) cancelButton.style.opacity = '0';
           // Send registration request
-          await postFetcher('/api/checkin/register', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
+          try {
+            const data = await postFetcher('/api/checkin/register', {
               userId: '',
               email: email,
               eventId: eventid,
-            }),
-          })
-            .then(async (response) => {
-              if (!response.ok) throw new Error(response.statusText);
-              const data: ApiResponseType = await response.json();
-              return data;
-            })
-            .then(async (data) => {
-              console.log('Success:', data);
-              await StyledSwal.fire({
-                icon: 'success',
-                title: <p>Vellykket!</p>,
-                text: 'Vi har registret ditt oppmøte!',
-                showConfirmButton: false,
-                timer: 1500,
-              });
-              window.location.reload();
-            })
-            .catch((error: unknown) => {
-              return StyledSwal.fire({
-                icon: 'error',
-                title: <p>Mislykket!</p>,
-                html: (
-                  <>
-                    <p>Registrering av oppmøte mislykket</p>
-                    <code className='mt-2 w-full'>
-                      {getErrorMessage(error)}
-                    </code>
-                  </>
-                ),
-                showConfirmButton: false,
-                timer: 5000,
-              });
             });
+            console.log('Success:', data);
+            await swalSuccess('Vi har registrert ditt oppmøte!');
+          } catch (error) {
+            swalError(
+              'Registrering av oppmøte mislykket',
+              error as Error,
+              5000,
+              false
+            );
+          } finally {
+            setRegistrationEnabled(true);
+          }
         },
-        allowOutsideClick: () => false,
-      }).finally(() => setRegistrationEnabled(true));
+      });
     },
     [eventid, setRegistrationEnabled, registrationEnabled, session?.user?.id]
   );
@@ -143,7 +118,7 @@ function Checkin({ params }: { params: { eventid: string } }): JSX.Element {
           ) : (
             <div className='w-full overflow-hidden'>
               <Image
-                src={event.image as string}
+                src={event?.event.image as string}
                 alt='Vercel Logo'
                 width={1352}
                 height={564}
@@ -167,7 +142,7 @@ function Checkin({ params }: { params: { eventid: string } }): JSX.Element {
                   href={`/events/${eventid}`}
                   className='text-primary hover:underline'
                 >
-                  {event.title}
+                  {event?.event.title}
                 </Link>
               </h2>
             )}
