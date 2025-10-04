@@ -88,6 +88,11 @@ async function main() {
 
   const open: EventType = 'OPEN';
   const member: EventType = 'MEMBERSHIP';
+
+  (await prisma.event.findMany()).forEach(async (e) => {
+    await prisma.event.delete({ where: { id: e.id } });
+  });
+
   const dummy: any = {
     id: 2,
     title: 'Julekos222 med VSAiT! DUMMY',
@@ -109,10 +114,8 @@ async function main() {
     isCancelled: false,
   };
 
-  await prisma.event.upsert({
-    where: { id: 1 },
-    update: {},
-    create: {
+  await prisma.event.create({
+    data: {
       id: 1,
       title: 'Julekos med VSAiT!',
       description:
@@ -133,10 +136,8 @@ async function main() {
       isCancelled: false,
     },
   });
-  await prisma.event.upsert({
-    where: { id: 2 },
-    update: {},
-    create: {
+  await prisma.event.create({
+    data: {
       id: 2,
       title: 'Julekos222 med VSAiT!',
       description:
@@ -158,10 +159,8 @@ async function main() {
     },
   });
   for (let i = 3; i < 12; i++) {
-    await prisma.event.upsert({
-      where: { id: i },
-      update: {},
-      create: { ...dummy, id: i, title: 'dummy' + i },
+    await prisma.event.create({
+      data: { ...dummy, id: i, title: 'dummy' + i },
     });
   }
 }
