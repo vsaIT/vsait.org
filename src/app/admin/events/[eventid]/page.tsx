@@ -1,10 +1,15 @@
 'use client';
 import { useEvent } from '@/lib/hooks/useEvent';
+import { Button } from '@/components/Input';
 import { FormInput, FormImageInput, SelectField } from '@/components/Form';
 //import { TextEditor } from '@/components/Input';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { timeEnd } from 'node:console';
 import LoadingIndicator from '@/components/LoadingIndicator';
+import { useForm } from 'react-hook-form';
+import { EventType } from '@/types';
+import { EventType as EventTypeOptions } from '@prisma/client';
+import { isoToOsloTimestring, osloTimeStringToUtcIso } from '@/lib/utils';
 
 type AdminEventsProps = {
   params: {
@@ -12,61 +17,38 @@ type AdminEventsProps = {
   };
 };
 
+type TimeDataInput = {
+  name: string;
+  attr: keyof Pick<
+    EventType,
+    'startTime' | 'endTime' | 'registrationDeadline' | 'cancellationDeadline'
+  >;
+  date: {
+    label: string;
+    type: string;
+    defaultValue: string;
+  };
+};
+
 function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
   const { eventid } = params;
-  const { data, isLoading, isError } = useEvent(eventid);
+  const { data, isLoading } = useEvent(eventid);
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<EventType>({ defaultValues: data?.event });
 
-  function handleChange<T>(attr: string, value: T) {
-    // if (editUser) {
-    //   setEditEvent({
-    //     ...editUser,
-    //     [attr]: value,
-    //   });
-    // }
-    console.log(attr, value);
-  }
-
-  function handleTimeChange<T>(attr: string, value: T) {
-    // if (editUser) {
-    //   setEditEvent({
-    //     ...editUser,
-    //     [attr]: value,
-    //   });
-    // }
-    console.log(attr, value);
-  }
-
-  function handleImageUpload<T>(attr: string, value: T) {
-    // if (editUser) {
-    //   setEditEvent({
-    //     ...editUser,
-    //     [attr]: value,
-    //   });
-    // }
-    console.log(attr, value);
-  }
-
-  const timeDataInputs = [
+  const timeDataInputs: Array<TimeDataInput> = [
     {
       name: 'Starttid:',
       attr: 'startTime',
       date: {
-        key: 'start-date',
         label: 'Dato',
-        type: 'date',
+        type: 'datetime-local',
         defaultValue: data?.event.startTime
-          ? new Date(data.event.startTime).toISOString().split('T')[0]
-          : '',
-      },
-      time: {
-        key: 'start-time',
-        label: 'Tid',
-        type: 'time',
-        defaultValue: data?.event.startTime
-          ? new Date(data.event.startTime)
-              .toISOString()
-              .split('T')[1]
-              .slice(0, 5)
+          ? isoToOsloTimestring(new Date(data.event.startTime))
           : '',
       },
     },
@@ -74,19 +56,10 @@ function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
       name: 'Sluttid:',
       attr: 'endTime',
       date: {
-        key: 'end-date',
         label: 'Dato',
-        type: 'date',
+        type: 'datetime-local',
         defaultValue: data?.event.endTime
-          ? new Date(data.event.endTime).toISOString().split('T')[0]
-          : '',
-      },
-      time: {
-        key: 'end-time',
-        label: 'Tid',
-        type: 'time',
-        defaultValue: data?.event.endTime
-          ? new Date(data.event.endTime).toISOString().split('T')[1].slice(0, 5)
+          ? isoToOsloTimestring(new Date(data.event.endTime))
           : '',
       },
     },
@@ -94,24 +67,10 @@ function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
       name: 'Registreringsfrist:',
       attr: 'registrationDeadline',
       date: {
-        key: 'registration-date',
         label: 'Dato',
-        type: 'date',
+        type: 'datetime-local',
         defaultValue: data?.event.registrationDeadline
-          ? new Date(data.event.registrationDeadline)
-              .toISOString()
-              .split('T')[0]
-          : '',
-      },
-      time: {
-        key: 'registration-time',
-        label: 'Tid',
-        type: 'time',
-        defaultValue: data?.event.registrationDeadline
-          ? new Date(data.event.registrationDeadline)
-              .toISOString()
-              .split('T')[1]
-              .slice(0, 5)
+          ? isoToOsloTimestring(new Date(data.event.registrationDeadline))
           : '',
       },
     },
@@ -119,30 +78,16 @@ function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
       name: 'Avmeldingsfrist:',
       attr: 'cancellationDeadline',
       date: {
-        key: 'cancellation-date',
         label: 'Dato',
-        type: 'date',
+        type: 'datetime-local',
         defaultValue: data?.event.cancellationDeadline
-          ? new Date(data.event.cancellationDeadline)
-              .toISOString()
-              .split('T')[0]
-          : '',
-      },
-      time: {
-        key: 'cancellation-time',
-        label: 'Tid',
-        type: 'time',
-        defaultValue: data?.event.cancellationDeadline
-          ? new Date(data.event.cancellationDeadline)
-              .toISOString()
-              .split('T')[1]
-              .slice(0, 5)
+          ? isoToOsloTimestring(new Date(data.event.cancellationDeadline))
           : '',
       },
     },
   ];
 
-  const eventTypeOptions = [
+  const eventTypeOptions: { value: EventTypeOptions; label: string }[] = [
     {
       value: 'OPEN',
       label: 'Åpent for alle',
@@ -152,6 +97,18 @@ function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
       label: 'Medlemskap kreves',
     },
   ];
+
+  const onSubmit = useCallback(
+    async (event: EventType) => {
+      timeDataInputs.forEach((input) => {
+        event[input.attr] = new Date(
+          osloTimeStringToUtcIso(event[input.attr]?.toString())
+        );
+      });
+      console.log('Submitting event:', event);
+    },
+    [timeDataInputs, setValue]
+  );
 
   if (isLoading) {
     return <LoadingIndicator />;
@@ -164,89 +121,118 @@ function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
           Endre arrangement: {data?.event.title}
         </h1>
       </div>
-      <div className='flex w-full flex-row items-stretch justify-evenly space-x-3 rounded-xl bg-white p-6'>
-        <div className='col-span-full w-2/3 flex-col space-y-4 rounded-xl border border-stone-300 p-6'>
-          <div className=''>
-            <h2 className='text-xl'>Detaljer:</h2>
-          </div>
 
-          <FormInput
-            key={'title'}
-            label={'Tittel'}
-            defaultValue={data?.event.title || ''}
-            onChange={(e) => handleChange('tittle', e.target.value)}
-          />
-
-          <div>
-            <h2>Banner:</h2>
-            <div className='max-h-70 flex justify-evenly gap-3 border border-stone-300 p-2'>
-              <div className={'w-1/2 flex-col'}>
-                <h3>Nåværende:</h3>
-                {/*<img src={event?.event.image || ''} alt="Forhåndsvisning" className="mt-2 max-h-45 rounded-lg object-contain" />*/}
-                {data?.event.image}
-              </div>
-              <div className={'w-1/2 flex-col'}>
-                <h3>Endre:</h3>
-                <FormImageInput
-                  key={'image'}
-                  label={'Bilde'}
-                  type={'file'}
-                  accept={'image/*'}
-                  onChange={(e) => handleImageUpload('image', e.target.value)}
-                />
-              </div>
-            </div>
+      <div className='flex w-full flex-col gap-6'>
+        {errors && Object.keys(errors).length > 0 && (
+          <div className='rounded-xl bg-red-100 p-4 text-red-700'>
+            <h2 className='mb-2 font-bold'>Feil i skjemaet:</h2>
+            <ul className='list-disc space-y-1 pl-5'>
+              {Object.entries(errors).map(([field, error]) => (
+                <li key={field}>
+                  {field}: {error?.message || 'Ugyldig verdi'}
+                </li>
+              ))}
+            </ul>
           </div>
-
-          <div>
-            <h2>Beskrivelse:</h2>
-            <div className='border border-stone-300 p-2'>
-              <div className='h-1/2'>{data?.event.description}</div>
-            </div>
-          </div>
-
-          <FormInput
-            key={'location'}
-            label={'Sted'}
-            defaultValue={data?.event.location || ''}
-            onChange={(e) => handleChange('location', e.target.value)}
-          />
-
-          <div>
-            <SelectField
-              label='Arrangementstype'
-              name='arrType'
-              defaultValue={data?.event.eventType || ''}
-              options={eventTypeOptions}
-              onChange={(e) => handleChange('student', e.target.value)}
-            />
-          </div>
-        </div>
-        <div className='col-span-full w-1/3 flex-col space-y-4 rounded-xl border border-stone-300 p-6'>
-          <div>
-            <h2 className='text-xl'>Dato og tid:</h2>
-          </div>
-          {timeDataInputs.map((inputFieldData, index) => (
-            <div key={index} className='flex flex-col space-y-1 pb-2'>
-              <h2 className='text-l p-2'>{inputFieldData.name}</h2>
-              <div className='flex flex-auto flex-row space-x-3'>
-                <FormInput
-                  {...inputFieldData.date}
-                  onChange={(e) =>
-                    handleTimeChange(inputFieldData.attr, e.target.value)
-                  }
-                />
-                <FormInput
-                  {...inputFieldData.time}
-                  onChange={(e) =>
-                    handleTimeChange(inputFieldData.attr, e.target.value)
-                  }
-                />
-              </div>
-            </div>
-          ))}
-        </div>
+        )}
       </div>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className='rounded-xl bg-white p-6'
+      >
+        <div className='flex w-full flex-row items-stretch justify-evenly space-x-3'>
+          <div className='col-span-full w-2/3 flex-col space-y-4 rounded-xl border border-stone-300 p-6'>
+            <div className=''>
+              <h2 className='text-xl'>Detaljer:</h2>
+            </div>
+
+            <FormInput
+              key={'title'}
+              label={'Tittel'}
+              defaultValue={data?.event.title || ''}
+              {...register('title', { required: true })}
+            />
+
+            <div>
+              <h2>Banner:</h2>
+              <div className='max-h-70 flex justify-evenly gap-3 border border-stone-300 p-2'>
+                <div className={'w-1/2 flex-col'}>
+                  <h3>Nåværende:</h3>
+                  {/*<img src={event?.event.image || ''} alt="Forhåndsvisning" className="mt-2 max-h-45 rounded-lg object-contain" />*/}
+                  {data?.event.image}
+                </div>
+                <div className={'w-1/2 flex-col'}>
+                  <h3>Endre:</h3>
+                  <FormImageInput
+                    key={'image'}
+                    label={'Bilde'}
+                    type={'file'}
+                    accept={'image/*'}
+                    {...register('image')}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h2>Beskrivelse:</h2>
+              <div className='border border-stone-300 p-2'>
+                <div className='h-1/2'>{data?.event.description}</div>
+              </div>
+            </div>
+
+            <FormInput
+              key={'location'}
+              label={'Sted'}
+              defaultValue={data?.event.location || ''}
+              {...register('location', { required: true })}
+            />
+
+            <div>
+              <SelectField
+                label='Arrangementstype'
+                name='arrType'
+                defaultValue={data?.event.eventType || ''}
+                options={eventTypeOptions}
+                onChange={(e) =>
+                  setValue('eventType', e.target.value as EventTypeOptions)
+                }
+              />
+            </div>
+          </div>
+          <div className='col-span-full w-1/3 flex-col space-y-4 rounded-xl border border-stone-300 p-6'>
+            <div>
+              <h2 className='text-xl'>Dato og tid:</h2>
+            </div>
+            {timeDataInputs.map((inputFieldData, index) => (
+              <div key={index} className='flex flex-col space-y-1 pb-2'>
+                <h2 className='text-l p-2'>{inputFieldData.name}</h2>
+                <div className='flex flex-auto flex-row space-x-3'>
+                  <FormInput
+                    key={inputFieldData.attr}
+                    {...inputFieldData.date}
+                    {...register(inputFieldData.attr as keyof EventType, {
+                      required: true,
+                    })}
+                  />
+                </div>
+              </div>
+            ))}
+            <div className='justify-left mt-6 flex w-full'>
+              <Button
+                type='submit'
+                text='Lagre endringer'
+                className='px-6 py-2'
+              />
+              <Button
+                type='button'
+                text='Slett arrangement'
+                className='ml-4 px-6 py-2'
+              />
+            </div>
+          </div>
+        </div>
+      </form>
     </div>
   );
 }
