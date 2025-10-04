@@ -4,6 +4,7 @@ import { EventType, RegisteredUserType } from '@/types/types';
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import { Event } from '@prisma/client';
+import { requireAdmin } from '../../utils';
 
 const POST = async () => {
   return NextResponse.json('Method Not Allowed', {
@@ -50,7 +51,12 @@ const GET = async (
         attendanceList: isAdmin,
       },
     });
-    if (!event) throw new Error(`Could not find event with id ${eventid}`);
+    if (!event) {
+      return NextResponse.json(
+        { message: `Could not find event with id ${eventid}` },
+        { status: 404 }
+      );
+    }
 
     // Set user ids in registrationList as filtering for registered users
     let registeredUsers: RegisteredUserType[] = [];
@@ -107,12 +113,8 @@ const PUT = async (
   { params }: { params: { eventid: number } }
 ) => {
   const eventid = params.eventid;
-  const token = await getToken({ req });
-  const isAdmin = token?.role === 'ADMIN';
-
-  if (!isAdmin) {
-    return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
-  }
+  const authResponse = await requireAdmin(req);
+  if (authResponse) return authResponse;
 
   try {
     const body: Event = await req.json();
@@ -137,11 +139,9 @@ const DELETE = async (
   { params }: { params: { eventid: number } }
 ) => {
   const eventid = params.eventid;
-  const token = await getToken({ req });
-  const isAdmin = token?.role === 'ADMIN';
-  if (!isAdmin) {
-    return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
-  }
+  const authResponse = await requireAdmin(req);
+  if (authResponse) return authResponse;
+
   try {
     await prisma.event.delete({ where: { id: Number(eventid) } });
     return NextResponse.json({ message: 'Event deleted' }, { status: 200 });

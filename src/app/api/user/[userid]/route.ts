@@ -4,28 +4,15 @@ import { getToken } from 'next-auth/jwt';
 import { NextRequest, NextResponse } from 'next/server';
 import prisma, { User } from 'prisma/index';
 import { updateUserMemberships } from './utils';
+import { requireAdmin, requireSelfOrAdmin } from '../../utils';
 
 const GET = async (
   req: NextRequest,
   { params }: { params: { userid: string } }
 ) => {
   const userID = params.userid;
-  const token = await getToken({ req });
-
-  if (!token)
-    return NextResponse.json(
-      {
-        message: 'Unauthorized',
-      },
-      { status: 401 }
-    );
-  if (userID !== token?.id && token?.role !== 'ADMIN')
-    return NextResponse.json(
-      {
-        message: 'Cannot register event for another user',
-      },
-      { status: 401 }
-    );
+  const authResponse = await requireSelfOrAdmin(req, userID);
+  if (authResponse) return authResponse;
 
   try {
     const user = exclude(
@@ -55,15 +42,8 @@ const PUT = async (
   { params }: { params: { userid: string } }
 ) => {
   const userID = params.userid;
-  const token = await getToken({ req });
-
-  if (!token || token.role !== 'ADMIN')
-    return NextResponse.json(
-      {
-        message: 'Unauthorized',
-      },
-      { status: 401 }
-    );
+  const authResponse = await requireAdmin(req);
+  if (authResponse) return authResponse;
 
   try {
     const data: UserType = await req.json();
@@ -71,14 +51,17 @@ const PUT = async (
       'membership',
       'userAttendanceList',
     ]) as User;
-    await prisma.user.update({
-      where: {
-        id: userID,
-      },
-      data: filteredData,
-    });
+    const updatedUser = exclude(
+      await prisma.user.update({
+        where: {
+          id: userID,
+        },
+        data: filteredData,
+      }),
+      ['password']
+    );
     await updateUserMemberships(userID, data.membership);
-    return GET(req, { params });
+    return NextResponse.json({ user: updatedUser }, { status: 200 });
   } catch (error) {
     console.error(`[api] /api/user`, getErrorMessage(error));
     return NextResponse.json(
@@ -99,22 +82,8 @@ const DELETE = async (
   { params }: { params: { userid: string } }
 ) => {
   const userID = params.userid;
-  const token = await getToken({ req });
-
-  if (!token)
-    return NextResponse.json(
-      {
-        message: 'Unauthorized',
-      },
-      { status: 401 }
-    );
-  if (userID !== token?.id && token?.role !== 'ADMIN')
-    return NextResponse.json(
-      {
-        message: 'Cannot register event for another user',
-      },
-      { status: 401 }
-    );
+  const authResponse = await requireSelfOrAdmin(req, userID);
+  if (authResponse) return authResponse;
 
   try {
     const userToDelete = await prisma.user.findUnique({

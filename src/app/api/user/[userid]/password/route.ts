@@ -3,6 +3,7 @@ import { getErrorMessage } from '@/lib/utils';
 import { hashPassword, verifyPassword } from '@/lib/auth/passwords';
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
+import { requireSelfOrAdmin } from '@/app/api/utils';
 
 type BodyType = {
   oldPassword: string | undefined;
@@ -20,23 +21,8 @@ const POST = async (
   const newPassword = body.newPassword || '';
   const confirmPassword = body.confirmPassword || '';
   const token = await getToken({ req });
-
-  if (!token) {
-    return NextResponse.json(
-      {
-        message: 'Unauthorized',
-      },
-      { status: 401 }
-    );
-  }
-  if (userID !== token.id && token.role !== 'ADMIN') {
-    return NextResponse.json(
-      {
-        message: 'Cannot change password for another user',
-      },
-      { status: 401 }
-    );
-  }
+  const authResponse = await requireSelfOrAdmin(req, userID);
+  if (authResponse) return authResponse;
 
   try {
     if (newPassword.length < 8 || confirmPassword.length < 8)
@@ -45,7 +31,7 @@ const POST = async (
       throw new Error('Passordene er ikke like!');
 
     // Only fetch and verify the old password if the user is not an admin
-    if (token.role !== 'ADMIN') {
+    if (token?.role !== 'ADMIN') {
       if (oldPassword.length < 8)
         throw new Error('Passord må være minst 8 tegn langt');
       const user = await prisma.user.findFirst({

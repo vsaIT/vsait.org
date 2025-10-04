@@ -1,24 +1,16 @@
 import prisma from 'prisma/index';
 import { getErrorMessage } from '@/lib/utils';
 import { AttendingUserType } from '@/types/types';
-import { getToken } from 'next-auth/jwt';
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAdmin } from '../../utils';
 
 export const GET = async (
   req: NextRequest,
   { params }: { params: { eventid: number } }
 ) => {
   const eventid = params.eventid;
-  const token = await getToken({ req: req });
-  const isAdmin = token?.role === 'ADMIN';
-
-  if (!token || !isAdmin)
-    return NextResponse.json(
-      {
-        message: 'Unauthorized',
-      },
-      { status: 401 }
-    );
+  const authResponse = await requireAdmin(req);
+  if (authResponse) return authResponse;
 
   try {
     const event = await prisma.event.findFirst({
@@ -88,5 +80,5 @@ export const GET = async (
 };
 
 export const POST = async () => {
-  return new Response('Method Not Allowed', { status: 405 });
+  return NextResponse.json({ message: 'Method Not Allowed' }, { status: 405 });
 };

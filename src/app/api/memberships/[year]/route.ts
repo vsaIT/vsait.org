@@ -2,16 +2,16 @@ import prisma from 'prisma/index';
 import { getErrorMessage } from '@/lib/utils';
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
+import { requireAdmin } from '../../utils';
 
 const GET = async (
   req: NextRequest,
   { params }: { params: { year: number } }
 ) => {
   const year = Number(params.year);
-  const token = await getToken({ req });
+  const authResponse = await requireAdmin(req);
+  if (authResponse) return authResponse;
 
-  if (!token || token?.role !== 'ADMIN')
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   try {
     const membership = await prisma.membership.findFirst({
       where: {

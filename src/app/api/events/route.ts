@@ -20,9 +20,9 @@ const GET = async (req: NextRequest) => {
       if (!isAdmin) {
         return NextResponse.json(
           {
-            message: 'Unauthorized',
+            message: 'Forbidden: Admins only',
           },
-          { status: 401 }
+          { status: 403 }
         );
       }
       const events = await prisma.event.findMany({
