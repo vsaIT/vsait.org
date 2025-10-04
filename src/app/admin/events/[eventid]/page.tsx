@@ -5,13 +5,20 @@ import { FormInput, FormImageInput, SelectField } from '@/components/Form';
 import ImagePreview from '../../../../components/ImagePreview';
 //import { TextEditor } from '@/components/Input';
 import { useCallback, useState } from 'react';
-import { timeEnd } from 'node:console';
+import { putFetcher } from '@/lib/utils';
+import { swalSuccess, swalError, swalLoading } from '@/lib/swal';
+import FormErrorBox from '@/components/Form/FormErrorBox';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import LoadingIndicator from '@/components/LoadingIndicator';
 import { useForm } from 'react-hook-form';
 import { EventType } from '@/types';
 import { EventType as EventTypeOptions } from '@prisma/client';
 import { isoToOsloTimestring, osloTimeStringToUtcIso } from '@/lib/utils';
 import SlideCheckbox from '@/components/Input/SlideCheckbox';
+import StyledSwal from '@/components/StyledSwal';
+import Swal from 'sweetalert2';
+import { set } from 'lodash';
 
 type AdminEventsProps = {
   params: {
@@ -43,8 +50,6 @@ function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
     watch,
     formState: { errors },
   } = useForm<EventType>({ defaultValues: data?.event });
-
-  const watchEventdata = watch();
 
   const sliderCheckboxes = [
     { id: 'isDraft', label: 'Kladd (ikke synlig for brukere)' },
@@ -111,14 +116,42 @@ function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
 
   const onSubmit = useCallback(
     async (event: EventType) => {
-      timeDataInputs.forEach((input) => {
-        event[input.attr] = new Date(
-          osloTimeStringToUtcIso(event[input.attr]?.toString())
-        );
+      swalLoading('Oppdaterer...', async () => {
+        try {
+          // if (image) {
+          //   const formData = new FormData();
+          //   formData.append('file', image);
+          //   const uploadResponse = await fetch('/api/upload', {
+          //     method: 'POST',
+          //     body: formData,
+          //   });
+
+          //   if (!uploadResponse.ok) {
+          //     throw new Error('Failed to upload image');
+          //   }
+
+          //   const { url } = await uploadResponse.json();
+          //   event.image = url;
+          // }
+          await new Promise((resolve) => setTimeout(resolve, 5000));
+          timeDataInputs.forEach((input) => {
+            event[input.attr] = new Date(
+              osloTimeStringToUtcIso(event[input.attr]?.toString())
+            );
+          });
+          await putFetcher(`/api/events/${eventid}`, event);
+          await swalSuccess('Arrangementet ble oppdatert!');
+        } catch (error) {
+          swalError(
+            'Kunne ikke oppdatere arrangementet',
+            error as Error,
+            5000,
+            true
+          );
+        }
       });
-      console.log('Submitting event:', event);
     },
-    [timeDataInputs, setValue]
+    [timeDataInputs, setValue, eventid]
   );
 
   if (isLoading) {
@@ -134,18 +167,7 @@ function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
       </div>
 
       <div className='flex w-full flex-col gap-6'>
-        {errors && Object.keys(errors).length > 0 && (
-          <div className='rounded-xl bg-red-100 p-4 text-red-700'>
-            <h2 className='mb-2 font-bold'>Feil i skjemaet:</h2>
-            <ul className='list-disc space-y-1 pl-5'>
-              {Object.entries(errors).map(([field, error]) => (
-                <li key={field}>
-                  {field}: {error?.message || 'Ugyldig verdi'}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+        <FormErrorBox errors={errors} />
       </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -194,8 +216,12 @@ function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
 
             <div>
               <h2>Beskrivelse:</h2>
-              <div className='border border-stone-300 p-2'>
-                <div className='h-1/2'>{data?.event.description}</div>
+              <div className='py-2'>
+                <ReactQuill
+                  theme='snow'
+                  defaultValue={data?.event.description || ''}
+                  onChange={(value) => setValue('description', value)}
+                />
               </div>
             </div>
 
@@ -215,6 +241,19 @@ function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
                 setValue('eventType', e.target.value as EventTypeOptions)
               }
             />
+
+            <FormInput
+              key={'maxRegistrations'}
+              label={'Maks antall påmeldinger'}
+              type='number'
+              defaultValue={data?.event.maxRegistrations || 0}
+              {...register('maxRegistrations', {
+                required: true,
+                valueAsNumber: true,
+                min: 0,
+              })}
+            />
+
             {/* Sliders */}
             <div className='grid grid-cols-2'>
               {sliderCheckboxes.map((checkbox) => (
