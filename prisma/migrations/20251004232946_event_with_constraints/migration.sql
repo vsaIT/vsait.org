@@ -13,11 +13,3 @@ ALTER COLUMN "location" SET DATA TYPE VARCHAR(100),
 ALTER COLUMN "eventType" SET NOT NULL,
 ALTER COLUMN "maxRegistrations" SET NOT NULL,
 ALTER COLUMN "maxRegistrations" SET DEFAULT 0;
-
--- AddConstraints
-ALTER TABLE "public"."Event"
-  ADD CONSTRAINT "endtime_after_starttime" CHECK (endTime > startTime),
-  ADD CONSTRAINT "registration_deadline_before_starttime" CHECK (registrationDeadline < startTime),
-  ADD CONSTRAINT "cancellation_deadline_before_starttime" CHECK (cancellationDeadline < startTime),
-  ADD CONSTRAINT "cancellation_deadline_after_registration_deadline" CHECK (cancellationDeadline > registrationDeadline),
-  ADD CONSTRAINT "max_registrations_non_negative" CHECK (maxRegistrations >= 0);
