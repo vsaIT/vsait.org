@@ -3,6 +3,8 @@ import prisma from 'prisma/index';
 import { getErrorMessage } from '@/lib/utils';
 import { isEmpty } from 'lodash';
 import { getToken } from 'next-auth/jwt';
+import { requireAdmin } from '../utils';
+import { Event } from '@prisma/client';
 
 const GET = async (req: NextRequest) => {
   const searchParams = req.nextUrl.searchParams;
@@ -86,10 +88,23 @@ const GET = async (req: NextRequest) => {
   }
 };
 
-const POST = async () => {
-  return NextResponse.json('Method Not Allowed', {
-    status: 405,
-  });
+const POST = async (req: NextRequest) => {
+  const authResponse = await requireAdmin(req);
+  if (authResponse) return authResponse;
+
+  try {
+    const body: Event = await req.json();
+    const event = await prisma.event.create({
+      data: body,
+    });
+    return NextResponse.json(event, { status: 201 });
+  } catch (error) {
+    console.error('[api] /api/events [POST]', getErrorMessage(error));
+    return NextResponse.json(
+      { message: getErrorMessage(error) },
+      { status: 500 }
+    );
+  }
 };
 
 export { GET, POST };

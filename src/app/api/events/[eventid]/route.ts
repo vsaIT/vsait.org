@@ -1,6 +1,6 @@
 import prisma from 'prisma/index';
 import { getErrorMessage, getMembershipYear } from '@/lib/utils';
-import { EventType, RegisteredUserType } from '@/types/types';
+import { RegisteredUserType } from '@/types/types';
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import { Event } from '@prisma/client';

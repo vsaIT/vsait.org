@@ -3,7 +3,6 @@ import { FormImageInput, FormInput, SelectField } from '@/components/Form';
 import { Button } from '@/components/Input';
 import { useEvent } from '@/lib/hooks/useEvent';
 import ImagePreview from '../../../../components/ImagePreview';
-//import { TextEditor } from '@/components/Input';
 import FormErrorBox from '@/components/Form/FormErrorBox';
 import SlideCheckbox from '@/components/Input/SlideCheckbox';
 import LoadingIndicator from '@/components/LoadingIndicator';
