@@ -4,14 +4,15 @@ import { AttendingUserType } from '@/types/types';
 import { getToken } from 'next-auth/jwt';
 import { NextRequest, NextResponse } from 'next/server';
 
-const handler = async (
+export const GET = async (
   req: NextRequest,
   { params }: { params: { eventid: number } }
 ) => {
   const eventid = params.eventid;
   const token = await getToken({ req: req });
+  const isAdmin = token?.role === 'ADMIN';
 
-  if (!token || token.role !== 'ADMIN')
+  if (!token || !isAdmin)
     return NextResponse.json(
       {
         message: 'Unauthorized',
@@ -86,4 +87,6 @@ const handler = async (
   }
 };
 
-export { handler as GET, handler as POST };
+export const POST = async () => {
+  return new Response('Method Not Allowed', { status: 405 });
+};

@@ -38,33 +38,24 @@ export type AttendingUserType = {
   checked: boolean;
 };
 
-export type EventType = {
-  event: Event;
+export type SingleEventType = {
+  event: EventType;
+  registrations: RegisteredUserType[];
+  hasRegistered: boolean;
+  hasMembership: boolean;
+};
+
+export type MultipleEventType = {
+  events: EventType[];
+  page: number;
+  pages: number;
+};
+
+export type EventType = Event & {
   registrationList: string[];
   waitingList: string[];
   attendanceList: string[];
 };
-
-// export type EventType = {
-//   id: string;
-//   title: string;
-//   description: string;
-//   image: string;
-//   location: string;
-//   maxRegistrations: number;
-//   eventType: EventTypeType;
-//   startTime: Date;
-//   endTime: Date;
-//   updatedAt: Date;
-//   registrationDeadline: Date;
-//   cancellationDeadline: Date;
-//   registrationList: string[];
-//   waitingList: string[];
-//   checkinId: string;
-//   checkinList: string[];
-//   isDraft: boolean;
-//   isCancelled: boolean;
-// };
 
 export type SelectProps<T extends FieldValues> = {
   options: {

@@ -12,11 +12,12 @@ const GET = async (req: NextRequest) => {
   const upcoming = isEmpty(searchParams.get('upcoming')) ? false : true;
   const all = isEmpty(searchParams.get('all')) ? false : true;
   const token = await getToken({ req });
+  const isAdmin = token?.role == 'ADMIN';
 
   // Retrieve all events, admins only
   try {
     if (all) {
-      if (token?.role !== 'ADMIN') {
+      if (!isAdmin) {
         return NextResponse.json(
           {
             message: 'Unauthorized',
@@ -59,7 +60,9 @@ const GET = async (req: NextRequest) => {
           startTime: 'desc',
         },
         include: {
-          registrationList: true,
+          registrationList: isAdmin,
+          attendanceList: isAdmin,
+          waitingList: isAdmin,
         },
       });
       const pages = Math.ceil(events.length / take);

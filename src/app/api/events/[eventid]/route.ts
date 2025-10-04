@@ -4,25 +4,25 @@ import { RegisteredUserType } from '@/types/types';
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
-const handler = async (
+const GET = async (
   req: NextRequest,
   { params }: { params: { eventid: number } }
 ) => {
   const eventid = params.eventid;
   const token = await getToken({ req: req });
+  const isAdmin = token?.role === 'ADMIN';
 
   try {
     // Retrieve events including registrationList, waitingList and attendanceList
     const event = await prisma.event.findFirst({
-      where:
-        token?.role === 'ADMIN'
-          ? {
-              id: Number(eventid),
-            }
-          : {
-              id: Number(eventid),
-              isDraft: false,
-            },
+      where: isAdmin
+        ? {
+            id: Number(eventid),
+          }
+        : {
+            id: Number(eventid),
+            isDraft: false,
+          },
       include: {
         registrationList: {
           select: {
@@ -40,7 +40,7 @@ const handler = async (
           },
         },
         waitingList: true,
-        attendanceList: token?.role === 'ADMIN',
+        attendanceList: isAdmin,
       },
     });
     if (!event) throw new Error(`Could not find event with id ${eventid}`);
@@ -95,4 +95,10 @@ const handler = async (
   }
 };
 
-export { handler as GET, handler as POST };
+const POST = async () => {
+  return NextResponse.json('Method Not Allowed', {
+    status: 405,
+  });
+};
+
+export { GET, POST };
