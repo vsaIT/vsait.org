@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider     = "postgresql"
-  url          = "postgres://default:kjTJNnM54VcY@ep-young-union-a2nbaf8m.eu-central-1.aws.neon.tech:5432/verceldb?sslmode=require"
+  url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
 
