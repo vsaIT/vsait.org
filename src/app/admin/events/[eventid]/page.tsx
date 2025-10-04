@@ -182,6 +182,7 @@ function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
             <FormInput
               key={'title'}
               label={'Tittel'}
+              required
               defaultValue={data?.event.title || ''}
               {...register('title', { required: true })}
             />
@@ -228,6 +229,7 @@ function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
             <FormInput
               key={'location'}
               label={'Sted'}
+              required
               defaultValue={data?.event.location || ''}
               {...register('location', { required: true })}
             />
@@ -246,6 +248,7 @@ function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
               key={'maxRegistrations'}
               label={'Maks antall påmeldinger'}
               type='number'
+              required
               defaultValue={data?.event.maxRegistrations || 0}
               {...register('maxRegistrations', {
                 required: true,
@@ -277,6 +280,7 @@ function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
                   <div className='flex flex-auto flex-row space-x-3'>
                     <FormInput
                       key={inputFieldData.attr}
+                      required
                       {...inputFieldData.date}
                       {...register(inputFieldData.attr as keyof EventType, {
                         required: true,

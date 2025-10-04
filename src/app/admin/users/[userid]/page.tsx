@@ -8,7 +8,12 @@ import StyledSwal from '@/components/StyledSwal';
 import { studentOptions } from '@/lib/constants';
 import { useMemberships } from '@/lib/hooks/useMemberships';
 import { useUser } from '@/lib/hooks/useUser';
-import { swalError, swalSuccess } from '@/lib/swal';
+import {
+  swalAreYouSure,
+  swalError,
+  swalLoading,
+  swalSuccess,
+} from '@/lib/swal';
 import { deleteFetcher, postFetcher, putFetcher } from '@/lib/utils';
 import { UserType } from '@/types';
 import { bigSmile } from '@dicebear/collection';
@@ -50,32 +55,18 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
 
   const updateUserPassword = useCallback(
     (data: PasswordFormValues) => {
-      StyledSwal.fire({
-        text: '',
-        showConfirmButton: true,
-        showCancelButton: true,
-        showLoaderOnConfirm: true,
-        confirmButtonText: 'Lagre',
-        cancelButtonText: 'Avbryt',
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          try {
-            if (data.newPassword !== data.confirmPassword)
-              throw new Error('Passordene er ikke like');
-            await postFetcher(`/api/user/${params.userid}/password`, {
-              newPassword: data.newPassword,
-              confirmPassword: data.confirmPassword,
-            });
-            await swalSuccess('Passordet ble oppdatert');
-            reset();
-          } catch (error) {
-            swalError(
-              'Passordet ble ikke oppdatert',
-              error as Error,
-              5000,
-              true
-            );
-          }
+      swalAreYouSure('Oppdatere passordet?', async () => {
+        try {
+          if (data.newPassword !== data.confirmPassword)
+            throw new Error('Passordene er ikke like');
+          await postFetcher(`/api/user/${params.userid}/password`, {
+            newPassword: data.newPassword,
+            confirmPassword: data.confirmPassword,
+          });
+          await swalSuccess('Passordet ble oppdatert');
+          reset();
+        } catch (error) {
+          swalError('Passordet ble ikke oppdatert', error as Error, 5000, true);
         }
       });
     },
@@ -83,33 +74,19 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
   );
 
   const updateUser = useCallback(
-    (putUser: UserType | undefined) => {
-      StyledSwal.fire({
-        text: '',
-        showConfirmButton: false,
-        showLoaderOnConfirm: true,
-        didOpen: () => {
-          StyledSwal.getConfirmButton()?.click();
-        },
-        preConfirm: async () => {
-          try {
-            if (!putUser) throw new Error('No user data');
-            const response = await putFetcher<UserType>(
-              `/api/user/${params.userid}`,
-              putUser
-            );
-            setEditUser(response);
-            await swalSuccess('Brukeren ble oppdatert');
-          } catch (error) {
-            swalError(
-              'Brukeren ble ikke oppdatert',
-              error as Error,
-              5000,
-              true
-            );
-          }
-        },
-        allowOutsideClick: () => !Swal.isLoading(),
+    async (putUser: UserType | undefined) => {
+      await swalLoading('Oppdaterer bruker...', async () => {
+        try {
+          if (!putUser) throw new Error('No user data');
+          const response = await putFetcher<UserType>(
+            `/api/user/${params.userid}`,
+            putUser
+          );
+          setEditUser(response);
+          await swalSuccess('Brukeren ble oppdatert');
+        } catch (error) {
+          swalError('Brukeren ble ikke oppdatert', error as Error, 5000, true);
+        }
       });
     },
     [params.userid]
@@ -117,32 +94,20 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
 
   const deleteUser = useCallback(
     (delUser: UserType | undefined) => {
-      StyledSwal.fire({
-        title: 'Er du sikker?',
-        text: 'Denne brukeren vil bli permanent slettet',
-        icon: 'warning',
-        showConfirmButton: true,
-        confirmButtonText: 'Slett bruker',
-        showCancelButton: true,
-        cancelButtonText: 'Angre',
-        showLoaderOnConfirm: true,
-      }).then(async (result) => {
-        if (result.isConfirmed) {
+      swalAreYouSure(
+        'Er du sikker på at du vil slette denne brukeren?',
+        async () => {
           try {
             if (!delUser) throw new Error('No user data');
             await deleteFetcher(`/api/user/${params.userid}`, delUser);
             await swalSuccess('Brukeren ble slettet');
-            router.replace('/admin/users');
           } catch (error) {
             swalError('Brukeren ble ikke slettet', error as Error, 5000, true);
           }
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
-          StyledSwal.fire({
-            title: 'Angret',
-            text: 'Brukeren ble ikke slettet',
-          });
-        }
-      });
+        },
+        'Slett bruker',
+        'Avbryt'
+      );
     },
     [params.userid]
   );

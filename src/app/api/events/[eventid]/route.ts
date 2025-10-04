@@ -1,8 +1,15 @@
 import prisma from 'prisma/index';
 import { getErrorMessage, getMembershipYear } from '@/lib/utils';
-import { RegisteredUserType } from '@/types/types';
+import { EventType, RegisteredUserType } from '@/types/types';
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
+import { Event } from '@prisma/client';
+
+const POST = async () => {
+  return NextResponse.json('Method Not Allowed', {
+    status: 405,
+  });
+};
 
 const GET = async (
   req: NextRequest,
@@ -95,10 +102,35 @@ const GET = async (
   }
 };
 
-const POST = async () => {
-  return NextResponse.json('Method Not Allowed', {
-    status: 405,
-  });
+const PUT = async (
+  req: NextRequest,
+  { params }: { params: { eventid: number } }
+) => {
+  const eventid = params.eventid;
+  const token = await getToken({ req });
+  const isAdmin = token?.role === 'ADMIN';
+
+  if (!isAdmin) {
+    return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
+  }
+
+  try {
+    const body: Event = await req.json();
+    console.log(body);
+
+    const updatedEvent = await prisma.event.update({
+      where: { id: Number(eventid) },
+      data: body,
+    });
+    console.log(`[api] /api/events/${eventid} [PUT] Updated event`);
+    return NextResponse.json({ event: updatedEvent }, { status: 200 });
+  } catch (error) {
+    console.error(`[api] /api/events/${eventid} [PUT]`, getErrorMessage(error));
+    return NextResponse.json(
+      { message: getErrorMessage(error) },
+      { status: 500 }
+    );
+  }
 };
 
-export { GET, POST };
+export { GET, POST, PUT };

@@ -89,16 +89,6 @@ const PUT = async (
 };
 
 const POST = async (req: NextRequest) => {
-  const token = await getToken({ req });
-
-  if (!token)
-    return NextResponse.json(
-      {
-        message: 'Unauthorized',
-      },
-      { status: 401 }
-    );
-
   return NextResponse.json('Method Not Allowed', {
     status: 405,
   });
