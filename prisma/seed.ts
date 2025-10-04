@@ -89,12 +89,14 @@ async function main() {
   const open: EventType = 'OPEN';
   const member: EventType = 'MEMBERSHIP';
 
-  (await prisma.event.findMany()).forEach(async (e) => {
+  const events = await prisma.event.findMany();
+  for (const e of events) {
     await prisma.event.delete({ where: { id: e.id } });
-  });
+  }
+
+  await prisma.$executeRaw`ALTER SEQUENCE "Event_id_seq" RESTART WITH 1;`;
 
   const dummy: any = {
-    id: 2,
     title: 'Julekos222 med VSAiT! DUMMY',
     description:
       '<p>Nå nærmer vinteren seg og vi gjør oss klare til JULEKOS med VSAiT!😍Det vil være masse BANGING pizza, varm drikke, juleworkshop, klementiner, pepperkaker og god julemusikk!🥳 Dersom du har vært snill i år så det være at vi får besøk av julenissen🙈! Det blir super lavterskel, mye smil og latter, og vi håper så mange som mulig vil komme! Kom med cozy wozy klær, og det er også mulig å spille brettspill, strikking, lekser og mingle med andre senere utover kvelden <3 🌈</p>',
@@ -116,7 +118,6 @@ async function main() {
 
   await prisma.event.create({
     data: {
-      id: 1,
       title: 'Julekos med VSAiT!',
       description:
         '<p>Nå nærmer vinteren seg og vi gjør oss klare til JULEKOS med VSAiT!😍Det vil være masse BANGING pizza, varm drikke, juleworkshop, klementiner, pepperkaker og god julemusikk!🥳 Dersom du har vært snill i år så det være at vi får besøk av julenissen🙈! Det blir super lavterskel, mye smil og latter, og vi håper så mange som mulig vil komme! Kom med cozy wozy klær, og det er også mulig å spille brettspill, strikking, lekser og mingle med andre senere utover kvelden <3 🌈</p>',
@@ -138,7 +139,6 @@ async function main() {
   });
   await prisma.event.create({
     data: {
-      id: 2,
       title: 'Julekos222 med VSAiT!',
       description:
         '<p>Nå nærmer vinteren seg og vi gjør oss klare til JULEKOS med VSAiT!😍Det vil være masse BANGING pizza, varm drikke, juleworkshop, klementiner, pepperkaker og god julemusikk!🥳 Dersom du har vært snill i år så det være at vi får besøk av julenissen🙈! Det blir super lavterskel, mye smil og latter, og vi håper så mange som mulig vil komme! Kom med cozy wozy klær, og det er også mulig å spille brettspill, strikking, lekser og mingle med andre senere utover kvelden <3 🌈</p>',
@@ -160,7 +160,7 @@ async function main() {
   });
   for (let i = 3; i < 12; i++) {
     await prisma.event.create({
-      data: { ...dummy, id: i, title: 'dummy' + i },
+      data: { ...dummy, title: 'dummy' + i },
     });
   }
 }
