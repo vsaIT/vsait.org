@@ -27,6 +27,9 @@ const GET = async (
       }),
       ['password']
     );
+    if (!user) {
+      return NextResponse.json({ message: 'User not found' }, { status: 404 });
+    }
     return NextResponse.json(user, { status: 200 });
   } catch (error) {
     console.error(`[api] /api/user`, getErrorMessage(error));
