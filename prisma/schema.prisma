@@ -76,9 +76,9 @@ model Event {
   endTime              DateTime
   registrationDeadline DateTime
   cancellationDeadline DateTime
-  location             String?
-  eventType            EventType?      @default(MEMBERSHIP)
-  maxRegistrations     Int?
+  location             String          @db.VarChar(100)
+  eventType            EventType       @default(MEMBERSHIP)
+  maxRegistrations     Int             @default(0)
   isDraft              Boolean         @default(false)
   isCancelled          Boolean         @default(false)
   registrationList     Registrations[]
