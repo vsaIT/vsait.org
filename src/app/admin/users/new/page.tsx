@@ -44,7 +44,7 @@ export default function NewUserPage(): JSX.Element {
         reset();
         router.replace(`${response.id}`);
       } catch (error) {
-        swalError('Kunne ikke opprette bruker', error as Error, 5000, true);
+        swalError('Kunne ikke opprette bruker', error as Error);
       }
     },
     [reset]

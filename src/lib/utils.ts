@@ -43,16 +43,12 @@ export async function putFetcher<T>(url: string, data: unknown): Promise<T> {
   return json;
 }
 
-export async function deleteFetcher(
-  url: string,
-  data: unknown
-): Promise<ApiResponseType> {
+export async function deleteFetcher(url: string): Promise<ApiResponseType> {
   const response = await fetch(url, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(data),
   });
   const json: ApiResponseType = await response.json();
   if (!response.ok) {

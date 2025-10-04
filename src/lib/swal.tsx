@@ -16,14 +16,12 @@ export async function swalSuccess(
 export async function swalError(
   msg: string,
   error: Error,
-  timer = 2000,
-  showConfirmButton = false
+  showConfirmButton = true
 ) {
   return StyledSwal.fire({
     icon: 'error',
     title: msg,
     text: error.message,
-    timer,
     showConfirmButton,
   });
 }

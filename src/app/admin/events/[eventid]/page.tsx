@@ -1,24 +1,30 @@
 'use client';
-import { useEvent } from '@/lib/hooks/useEvent';
+import { FormImageInput, FormInput, SelectField } from '@/components/Form';
 import { Button } from '@/components/Input';
-import { FormInput, FormImageInput, SelectField } from '@/components/Form';
+import { useEvent } from '@/lib/hooks/useEvent';
 import ImagePreview from '../../../../components/ImagePreview';
 //import { TextEditor } from '@/components/Input';
-import { useCallback, useState } from 'react';
-import { putFetcher } from '@/lib/utils';
-import { swalSuccess, swalError, swalLoading } from '@/lib/swal';
 import FormErrorBox from '@/components/Form/FormErrorBox';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import SlideCheckbox from '@/components/Input/SlideCheckbox';
 import LoadingIndicator from '@/components/LoadingIndicator';
-import { useForm } from 'react-hook-form';
+import {
+  swalAreYouSure,
+  swalError,
+  swalLoading,
+  swalSuccess,
+} from '@/lib/swal';
+import {
+  deleteFetcher,
+  isoToOsloTimestring,
+  osloTimeStringToUtcIso,
+  putFetcher,
+} from '@/lib/utils';
 import { EventType } from '@/types';
 import { EventType as EventTypeOptions } from '@prisma/client';
-import { isoToOsloTimestring, osloTimeStringToUtcIso } from '@/lib/utils';
-import SlideCheckbox from '@/components/Input/SlideCheckbox';
-import StyledSwal from '@/components/StyledSwal';
-import Swal from 'sweetalert2';
-import { set } from 'lodash';
+import { useCallback, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 type AdminEventsProps = {
   params: {
@@ -47,7 +53,6 @@ function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
     register,
     handleSubmit,
     setValue,
-    watch,
     formState: { errors },
   } = useForm<EventType>({ defaultValues: data?.event });
 
@@ -142,17 +147,28 @@ function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
           await putFetcher(`/api/events/${eventid}`, event);
           await swalSuccess('Arrangementet ble oppdatert!');
         } catch (error) {
-          swalError(
-            'Kunne ikke oppdatere arrangementet',
-            error as Error,
-            5000,
-            true
-          );
+          swalError('Kunne ikke oppdatere arrangementet', error as Error);
         }
       });
     },
     [timeDataInputs, setValue, eventid]
   );
+
+  const deleteEvent = useCallback(() => {
+    swalAreYouSure(
+      'Er du sikker på at du vil slette dette arrangementet?',
+      async () => {
+        try {
+          await deleteFetcher(`/api/events/${eventid}`);
+          await swalSuccess('Arrangementet ble slettet');
+        } catch (error) {
+          swalError('Arrangementet ble ikke slettet', error as Error);
+        }
+      },
+      'Slett arrangement',
+      'Avbryt'
+    );
+  }, [eventid]);
 
   if (isLoading) {
     return <LoadingIndicator />;
@@ -300,6 +316,7 @@ function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
                 type='button'
                 text='Slett arrangement'
                 className='px-6 py-3'
+                onClick={deleteEvent}
               />
             </div>
           </div>

@@ -122,7 +122,6 @@ const PUT = async (
       where: { id: Number(eventid) },
       data: body,
     });
-    console.log(`[api] /api/events/${eventid} [PUT] Updated event`);
     return NextResponse.json({ event: updatedEvent }, { status: 200 });
   } catch (error) {
     console.error(`[api] /api/events/${eventid} [PUT]`, getErrorMessage(error));
@@ -133,4 +132,29 @@ const PUT = async (
   }
 };
 
-export { GET, POST, PUT };
+const DELETE = async (
+  req: NextRequest,
+  { params }: { params: { eventid: number } }
+) => {
+  const eventid = params.eventid;
+  const token = await getToken({ req });
+  const isAdmin = token?.role === 'ADMIN';
+  if (!isAdmin) {
+    return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
+  }
+  try {
+    await prisma.event.delete({ where: { id: Number(eventid) } });
+    return NextResponse.json({ message: 'Event deleted' }, { status: 200 });
+  } catch (error) {
+    console.error(
+      `[api] /api/events/${eventid} [DELETE]`,
+      getErrorMessage(error)
+    );
+    return NextResponse.json(
+      { message: getErrorMessage(error) },
+      { status: 500 }
+    );
+  }
+};
+
+export { GET, POST, PUT, DELETE };

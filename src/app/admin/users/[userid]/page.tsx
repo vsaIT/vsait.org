@@ -66,7 +66,7 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
           await swalSuccess('Passordet ble oppdatert');
           reset();
         } catch (error) {
-          swalError('Passordet ble ikke oppdatert', error as Error, 5000, true);
+          swalError('Passordet ble ikke oppdatert', error as Error);
         }
       });
     },
@@ -85,32 +85,28 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
           setEditUser(response);
           await swalSuccess('Brukeren ble oppdatert');
         } catch (error) {
-          swalError('Brukeren ble ikke oppdatert', error as Error, 5000, true);
+          swalError('Brukeren ble ikke oppdatert', error as Error);
         }
       });
     },
     [params.userid]
   );
 
-  const deleteUser = useCallback(
-    (delUser: UserType | undefined) => {
-      swalAreYouSure(
-        'Er du sikker på at du vil slette denne brukeren?',
-        async () => {
-          try {
-            if (!delUser) throw new Error('No user data');
-            await deleteFetcher(`/api/user/${params.userid}`, delUser);
-            await swalSuccess('Brukeren ble slettet');
-          } catch (error) {
-            swalError('Brukeren ble ikke slettet', error as Error, 5000, true);
-          }
-        },
-        'Slett bruker',
-        'Avbryt'
-      );
-    },
-    [params.userid]
-  );
+  const deleteUser = useCallback(() => {
+    swalAreYouSure(
+      'Er du sikker på at du vil slette denne brukeren?',
+      async () => {
+        try {
+          await deleteFetcher(`/api/user/${params.userid}`);
+          await swalSuccess('Brukeren ble slettet');
+        } catch (error) {
+          swalError('Brukeren ble ikke slettet', error as Error);
+        }
+      },
+      'Slett bruker',
+      'Avbryt'
+    );
+  }, [params.userid]);
 
   useEffect(() => {
     if (!isLoading) {
@@ -330,7 +326,7 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
                 form='user-form'
                 text='Slett bruker'
                 className='bg-light'
-                onClick={() => deleteUser(editUser)}
+                onClick={deleteUser}
               />
             </div>
           </div>

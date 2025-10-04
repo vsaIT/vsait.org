@@ -66,12 +66,7 @@ function Checkin({ params }: { params: { eventid: string } }): JSX.Element {
             console.log('Success:', data);
             await swalSuccess('Vi har registrert ditt oppmøte!');
           } catch (error) {
-            swalError(
-              'Registrering av oppmøte mislykket',
-              error as Error,
-              5000,
-              false
-            );
+            swalError('Registrering av oppmøte mislykket', error as Error);
           } finally {
             setRegistrationEnabled(true);
           }
