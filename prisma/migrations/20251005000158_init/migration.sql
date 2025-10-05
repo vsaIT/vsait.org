@@ -1,14 +1,11 @@
--- CreateSchema
-CREATE SCHEMA IF NOT EXISTS "public";
+-- CreateEnum
+CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN');
 
 -- CreateEnum
-CREATE TYPE "public"."Role" AS ENUM ('USER', 'ADMIN');
-
--- CreateEnum
-CREATE TYPE "public"."EventType" AS ENUM ('OPEN', 'MEMBERSHIP');
+CREATE TYPE "EventType" AS ENUM ('OPEN', 'MEMBERSHIP');
 
 -- CreateTable
-CREATE TABLE "public"."Account" (
+CREATE TABLE "Account" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -31,7 +28,7 @@ CREATE TABLE "public"."Account" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."Session" (
+CREATE TABLE "Session" (
     "id" TEXT NOT NULL,
     "sessionToken" TEXT NOT NULL,
     "expires" TIMESTAMP(3) NOT NULL,
@@ -41,7 +38,7 @@ CREATE TABLE "public"."Session" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."User" (
+CREATE TABLE "User" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -51,8 +48,8 @@ CREATE TABLE "public"."User" (
     "password" TEXT NOT NULL,
     "emailVerified" BOOLEAN NOT NULL DEFAULT false,
     "foodNeeds" TEXT NOT NULL DEFAULT '',
-    "student" TEXT,
-    "role" "public"."Role" NOT NULL DEFAULT 'USER',
+    "student" TEXT DEFAULT 'Non-student',
+    "role" "Role" NOT NULL DEFAULT 'USER',
     "pendingMembership" BOOLEAN NOT NULL DEFAULT false,
     "someConsent" TIMESTAMP(3),
     "profileIconSeed" TEXT NOT NULL,
@@ -63,7 +60,7 @@ CREATE TABLE "public"."User" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."Event" (
+CREATE TABLE "Event" (
     "id" SERIAL NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -74,9 +71,9 @@ CREATE TABLE "public"."Event" (
     "endTime" TIMESTAMP(3) NOT NULL,
     "registrationDeadline" TIMESTAMP(3) NOT NULL,
     "cancellationDeadline" TIMESTAMP(3) NOT NULL,
-    "location" TEXT,
-    "eventType" "public"."EventType" DEFAULT 'MEMBERSHIP',
-    "maxRegistrations" INTEGER,
+    "location" VARCHAR(100) NOT NULL,
+    "eventType" "EventType" NOT NULL DEFAULT 'MEMBERSHIP',
+    "maxRegistrations" INTEGER NOT NULL DEFAULT 0,
     "isDraft" BOOLEAN NOT NULL DEFAULT false,
     "isCancelled" BOOLEAN NOT NULL DEFAULT false,
 
@@ -84,7 +81,7 @@ CREATE TABLE "public"."Event" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."Registrations" (
+CREATE TABLE "Registrations" (
     "userId" TEXT NOT NULL,
     "eventId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -93,7 +90,7 @@ CREATE TABLE "public"."Registrations" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."Waiting" (
+CREATE TABLE "Waiting" (
     "userId" TEXT NOT NULL,
     "eventId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -102,7 +99,7 @@ CREATE TABLE "public"."Waiting" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."Attendances" (
+CREATE TABLE "Attendances" (
     "userId" TEXT NOT NULL,
     "eventId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -111,21 +108,21 @@ CREATE TABLE "public"."Attendances" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."Membership" (
+CREATE TABLE "Membership" (
     "year" INTEGER NOT NULL,
 
     CONSTRAINT "Membership_pkey" PRIMARY KEY ("year")
 );
 
 -- CreateTable
-CREATE TABLE "public"."VerificationToken" (
+CREATE TABLE "VerificationToken" (
     "identifier" TEXT NOT NULL,
     "token" TEXT NOT NULL,
     "expires" TIMESTAMP(3) NOT NULL
 );
 
 -- CreateTable
-CREATE TABLE "public"."_MembershipToUser" (
+CREATE TABLE "_MembershipToUser" (
     "A" INTEGER NOT NULL,
     "B" TEXT NOT NULL,
 
@@ -133,26 +130,25 @@ CREATE TABLE "public"."_MembershipToUser" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Account_userId_key" ON "public"."Account"("userId");
+CREATE UNIQUE INDEX "Account_userId_key" ON "Account"("userId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Account_provider_providerAccountId_key" ON "public"."Account"("provider", "providerAccountId");
+CREATE UNIQUE INDEX "Account_provider_providerAccountId_key" ON "Account"("provider", "providerAccountId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Session_sessionToken_key" ON "public"."Session"("sessionToken");
+CREATE UNIQUE INDEX "Session_sessionToken_key" ON "Session"("sessionToken");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Session_userId_key" ON "public"."Session"("userId");
+CREATE UNIQUE INDEX "Session_userId_key" ON "Session"("userId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_email_key" ON "public"."User"("email");
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "VerificationToken_token_key" ON "public"."VerificationToken"("token");
+CREATE UNIQUE INDEX "VerificationToken_token_key" ON "VerificationToken"("token");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "VerificationToken_identifier_token_key" ON "public"."VerificationToken"("identifier", "token");
+CREATE UNIQUE INDEX "VerificationToken_identifier_token_key" ON "VerificationToken"("identifier", "token");
 
 -- CreateIndex
-CREATE INDEX "_MembershipToUser_B_index" ON "public"."_MembershipToUser"("B");
-
+CREATE INDEX "_MembershipToUser_B_index" ON "_MembershipToUser"("B");
