@@ -1,5 +1,5 @@
 import { Membership } from '@prisma/client';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Accordion } from './Accordion';
 
 type Item = {

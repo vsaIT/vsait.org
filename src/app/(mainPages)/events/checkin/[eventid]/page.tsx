@@ -20,7 +20,7 @@ function Checkin({ params }: { params: { eventid: string } }): JSX.Element {
   const { eventid } = params;
   const [registrationEnabled, setRegistrationEnabled] = useState(true);
 
-  const { isSuccess, isLoading, error, data } = useQuery({
+  const { isLoading, error, data } = useQuery({
     queryKey: ['eventId', eventid],
     queryFn: () => fetch(`/api/checkin/${eventid}`).then((res) => res.json()),
     enabled: !!eventid,

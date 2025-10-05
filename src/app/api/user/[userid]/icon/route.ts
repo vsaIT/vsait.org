@@ -1,9 +1,8 @@
-import prisma from 'prisma/index';
 import { getErrorMessage } from '@/lib/utils';
+import prisma from 'prisma/index';
 
-import { NextRequest, NextResponse } from 'next/server';
-import { getToken } from 'next-auth/jwt';
 import { requireSelfOrAdmin } from '@/app/api/utils';
+import { NextRequest, NextResponse } from 'next/server';
 
 const POST = async (
   req: NextRequest,

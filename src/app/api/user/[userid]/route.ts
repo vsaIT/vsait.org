@@ -1,10 +1,9 @@
 import { exclude, getErrorMessage } from '@/lib/utils';
 import { UserType } from '@/types';
-import { getToken } from 'next-auth/jwt';
 import { NextRequest, NextResponse } from 'next/server';
 import prisma, { User } from 'prisma/index';
-import { updateUserMemberships } from './utils';
 import { requireAdmin, requireSelfOrAdmin } from '../../utils';
+import { updateUserMemberships } from './utils';
 
 const GET = async (
   req: NextRequest,
@@ -74,7 +73,7 @@ const PUT = async (
   }
 };
 
-const POST = async (req: NextRequest) => {
+const POST = async () => {
   return NextResponse.json('Method Not Allowed', {
     status: 405,
   });

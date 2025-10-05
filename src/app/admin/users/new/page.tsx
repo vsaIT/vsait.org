@@ -47,7 +47,7 @@ export default function NewUserPage(): JSX.Element {
         swalError('Kunne ikke opprette bruker', error as Error);
       }
     },
-    [reset]
+    [reset, router]
   );
 
   const avatar = createAvatar(bigSmile, {

@@ -1,20 +1,18 @@
 'use client';
 import { EventsDetailedSkeleton } from '@/components/Events';
-import AdminRegistrationsList from './(components)/AdminRegistrationsList';
-import InfoBox from './(components)/InfoBox';
 import { SmallHeader } from '@/components/Header';
 import { Button } from '@/components/Input';
-import LoadingIndicator from '@/components/LoadingIndicator';
 import StyledSwal from '@/components/StyledSwal';
 import { useEvent } from '@/lib/hooks/useEvent';
 import { getErrorMessage } from '@/lib/utils';
-import { ApiResponseType, EventType, RegisteredUserType } from '@/types';
-import { useQuery } from '@tanstack/react-query';
+import { ApiResponseType, RegisteredUserType } from '@/types';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, useState } from 'react';
 import Swal from 'sweetalert2';
+import AdminRegistrationsList from './(components)/AdminRegistrationsList';
+import InfoBox from './(components)/InfoBox';
 
 function Event({ params }: { params: { eventid: string } }): JSX.Element {
   const { status, data: session } = useSession({

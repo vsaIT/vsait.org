@@ -150,7 +150,7 @@ function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
         }
       });
     },
-    [timeDataInputs, setValue, eventid]
+    [timeDataInputs, eventid]
   );
 
   const deleteEvent = useCallback(() => {

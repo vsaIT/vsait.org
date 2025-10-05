@@ -4,7 +4,6 @@ import DropdownWithCheckboxes from '@/components/DropdownWithCheckboxes';
 import { FormInput, SelectField } from '@/components/Form';
 import { Button } from '@/components/Input';
 import SlideCheckbox from '@/components/Input/SlideCheckbox';
-import StyledSwal from '@/components/StyledSwal';
 import { studentOptions } from '@/lib/constants';
 import { useMemberships } from '@/lib/hooks/useMemberships';
 import { useUser } from '@/lib/hooks/useUser';
@@ -19,12 +18,10 @@ import { UserType } from '@/types';
 import { bigSmile } from '@dicebear/collection';
 import { createAvatar } from '@dicebear/core';
 import { Membership } from '@prisma/client';
-import { NavigateOptions } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import Swal from 'sweetalert2';
 
 type AdminUsersViewProps = {
   params: { userid: string };
@@ -99,6 +96,7 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
         try {
           await deleteFetcher(`/api/user/${params.userid}`);
           await swalSuccess('Brukeren ble slettet');
+          router.replace('/admin/users');
         } catch (error) {
           swalError('Brukeren ble ikke slettet', error as Error);
         }
