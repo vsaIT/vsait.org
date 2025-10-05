@@ -10,8 +10,7 @@ import { EventType as EventTypeOptions } from '@prisma/client';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import QuillNoSSR from '@/components/Input/QuillNoSSR';
 import ImagePreview from '@/components/ImagePreview';
 
 export default function AdminEventsNew() {
@@ -87,7 +86,7 @@ export default function AdminEventsNew() {
           const eventToSend = { ...event };
           timeDataInputs.forEach((input) => {
             const key = input.attr as keyof EventType;
-            (eventToSend as any)[key] = new Date(
+            (eventToSend[key] as Date) = new Date(
               osloTimeStringToUtcIso((event[key] as string)?.toString())
             );
           });
@@ -104,7 +103,7 @@ export default function AdminEventsNew() {
         }
       });
     },
-    [reset, router]
+    [reset, router, timeDataInputs]
   );
 
   return (
@@ -158,7 +157,7 @@ export default function AdminEventsNew() {
             <div>
               <h2>Beskrivelse:</h2>
               <div className='py-2'>
-                <ReactQuill
+                <QuillNoSSR
                   theme='snow'
                   onChange={(value) => setValue('description', value)}
                 />

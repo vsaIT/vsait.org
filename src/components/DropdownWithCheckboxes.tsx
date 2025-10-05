@@ -1,5 +1,5 @@
 import { Membership } from '@prisma/client';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Accordion } from './Accordion';
 
 type Item = {
@@ -24,11 +24,6 @@ const DropdownWithCheckboxes = ({
       ...item,
       id: index,
     }))
-  );
-
-  const filteredItems = useMemo(
-    () => items.filter((item) => item.checked),
-    [items]
   );
 
   const handleCheckboxChange = useCallback(
