@@ -124,9 +124,9 @@ async function main() {
       image: '/placeholder.png',
 
       startTime: new Date('11-02-2025 17:00'),
-    endTime: new Date('12-02-2025 17:00'),
-    registrationDeadline: new Date('10-02-2025 17:00'),
-    cancellationDeadline: new Date('9-02-2025 17:00'),
+      endTime: new Date('12-02-2025 17:00'),
+      registrationDeadline: new Date('10-02-2025 17:00'),
+      cancellationDeadline: new Date('9-02-2025 17:00'),
 
       location: 'KJL4, Gløshaugen',
       eventType: open,

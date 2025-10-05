@@ -104,7 +104,7 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
       'Slett bruker',
       'Avbryt'
     );
-  }, [params.userid]);
+  }, [params.userid, router]);
 
   useEffect(() => {
     if (!isLoading) {

@@ -20,6 +20,12 @@ import {
 } from '@/lib/utils';
 import { EventType } from '@/types';
 import { EventType as EventTypeOptions } from '@prisma/client';
+import {
+  sliderCheckboxes,
+  eventTypeOptions,
+  getTimeDataInputs,
+  TimeDataInput,
+} from '../schemaObjects';
 import { useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import ReactQuill from 'react-quill';
@@ -28,19 +34,6 @@ import 'react-quill/dist/quill.snow.css';
 type AdminEventsProps = {
   params: {
     eventid: string;
-  };
-};
-
-type TimeDataInput = {
-  name: string;
-  attr: keyof Pick<
-    EventType,
-    'startTime' | 'endTime' | 'registrationDeadline' | 'cancellationDeadline'
-  >;
-  date: {
-    label: string;
-    type: string;
-    defaultValue: string;
   };
 };
 
@@ -55,68 +48,21 @@ function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
     formState: { errors },
   } = useForm<EventType>({ defaultValues: data?.event });
 
-  const sliderCheckboxes = [
-    { id: 'isDraft', label: 'Kladd (ikke synlig for brukere)' },
-    { id: 'isCancelled', label: 'Avlyst' },
-  ];
-
-  const timeDataInputs: Array<TimeDataInput> = [
-    {
-      name: 'Starttid:',
-      attr: 'startTime',
-      date: {
-        label: 'Dato',
-        type: 'datetime-local',
-        defaultValue: data?.event.startTime
-          ? isoToOsloTimestring(new Date(data.event.startTime))
-          : '',
-      },
-    },
-    {
-      name: 'Sluttid:',
-      attr: 'endTime',
-      date: {
-        label: 'Dato',
-        type: 'datetime-local',
-        defaultValue: data?.event.endTime
-          ? isoToOsloTimestring(new Date(data.event.endTime))
-          : '',
-      },
-    },
-    {
-      name: 'Registreringsfrist:',
-      attr: 'registrationDeadline',
-      date: {
-        label: 'Dato',
-        type: 'datetime-local',
-        defaultValue: data?.event.registrationDeadline
-          ? isoToOsloTimestring(new Date(data.event.registrationDeadline))
-          : '',
-      },
-    },
-    {
-      name: 'Avmeldingsfrist:',
-      attr: 'cancellationDeadline',
-      date: {
-        label: 'Dato',
-        type: 'datetime-local',
-        defaultValue: data?.event.cancellationDeadline
-          ? isoToOsloTimestring(new Date(data.event.cancellationDeadline))
-          : '',
-      },
-    },
-  ];
-
-  const eventTypeOptions: { value: EventTypeOptions; label: string }[] = [
-    {
-      value: 'OPEN',
-      label: 'Åpent for alle',
-    },
-    {
-      value: 'MEMBERSHIP',
-      label: 'Medlemskap kreves',
-    },
-  ];
+  const timeDataInputs: Array<TimeDataInput> = getTimeDataInputs().map(
+    (input) => {
+      const eventTime = data?.event[input.attr as keyof EventType];
+      const value = eventTime
+        ? isoToOsloTimestring(new Date(eventTime as string))
+        : '';
+      return {
+        ...input,
+        date: {
+          ...input.date,
+          defaultValue: value,
+        },
+      };
+    }
+  );
 
   const onSubmit = useCallback(
     async (event: EventType) => {

@@ -7,6 +7,11 @@ import { swalError, swalLoading, swalSuccess } from '@/lib/swal';
 import { osloTimeStringToUtcIso, postFetcher } from '@/lib/utils';
 import { EventType } from '@/types';
 import { EventType as EventTypeOptions } from '@prisma/client';
+import {
+  sliderCheckboxes,
+  eventTypeOptions,
+  getTimeDataInputs,
+} from '../schemaObjects';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -25,59 +30,7 @@ export default function AdminEventsNew() {
   } = useForm<EventType>({ defaultValues: { description: '' } });
 
   const now = new Date().toISOString().slice(0, 16);
-  const sliderCheckboxes = [
-    { id: 'isDraft', label: 'Kladd (ikke synlig for brukere)' },
-    { id: 'isCancelled', label: 'Avlyst' },
-  ];
-  const timeDataInputs = [
-    {
-      name: 'Starttid:',
-      attr: 'startTime',
-      date: {
-        label: 'Dato',
-        type: 'datetime-local',
-        defaultValue: now,
-      },
-    },
-    {
-      name: 'Sluttid:',
-      attr: 'endTime',
-      date: {
-        label: 'Dato',
-        type: 'datetime-local',
-        defaultValue: now,
-      },
-    },
-    {
-      name: 'Registreringsfrist:',
-      attr: 'registrationDeadline',
-      date: {
-        label: 'Dato',
-        type: 'datetime-local',
-        defaultValue: now,
-      },
-    },
-    {
-      name: 'Avmeldingsfrist:',
-      attr: 'cancellationDeadline',
-      date: {
-        label: 'Dato',
-        type: 'datetime-local',
-        defaultValue: now,
-      },
-    },
-  ];
-
-  const eventTypeOptions: { value: EventTypeOptions; label: string }[] = [
-    {
-      value: 'OPEN',
-      label: 'Åpent for alle',
-    },
-    {
-      value: 'MEMBERSHIP',
-      label: 'Medlemskap kreves',
-    },
-  ];
+  const timeDataInputs = getTimeDataInputs(now);
 
   const onSubmit = useCallback(
     async (event: EventType) => {
@@ -105,7 +58,6 @@ export default function AdminEventsNew() {
     },
     [reset, router, timeDataInputs]
   );
-
   return (
     <div className='flex h-screen w-full flex-col gap-6 p-6'>
       <div className='flex w-full rounded-xl bg-white p-6'>
