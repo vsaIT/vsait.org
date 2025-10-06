@@ -108,7 +108,7 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
 
   useEffect(() => {
     if (!isLoading) {
-      setEditUser(user);
+      setEditUser(user!);
     }
   }, [isLoading, user]);
 

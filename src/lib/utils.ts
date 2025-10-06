@@ -2,6 +2,9 @@ import { ApiResponseType } from '@/types';
 
 export const fetcher = async (url: string) => {
   const response = await fetch(url);
+  if (response.status === 404) {
+    return null;
+  }
   if (!response.ok) {
     const message = `An error has occured: ${response.status}`;
     throw new Error(message);

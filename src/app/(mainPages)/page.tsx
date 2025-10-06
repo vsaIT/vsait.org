@@ -3,6 +3,7 @@ import { EventsQuickView } from '@/components/Events';
 import { LargeHeader } from '@/components/Header';
 import Button from '@/components/Input/Button';
 import Wave from '@/components/Wave';
+import { updateUserSession } from '@/lib/auth/session';
 import { useUser } from '@/lib/hooks/useUser';
 import { getMembershipYear } from '@/lib/utils';
 import { useSession } from 'next-auth/react';
@@ -23,14 +24,8 @@ export default function Home() {
   const membershipYear = getMembershipYear();
   const { user } = useUser(session?.user?.id as string);
 
-  async function updateSession() {
-    if (session && user) {
-      session.user.membership = user?.membership;
-    }
-  }
-
-  if (user) {
-    updateSession();
+  if (session && status === 'authenticated' && user) {
+    updateUserSession(session, user, ['membership']);
   }
 
   return (
