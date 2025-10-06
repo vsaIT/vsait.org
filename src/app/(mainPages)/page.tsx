@@ -22,7 +22,7 @@ export default function Home() {
 
   const loading = status === 'loading';
   const membershipYear = getMembershipYear();
-  const { user } = useUser(session?.user?.id as string);
+  const { user } = useUser(session?.user?.id ?? '');
 
   if (session && status === 'authenticated' && user) {
     updateUserSession(session, user, ['membership']);

@@ -65,8 +65,15 @@ const GET = async (req: NextRequest) => {
           registrationList: isAdmin,
           attendanceList: isAdmin,
           waitingList: isAdmin,
+          _count: {
+            select: {
+              registrationList: true,
+              waitingList: true,
+            },
+          },
         },
       });
+
       const pages = Math.ceil(events.length / take);
       const currentPage = Math.min(page || 1, pages);
 

@@ -65,7 +65,7 @@ function Events(): JSX.Element {
                         <div className='grid grid-cols-event gap-3'>
                           <Person className='justify-self-center' />
                           <p className='flex flex-col justify-center'>
-                            Antall påmeldte: {event.registrationList.length}/
+                            Antall påmeldte: {event._count?.registrationList}/
                             {event.maxRegistrations}
                           </p>
                         </div>

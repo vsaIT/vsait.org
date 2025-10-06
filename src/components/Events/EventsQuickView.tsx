@@ -58,7 +58,7 @@ const EventsDisplay = ({ className = '' }: ExtendedComponentProps) => {
                 </p>
                 <div className='w-full bg-light'>
                   <p className='m-1 box-border w-full text-white'>
-                    Antall påmeldte {event.registrationList.length}/
+                    Antall påmeldte {event._count?.registrationList}/
                     {event.maxRegistrations}
                   </p>
                 </div>

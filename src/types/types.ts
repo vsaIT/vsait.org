@@ -52,9 +52,13 @@ export type MultipleEventType = {
 };
 
 export type EventType = Event & {
-  registrationList: string[];
-  waitingList: string[];
-  attendanceList: string[];
+  registrationList?: string[];
+  waitingList?: string[];
+  attendanceList?: string[];
+  _count?: {
+    registrationList: number;
+    waitingList: number;
+  };
 };
 
 export type SelectProps<T extends FieldValues> = {

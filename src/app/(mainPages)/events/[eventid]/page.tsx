@@ -185,11 +185,12 @@ function Event({ params }: { params: { eventid: string } }): JSX.Element {
                 <h2 className='mb-4 text-2xl font-bold'>Påmelding</h2>
                 <div className='flex flex-col gap-2'>
                   <p>
-                    <b>Antall påmeldte:</b> {data.event.registrationList.length}{' '}
-                    / {data.event.maxRegistrations}
+                    <b>Antall påmeldte:</b>{' '}
+                    {data.event._count?.registrationList} /{' '}
+                    {data.event.maxRegistrations}
                   </p>
                   <p>
-                    <b>Venteliste:</b> {data.event.waitingList.length}
+                    <b>Venteliste:</b> {data.event._count?.waitingList}
                   </p>
                   <div className='mt-2 flex flex-col gap-3'>
                     {session?.user ? (
