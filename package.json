@@ -13,6 +13,7 @@
     "db:migrate-dev": "prisma migrate dev",
     "db:migrate-deploy": "prisma migrate deploy",
     "db:generate": "prisma generate",
+    "db:postinstall": "prisma generate",
     "db:seed": "npx prisma db seed",
     "db:studio": "prisma studio"
   },
