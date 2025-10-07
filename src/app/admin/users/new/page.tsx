@@ -1,6 +1,7 @@
 'use client';
 import DropdownWithCheckboxes from '@/components/DropdownWithCheckboxes';
 import { FormInput, SelectField } from '@/components/Form';
+import FormErrorBox from '@/components/Form/FormErrorBox';
 import { Button } from '@/components/Input';
 import SlideCheckbox from '@/components/Input/SlideCheckbox';
 import LoadingIndicator from '@/components/LoadingIndicator';
@@ -12,38 +13,41 @@ import { postFetcher } from '@/lib/utils';
 import { UserType } from '@/types';
 import { bigSmile } from '@dicebear/collection';
 import { createAvatar } from '@dicebear/core';
-import { User } from '@prisma/client';
-import { lastIndexOf } from 'lodash';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { FormEvent, useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 export default function NewUserPage(): JSX.Element {
   const { memberships, isLoading: mLoading } = useMemberships();
-  const { register, reset, watch, setValue } = useForm<UserType>();
+  const {
+    register,
+    reset,
+    watch,
+    setValue,
+    formState: { errors },
+    handleSubmit,
+  } = useForm<UserType>();
   const [isAvatarHover, setAvatarHover] = useState(false);
   const router = useRouter();
 
-  const user = watch();
   const watchIsAdmin = watch('role', 'USER');
   const watchPendingMembership = watch('pendingMembership', false);
   const watchEmailVerified = watch('emailVerified', false);
   const watchProfileIconSeed = watch('profileIconSeed', '');
 
   const onSubmit = useCallback(
-    async (event: FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
+    async (user: UserType) => {
       try {
         const response = await postFetcher<UserType>('/api/user', user);
         await swalSuccess('Bruker opprettet!');
         reset();
         router.replace(`${response.id}`);
       } catch (error) {
-        swalError('Kunne ikke opprette bruker', error as Error, 5000, true);
+        swalError('Kunne ikke opprette bruker', error as Error);
       }
     },
-    [reset, user]
+    [reset, router]
   );
 
   const avatar = createAvatar(bigSmile, {
@@ -114,7 +118,13 @@ export default function NewUserPage(): JSX.Element {
           </div>
         </div>
       </div>
-      <form className='w-full rounded-xl bg-white p-6' onSubmit={onSubmit}>
+      <div className='flex w-full flex-col gap-6'>
+        <FormErrorBox errors={errors} />
+      </div>
+      <form
+        className='w-full rounded-xl bg-white p-6'
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <div className='flex w-full flex-col gap-3 sm:flex-row'>
           <div className='rounded-xl border border-stone-300 sm:w-1/2'>
             <div className='flex flex-col gap-5 p-6'>

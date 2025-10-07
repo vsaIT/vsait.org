@@ -35,6 +35,18 @@ npx prisma migrate dev --name <migration_name>
 npx prisma migrate dev --name add-bio-to-user-model
 ```
 
+**If you want to customize the migration SQL** before applying it, you can use the `--create-only` flag. This will generate the migration file without applying it to the database, allowing you to make manual adjustments.
+
+```bash
+npx prisma migrate dev --name <migration_name> --create-only
+```
+
+After customizing the migration, you can apply it by running:
+
+```bash
+npx prisma migrate dev
+```
+
 ### What this command does:
 
 - **Compares Schemas:** It compares your updated `schema.prisma` file with the current state of your development database.

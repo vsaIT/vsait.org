@@ -1,15 +1,28 @@
+import { MultipleEventType, SingleEventType } from '@/types';
 import useSWR from 'swr';
 import { fetcher } from '../utils';
-import { EventType } from '@/types';
 
 export function useEvent(id: string) {
-  const { data, error, isLoading } = useSWR<EventType>(
+  const { data, error, isLoading } = useSWR<SingleEventType>(
     `/api/events/${id}`,
     fetcher
   );
 
   return {
-    event: data,
+    data,
+    isLoading,
+    isError: error,
+  };
+}
+
+export function useEvents(query: string = '') {
+  const { data, error, isLoading } = useSWR<MultipleEventType>(
+    `/api/events?${query}`,
+    fetcher
+  );
+
+  return {
+    data,
     isLoading,
     isError: error,
   };

@@ -88,17 +88,24 @@ async function main() {
 
   const open: EventType = 'OPEN';
   const member: EventType = 'MEMBERSHIP';
+
+  const events = await prisma.event.findMany();
+  for (const e of events) {
+    await prisma.event.delete({ where: { id: e.id } });
+  }
+
+  await prisma.$executeRaw`ALTER SEQUENCE "Event_id_seq" RESTART WITH 1;`;
+
   const dummy: any = {
-    id: 2,
     title: 'Julekos222 med VSAiT! DUMMY',
     description:
-      'Nå nærmer vinteren seg og vi gjør oss klare til JULEKOS med VSAiT!😍Det vil være masse BANGING pizza, varm drikke, juleworkshop, klementiner, pepperkaker og god julemusikk!🥳 Dersom du har vært snill i år så det være at vi får besøk av julenissen🙈! Det blir super lavterskel, mye smil og latter, og vi håper så mange som mulig vil komme! Kom med cozy wozy klær, og det er også mulig å spille brettspill, strikking, lekser og mingle med andre senere utover kvelden <3 🌈',
+      '<p>Nå nærmer vinteren seg og vi gjør oss klare til JULEKOS med VSAiT!😍Det vil være masse BANGING pizza, varm drikke, juleworkshop, klementiner, pepperkaker og god julemusikk!🥳 Dersom du har vært snill i år så det være at vi får besøk av julenissen🙈! Det blir super lavterskel, mye smil og latter, og vi håper så mange som mulig vil komme! Kom med cozy wozy klær, og det er også mulig å spille brettspill, strikking, lekser og mingle med andre senere utover kvelden <3 🌈</p>',
     image: '/placeholder.png',
 
     startTime: new Date('11-02-2025 17:00'),
-    endTime: new Date('11-02-2025 17:00'),
-    registrationDeadline: new Date('11-02-2025 17:00'),
-    cancellationDeadline: new Date('11-02-2025 17:00'),
+    endTime: new Date('12-02-2025 17:00'),
+    registrationDeadline: new Date('10-02-2025 17:00'),
+    cancellationDeadline: new Date('9-02-2025 17:00'),
 
     location: 'KJL4, Gløshaugen',
     eventType: member,
@@ -109,20 +116,17 @@ async function main() {
     isCancelled: false,
   };
 
-  await prisma.event.upsert({
-    where: { id: 1 },
-    update: {},
-    create: {
-      id: 1,
+  await prisma.event.create({
+    data: {
       title: 'Julekos med VSAiT!',
       description:
-        'Nå nærmer vinteren seg og vi gjør oss klare til JULEKOS med VSAiT!😍Det vil være masse BANGING pizza, varm drikke, juleworkshop, klementiner, pepperkaker og god julemusikk!🥳 Dersom du har vært snill i år så det være at vi får besøk av julenissen🙈! Det blir super lavterskel, mye smil og latter, og vi håper så mange som mulig vil komme! Kom med cozy wozy klær, og det er også mulig å spille brettspill, strikking, lekser og mingle med andre senere utover kvelden <3 🌈',
+        '<p>Nå nærmer vinteren seg og vi gjør oss klare til JULEKOS med VSAiT!😍Det vil være masse BANGING pizza, varm drikke, juleworkshop, klementiner, pepperkaker og god julemusikk!🥳 Dersom du har vært snill i år så det være at vi får besøk av julenissen🙈! Det blir super lavterskel, mye smil og latter, og vi håper så mange som mulig vil komme! Kom med cozy wozy klær, og det er også mulig å spille brettspill, strikking, lekser og mingle med andre senere utover kvelden <3 🌈</p>',
       image: '/placeholder.png',
 
-      startTime: new Date('11-11-2022 17:00'),
-      endTime: new Date('11-11-2022 17:00'),
-      registrationDeadline: new Date('11-11-2022 17:00'),
-      cancellationDeadline: new Date('11-11-2022 17:00'),
+      startTime: new Date('11-02-2025 17:00'),
+      endTime: new Date('12-02-2025 17:00'),
+      registrationDeadline: new Date('10-02-2025 17:00'),
+      cancellationDeadline: new Date('9-02-2025 17:00'),
 
       location: 'KJL4, Gløshaugen',
       eventType: open,
@@ -133,19 +137,16 @@ async function main() {
       isCancelled: false,
     },
   });
-  await prisma.event.upsert({
-    where: { id: 2 },
-    update: {},
-    create: {
-      id: 2,
+  await prisma.event.create({
+    data: {
       title: 'Julekos222 med VSAiT!',
       description:
-        'Nå nærmer vinteren seg og vi gjør oss klare til JULEKOS med VSAiT!😍Det vil være masse BANGING pizza, varm drikke, juleworkshop, klementiner, pepperkaker og god julemusikk!🥳 Dersom du har vært snill i år så det være at vi får besøk av julenissen🙈! Det blir super lavterskel, mye smil og latter, og vi håper så mange som mulig vil komme! Kom med cozy wozy klær, og det er også mulig å spille brettspill, strikking, lekser og mingle med andre senere utover kvelden <3 🌈',
+        '<p>Nå nærmer vinteren seg og vi gjør oss klare til JULEKOS med VSAiT!😍Det vil være masse BANGING pizza, varm drikke, juleworkshop, klementiner, pepperkaker og god julemusikk!🥳 Dersom du har vært snill i år så det være at vi får besøk av julenissen🙈! Det blir super lavterskel, mye smil og latter, og vi håper så mange som mulig vil komme! Kom med cozy wozy klær, og det er også mulig å spille brettspill, strikking, lekser og mingle med andre senere utover kvelden <3 🌈</p>',
       image: '/placeholder.png',
 
-      startTime: new Date('07-01-2023 17:00'),
-      endTime: new Date('07-01-2023 17:00'),
-      registrationDeadline: new Date('07-01-2023 17:00'),
+      startTime: new Date('09-01-2023 17:00'),
+      endTime: new Date('10-01-2023 17:00'),
+      registrationDeadline: new Date('08-01-2023 17:00'),
       cancellationDeadline: new Date('07-01-2023 17:00'),
 
       location: 'KJL4, Gløshaugen',
@@ -158,10 +159,8 @@ async function main() {
     },
   });
   for (let i = 3; i < 12; i++) {
-    await prisma.event.upsert({
-      where: { id: i },
-      update: {},
-      create: { ...dummy, id: i, title: 'dummy' + i },
+    await prisma.event.create({
+      data: { ...dummy, title: 'dummy' + i },
     });
   }
 }

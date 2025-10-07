@@ -4,22 +4,24 @@ import DropdownWithCheckboxes from '@/components/DropdownWithCheckboxes';
 import { FormInput, SelectField } from '@/components/Form';
 import { Button } from '@/components/Input';
 import SlideCheckbox from '@/components/Input/SlideCheckbox';
-import StyledSwal from '@/components/StyledSwal';
 import { studentOptions } from '@/lib/constants';
 import { useMemberships } from '@/lib/hooks/useMemberships';
 import { useUser } from '@/lib/hooks/useUser';
-import { swalError, swalSuccess } from '@/lib/swal';
+import {
+  swalAreYouSure,
+  swalError,
+  swalLoading,
+  swalSuccess,
+} from '@/lib/swal';
 import { deleteFetcher, postFetcher, putFetcher } from '@/lib/utils';
 import { UserType } from '@/types';
 import { bigSmile } from '@dicebear/collection';
 import { createAvatar } from '@dicebear/core';
 import { Membership } from '@prisma/client';
-import { NavigateOptions } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import Swal from 'sweetalert2';
 
 type AdminUsersViewProps = {
   params: { userid: string };
@@ -50,32 +52,18 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
 
   const updateUserPassword = useCallback(
     (data: PasswordFormValues) => {
-      StyledSwal.fire({
-        text: '',
-        showConfirmButton: true,
-        showCancelButton: true,
-        showLoaderOnConfirm: true,
-        confirmButtonText: 'Lagre',
-        cancelButtonText: 'Avbryt',
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          try {
-            if (data.newPassword !== data.confirmPassword)
-              throw new Error('Passordene er ikke like');
-            await postFetcher(`/api/user/${params.userid}/password`, {
-              newPassword: data.newPassword,
-              confirmPassword: data.confirmPassword,
-            });
-            await swalSuccess('Passordet ble oppdatert');
-            reset();
-          } catch (error) {
-            swalError(
-              'Passordet ble ikke oppdatert',
-              error as Error,
-              5000,
-              true
-            );
-          }
+      swalAreYouSure('Oppdatere passordet?', async () => {
+        try {
+          if (data.newPassword !== data.confirmPassword)
+            throw new Error('Passordene er ikke like');
+          await postFetcher(`/api/user/${params.userid}/password`, {
+            newPassword: data.newPassword,
+            confirmPassword: data.confirmPassword,
+          });
+          await swalSuccess('Passordet ble oppdatert');
+          reset();
+        } catch (error) {
+          swalError('Passordet ble ikke oppdatert', error as Error);
         }
       });
     },
@@ -83,73 +71,44 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
   );
 
   const updateUser = useCallback(
-    (putUser: UserType | undefined) => {
-      StyledSwal.fire({
-        text: '',
-        showConfirmButton: false,
-        showLoaderOnConfirm: true,
-        didOpen: () => {
-          StyledSwal.getConfirmButton()?.click();
-        },
-        preConfirm: async () => {
-          try {
-            if (!putUser) throw new Error('No user data');
-            const response = await putFetcher<UserType>(
-              `/api/user/${params.userid}`,
-              putUser
-            );
-            setEditUser(response);
-            await swalSuccess('Brukeren ble oppdatert');
-          } catch (error) {
-            swalError(
-              'Brukeren ble ikke oppdatert',
-              error as Error,
-              5000,
-              true
-            );
-          }
-        },
-        allowOutsideClick: () => !Swal.isLoading(),
-      });
-    },
-    [params.userid]
-  );
-
-  const deleteUser = useCallback(
-    (delUser: UserType | undefined) => {
-      StyledSwal.fire({
-        title: 'Er du sikker?',
-        text: 'Denne brukeren vil bli permanent slettet',
-        icon: 'warning',
-        showConfirmButton: true,
-        confirmButtonText: 'Slett bruker',
-        showCancelButton: true,
-        cancelButtonText: 'Angre',
-        showLoaderOnConfirm: true,
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          try {
-            if (!delUser) throw new Error('No user data');
-            await deleteFetcher(`/api/user/${params.userid}`, delUser);
-            await swalSuccess('Brukeren ble slettet');
-            router.replace('/admin/users');
-          } catch (error) {
-            swalError('Brukeren ble ikke slettet', error as Error, 5000, true);
-          }
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
-          StyledSwal.fire({
-            title: 'Angret',
-            text: 'Brukeren ble ikke slettet',
-          });
+    async (putUser: UserType | undefined) => {
+      await swalLoading('Oppdaterer bruker...', async () => {
+        try {
+          if (!putUser) throw new Error('No user data');
+          const response = await putFetcher<UserType>(
+            `/api/user/${params.userid}`,
+            putUser
+          );
+          setEditUser(response);
+          await swalSuccess('Brukeren ble oppdatert');
+        } catch (error) {
+          swalError('Brukeren ble ikke oppdatert', error as Error);
         }
       });
     },
     [params.userid]
   );
 
+  const deleteUser = useCallback(() => {
+    swalAreYouSure(
+      'Er du sikker på at du vil slette denne brukeren?',
+      async () => {
+        try {
+          await deleteFetcher(`/api/user/${params.userid}`);
+          await swalSuccess('Brukeren ble slettet');
+          router.replace('/admin/users');
+        } catch (error) {
+          swalError('Brukeren ble ikke slettet', error as Error);
+        }
+      },
+      'Slett bruker',
+      'Avbryt'
+    );
+  }, [params.userid, router]);
+
   useEffect(() => {
     if (!isLoading) {
-      setEditUser(user);
+      setEditUser(user!);
     }
   }, [isLoading, user]);
 
@@ -365,7 +324,7 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
                 form='user-form'
                 text='Slett bruker'
                 className='bg-light'
-                onClick={() => deleteUser(editUser)}
+                onClick={deleteUser}
               />
             </div>
           </div>

@@ -1,17 +1,17 @@
 'use client';
-import { Accordion } from '@/components/Accordion';
 import { SmallHeader } from '@/components/Header';
 import { Button } from '@/components/Input';
 import StyledSwal from '@/components/StyledSwal';
 import { Person } from '@/components/icons';
 import { swalError, swalSuccess } from '@/lib/swal';
-import { getErrorMessage, postFetcher } from '@/lib/utils';
-import { ApiResponseType, AttendingUserType, EventType } from '@/types';
+import { postFetcher } from '@/lib/utils';
+import { AttendingUserType, EventType } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, useState } from 'react';
+import CheckinList from './CheckinList';
 
 function Checkin({ params }: { params: { eventid: string } }): JSX.Element {
   const { status, data: session } = useSession({
@@ -20,7 +20,7 @@ function Checkin({ params }: { params: { eventid: string } }): JSX.Element {
   const { eventid } = params;
   const [registrationEnabled, setRegistrationEnabled] = useState(true);
 
-  const { isSuccess, isLoading, error, data } = useQuery({
+  const { isLoading, error, data } = useQuery({
     queryKey: ['eventId', eventid],
     queryFn: () => fetch(`/api/checkin/${eventid}`).then((res) => res.json()),
     enabled: !!eventid,
@@ -66,12 +66,7 @@ function Checkin({ params }: { params: { eventid: string } }): JSX.Element {
             console.log('Success:', data);
             await swalSuccess('Vi har registrert ditt oppmøte!');
           } catch (error) {
-            swalError(
-              'Registrering av oppmøte mislykket',
-              error as Error,
-              5000,
-              false
-            );
+            swalError('Registrering av oppmøte mislykket', error as Error);
           } finally {
             setRegistrationEnabled(true);
           }
@@ -82,8 +77,7 @@ function Checkin({ params }: { params: { eventid: string } }): JSX.Element {
   );
 
   const event: EventType = data?.event;
-  const loading =
-    status === 'loading' || isLoading || !isSuccess || data?.statusCode !== 200;
+  const loading = status === 'loading' || isLoading || !data;
 
   // Redirect user if not admin
   if (status === 'authenticated' && session.user.role === 'USER')
@@ -98,27 +92,20 @@ function Checkin({ params }: { params: { eventid: string } }): JSX.Element {
       <SmallHeader />
       <div className='z-10 mb-32 flex w-11/12 max-w-screen-xl -translate-y-10 transform flex-col gap-6'>
         <div className='flex w-full rounded-2xl bg-white p-6 shadow-2xl'>
-          {loading ? (
-            <div className='w-full overflow-hidden rounded-l-2xl'>
-              <div className='w-full animate-pulse rounded-md bg-slate-400'>
-                <Image
-                  src='/placeholder.png'
-                  alt='Vercel Logo'
-                  width={1352}
-                  height={564}
-                  className='opacity-0'
-                  sizes='100vw'
-                  style={{
-                    width: '100%',
-                    height: 'auto',
-                  }}
-                />
-              </div>
-            </div>
-          ) : (
-            <div className='w-full overflow-hidden'>
+          <div className='w-full overflow-hidden'>
+            {loading ? (
+              <div
+                className='w-full animate-pulse rounded-2xl bg-slate-400'
+                style={{
+                  width: '100%',
+                  height: 'auto',
+                  paddingTop: '41.7%', // Maintain 1352x564 aspect ratio
+                }}
+              ></div>
+            ) : (
               <Image
-                src={event?.event.image as string}
+                src={event?.image as string}
+                priority
                 alt='Vercel Logo'
                 width={1352}
                 height={564}
@@ -128,8 +115,8 @@ function Checkin({ params }: { params: { eventid: string } }): JSX.Element {
                   height: 'auto',
                 }}
               />
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
         <div className='flex flex-col text-left'>
@@ -142,7 +129,7 @@ function Checkin({ params }: { params: { eventid: string } }): JSX.Element {
                   href={`/events/${eventid}`}
                   className='text-primary hover:underline'
                 >
-                  {event?.event.title}
+                  {event?.title}
                 </Link>
               </h2>
             )}
@@ -184,33 +171,7 @@ function Checkin({ params }: { params: { eventid: string } }): JSX.Element {
             </div>
           </div>
         </div>
-
-        <Accordion className='rounded-2xl bg-white shadow-2xl'>
-          <div className='flex flex-col p-2 text-left'>
-            <div className='flex w-full flex-col p-6'>
-              <h2 className='mb-4 text-2xl font-bold'>Liste over påmeldte</h2>
-              <div className='flex flex-col overflow-hidden rounded-lg bg-slate-100 text-xs'>
-                <div className='mb-1 flex bg-light px-10 py-2 font-bold text-white'>
-                  <p className='w-1/4'>Navn</p>
-                  <p className='w-1/4'>E-post</p>
-                  <p className='w-1/4'>Matbehov</p>
-                  <p className='w-1/4'>Checked</p>
-                </div>
-                {data?.attendances?.map((user: AttendingUserType) => (
-                  <div
-                    key={user.email}
-                    className='mx-1 mb-1 flex rounded-md bg-white px-9 py-2'
-                  >
-                    <p className='w-1/4'>{user.name}</p>
-                    <p className='w-1/4'>{user.email}</p>
-                    <p className='w-1/4'>{user.foodNeeds}</p>
-                    <p className='w-1/4'>{user.checked ? '✔️' : ''}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </Accordion>
+        <CheckinList attendances={data?.attendances ?? []} />
       </div>
     </>
   );

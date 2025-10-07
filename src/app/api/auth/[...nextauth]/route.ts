@@ -1,9 +1,8 @@
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
+import chalk from 'chalk';
 import NextAuth, { AuthOptions, User } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import prisma, { Role } from 'prisma/index';
-import { NextResponse } from 'next/server';
-import chalk from 'chalk';
 
 import {
   generateSalt,

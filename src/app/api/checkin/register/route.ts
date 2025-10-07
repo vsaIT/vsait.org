@@ -1,17 +1,17 @@
-import prisma from 'prisma/index';
 import { getErrorMessage } from '@/lib/utils';
 import { isEmpty } from 'lodash';
 import { NextRequest, NextResponse } from 'next/server';
-import { getToken } from 'next-auth/jwt';
+import prisma from 'prisma/index';
+import { requireAdmin } from '../../utils';
 
 const POST = async (req: NextRequest) => {
   const body = await req.json();
   const { email, userid } = body;
   const eventId = isEmpty(body.eventId) ? 0 : Number(body.eventId);
 
-  const token = await getToken({ req: req });
-  if (!token || token.role !== 'ADMIN')
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  const authResponse = await requireAdmin(req);
+  if (authResponse) return authResponse;
+
   try {
     // Retrieve user with email
     let id = userid;
@@ -89,8 +89,8 @@ const POST = async (req: NextRequest) => {
 const GET = async () => {
   return NextResponse.json(
     { message: 'Only POST requests are allowed' },
-    { status: 404 }
+    { status: 405 }
   );
 };
 
-export { POST, GET };
+export { GET, POST };
