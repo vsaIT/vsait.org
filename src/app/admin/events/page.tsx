@@ -6,6 +6,7 @@ import {
   IndeterminateCheckbox,
 } from '@/components/Input';
 import { CircleCheck, CircleXMark, Search } from '@/components/icons';
+import { useEvents } from '@/lib/hooks/useEvent';
 import { getLocaleDatetimeString } from '@/lib/utils';
 import { EventType } from '@/types';
 import { Event } from '@prisma/client';
@@ -21,16 +22,10 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 function AdminEvents(): JSX.Element {
-  const { isLoading, error, isFetching, data } = useQuery({
-    queryKey: ['events'],
-    queryFn: () => fetch('/api/events?all=true').then((res) => res.json()),
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-    staleTime: 60000,
-  });
+  const { isLoading, isError, data } = useEvents("all=true")
   // Selection, filter and sorting states
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [rowSelection, setRowSelection] = useState({});
@@ -39,7 +34,10 @@ function AdminEvents(): JSX.Element {
   ]);
   //TODO: Make a tanstack table component
   // Column creation through tanstack column helper for strictly typing header and cells
-  const columnHelper = createColumnHelper<Event>();
+  const columnHelper = createColumnHelper<EventType>();
+  const eventCount = useMemo(() => Math.ceil((data?.events || []).length / 9), [data]);
+  const [eventSplit, setEventSplit] = useState<EventType[]>([])
+
   const columns = useMemo(
     () => [
       columnHelper.display({
@@ -142,7 +140,7 @@ function AdminEvents(): JSX.Element {
           cell: (info) => (
             <span>
               {new Date(info.getValue().startTime) <= new Date() &&
-              new Date(info.getValue().endTime) > new Date() ? (
+                new Date(info.getValue().endTime) > new Date() ? (
                 <>
                   <CircleCheck
                     className='h-[14px] w-[14px] fill-[#70BF2B]'
@@ -188,7 +186,7 @@ function AdminEvents(): JSX.Element {
 
   // Create table
   const table = useReactTable({
-    data: data?.events || [],
+    data: eventSplit,
     columns: columns,
     // States
     initialState: { pagination: { pageIndex: 0, pageSize: 9 } },
@@ -197,6 +195,8 @@ function AdminEvents(): JSX.Element {
       sorting,
       columnFilters,
     },
+    pageCount: eventCount,
+    manualPagination: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -209,16 +209,25 @@ function AdminEvents(): JSX.Element {
   });
 
   // Variables for reusability
-  const events: EventType[] = data?.events;
-  const loading = isLoading || isFetching;
+  const events = data?.events;
   const pageCount = table.getPageCount();
   const pageIndex = table.getState().pagination.pageIndex;
   const pageSize = table.getState().pagination.pageSize;
 
   // Redirect to 404 if event not found
-  if (!loading && events.length === 0) window.location.href = '/404';
+  if (!isLoading && events?.length === 0) window.location.href = '/404';
   // Redirect to 500 if error
-  if (error) window.location.href = '/500';
+  if (isError) window.location.href = '/500';
+
+  useEffect(() => {
+    const startIndex = (pageIndex) * 9
+    const endIndex = startIndex + 9
+    if (events != null) {
+      setEventSplit(events.slice(startIndex, endIndex))
+    } else {
+      setEventSplit([])
+    }
+  }, [pageIndex, events]);
 
   return (
     <>
@@ -254,11 +263,10 @@ function AdminEvents(): JSX.Element {
           <div className='flex items-center justify-between pb-6'>
             <div>
               <p
-                className={`text-sm text-neutral-500 transition-all duration-500 ${
-                  Object.keys(rowSelection).length > 0
-                    ? 'opacity-100'
-                    : 'opacity-0'
-                }`}
+                className={`text-sm text-neutral-500 transition-all duration-500 ${Object.keys(rowSelection).length > 0
+                  ? 'opacity-100'
+                  : 'opacity-0'
+                  }`}
               >
                 {Object.keys(rowSelection).length} av{' '}
                 {table.getPreFilteredRowModel().rows.length} valgt

@@ -30,6 +30,7 @@ import { useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import { imageToBase64 } from '@/lib/imageBlobUtil';
 
 type AdminEventsProps = {
   params: {
@@ -68,7 +69,10 @@ function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
     async (event: EventType) => {
       swalLoading('Oppdaterer...', async () => {
         try {
-          // if (image) {
+          if (image) {
+            event.image = await imageToBase64(image);
+          }
+
           //   const formData = new FormData();
           //   formData.append('file', image);
           //   const uploadResponse = await fetch('/api/upload', {

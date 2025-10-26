@@ -5,6 +5,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import { Event } from '@prisma/client';
 import { requireAdmin } from '../../utils';
+import { del, put } from "@vercel/blob"
+import { v4 as uuidv4 } from 'uuid';
+import { base64ToBlob, isValidImageUrl } from '@/lib/imageBlobUtil';
 
 const POST = async () => {
   return NextResponse.json('Method Not Allowed', {
@@ -25,12 +28,12 @@ const GET = async (
     const event = await prisma.event.findFirst({
       where: isAdmin
         ? {
-            id: Number(eventid),
-          }
+          id: Number(eventid),
+        }
         : {
-            id: Number(eventid),
-            isDraft: false,
-          },
+          id: Number(eventid),
+          isDraft: false,
+        },
       include: {
         registrationList: {
           select: {
@@ -117,8 +120,40 @@ const PUT = async (
   if (authResponse) return authResponse;
 
   try {
-    const body: Event = await req.json();
-    console.log(body);
+    const body = (await req.json()) as any;
+
+    const currentEvent = await prisma.event.findFirst({
+      where: {
+        id: Number(eventid)
+      }
+    })
+
+    const imageUrl = currentEvent?.image as string;
+
+    // If image is a base64 data URL string, convert it to a Blob first.
+    if (typeof body.image === 'string') {
+      try {
+        const maybeBlob = base64ToBlob(body.image);
+        if (maybeBlob instanceof Blob) {
+          body.image = maybeBlob;
+        }
+      } catch (e) {
+        // ignore conversion errors and leave body.image as-is
+      }
+    }
+
+    // If image is a Blob, upload it and replace with the returned URL string.
+    if (body.image && body.image instanceof Blob) {
+      if (isValidImageUrl(imageUrl)) {
+        await del(imageUrl);
+      }
+
+      const filename = uuidv4();
+      const { url } = await put(`images/${filename}`, body.image, {
+        access: "public",
+      });
+      body.image = url;
+    }
 
     const updatedEvent = await prisma.event.update({
       where: { id: Number(eventid) },
@@ -143,6 +178,18 @@ const DELETE = async (
   if (authResponse) return authResponse;
 
   try {
+    const currentEvent = await prisma.event.findFirst({
+      where: {
+        id: Number(eventid)
+      }
+    })
+
+    const imageUrl = currentEvent?.image as string;
+
+    if (isValidImageUrl(imageUrl)) {
+      await del(imageUrl);
+    }
+
     await prisma.event.delete({ where: { id: Number(eventid) } });
     return NextResponse.json({ message: 'Event deleted' }, { status: 200 });
   } catch (error) {
