@@ -16,14 +16,51 @@ export async function swalSuccess(
 export async function swalError(
   msg: string,
   error: Error,
-  timer = 2000,
-  showConfirmButton = false
+  showConfirmButton = true
 ) {
   return StyledSwal.fire({
     icon: 'error',
     title: msg,
     text: error.message,
-    timer,
     showConfirmButton,
+  });
+}
+
+export async function swalLoading(
+  msg: string,
+  preConfirm: () => Promise<unknown>
+) {
+  return StyledSwal.fire({
+    icon: 'info',
+    title: msg,
+    showLoaderOnConfirm: true,
+    showConfirmButton: false,
+    didOpen: () => {
+      StyledSwal.getConfirmButton()?.click();
+    },
+    preConfirm,
+    allowOutsideClick: () => !StyledSwal.isLoading(),
+  });
+}
+
+export async function swalAreYouSure(
+  msg: string,
+  action: () => Promise<unknown>,
+  confirmText = 'Lagre',
+  cancelText = 'Avbryt'
+) {
+  return StyledSwal.fire({
+    title: '',
+    icon: 'warning',
+    text: msg,
+    showConfirmButton: true,
+    showCancelButton: true,
+    showLoaderOnConfirm: true,
+    confirmButtonText: confirmText,
+    cancelButtonText: cancelText,
+  }).then((result) => {
+    if (result.isConfirmed) {
+      action();
+    }
   });
 }

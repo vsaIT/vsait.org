@@ -3,14 +3,16 @@ import { EventsDetailedSkeleton } from '@/components/Events';
 import { SmallHeader } from '@/components/Header';
 import { Button } from '@/components/Input';
 import StyledSwal from '@/components/StyledSwal';
+import { useEvent } from '@/lib/hooks/useEvent';
 import { getErrorMessage } from '@/lib/utils';
-import { ApiResponseType, EventType, RegisteredUserType } from '@/types';
-import { useQuery } from '@tanstack/react-query';
+import { ApiResponseType, RegisteredUserType } from '@/types';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, useState } from 'react';
 import Swal from 'sweetalert2';
+import AdminRegistrationsList from './(components)/AdminRegistrationsList';
+import InfoBox from './(components)/InfoBox';
 
 function Event({ params }: { params: { eventid: string } }): JSX.Element {
   const { status, data: session } = useSession({
@@ -18,19 +20,13 @@ function Event({ params }: { params: { eventid: string } }): JSX.Element {
   });
   const { eventid } = params;
   const [registrationEnabled, setRegistrationEnabled] = useState(true);
+  const { data, isLoading, isError } = useEvent(eventid);
 
-  const { isSuccess, isLoading, error, data } = useQuery({
-    queryKey: ['eventId', eventid],
-    queryFn: () => fetch(`/api/events/${eventid}`).then((res) => res.json()),
-    enabled: !!eventid,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-    staleTime: 60000,
-  });
+  if (isError) window.location.href = '/500';
 
   const register = useCallback(async () => {
     if (!eventid || !session?.user?.id) return;
-    const melding = data.hasRegistered ? 'av' : 'på';
+    const melding = data?.hasRegistered ? 'av' : 'på';
     StyledSwal.fire({
       icon: 'info',
       title: <p>Bekreftelse!</p>,
@@ -79,7 +75,7 @@ function Event({ params }: { params: { eventid: string } }): JSX.Element {
               html: (
                 <>
                   <p>
-                    {data.hasRegistered ? 'Avmelding' : 'Påmelding'} på
+                    {data?.hasRegistered ? 'Avmelding' : 'Påmelding'} på
                     arrangementet mislykket
                   </p>
                   <code className='mt-2 w-full'>{getErrorMessage(error)}</code>
@@ -92,16 +88,16 @@ function Event({ params }: { params: { eventid: string } }): JSX.Element {
       },
       allowOutsideClick: () => !Swal.isLoading(),
     }).finally(() => setRegistrationEnabled(true));
-  }, [eventid, session?.user?.id, data?.hasRegistered, setRegistrationEnabled]);
+  }, [eventid, session, data]);
 
   const showRegistrations = useCallback(() => {
-    if (data?.registrations?.length >= 0) {
+    if ((data?.registrations ?? []).length > 0) {
       StyledSwal.fire({
         title: <p>Liste over påmeldte</p>,
         html: (
           <div className='flex flex-col'>
-            {data.registrations.length > 0 ? (
-              data.registrations.map((user: RegisteredUserType, i: number) => (
+            {(data?.registrations ?? []).length > 0 ? (
+              data?.registrations.map((user: RegisteredUserType, i: number) => (
                 <p
                   key={user.name + i}
                   className='border-t-2 border-slate-100 px-2'
@@ -118,19 +114,12 @@ function Event({ params }: { params: { eventid: string } }): JSX.Element {
         showCloseButton: true,
       });
     }
-  }, [data?.registrations]);
-
-  const event: EventType = data?.event;
-
-  // Redirect to 404 if event not found
-  if (!isLoading && !event) window.location.href = '/404';
-  // Redirect to 500 if error
-  if (error) window.location.href = '/500';
+  }, [data]);
 
   return (
     <>
       <SmallHeader />
-      {status === 'loading' || isLoading || !isSuccess || data?.statusCode ? (
+      {status === 'loading' || isLoading || !data ? (
         <>
           <EventsDetailedSkeleton />
         </>
@@ -139,7 +128,7 @@ function Event({ params }: { params: { eventid: string } }): JSX.Element {
           <div className='flex w-full rounded-2xl bg-white p-6 shadow-2xl'>
             <div className='w-full overflow-hidden'>
               <Image
-                src={event?.event.image as string}
+                src={data.event.image as string}
                 alt='Vercel Logo'
                 width={1352}
                 height={564}
@@ -159,35 +148,34 @@ function Event({ params }: { params: { eventid: string } }): JSX.Element {
               <div className='flex flex-col gap-2'>
                 <p>
                   <b>Starttid:</b>{' '}
-                  {new Date(event?.event.startTime).toDateString()}
+                  {new Date(data.event.startTime).toDateString()}
                 </p>
                 <p>
-                  <b>Sluttid:</b>{' '}
-                  {new Date(event?.event.endTime).toDateString()}
+                  <b>Sluttid:</b> {new Date(data.event.endTime).toDateString()}
                 </p>
                 <p>
                   <b>Påmeldingsfrist:</b>{' '}
-                  {new Date(event?.event.registrationDeadline).toDateString()}
+                  {new Date(data.event.registrationDeadline).toDateString()}
                 </p>
                 <p>
                   <b>Avmeldingsfrist:</b>{' '}
-                  {new Date(event?.event.cancellationDeadline).toDateString()}
+                  {new Date(data.event.cancellationDeadline).toDateString()}
                 </p>
                 <p>
-                  <b>Sted:</b> {event?.event.location}
+                  <b>Sted:</b> {data.event.location}
                 </p>
                 <p>
                   <b>Åpent for:</b>{' '}
-                  {event?.event.eventType === 'OPEN' ? 'Alle' : 'Medlemmer'}
+                  {data.event.eventType === 'OPEN' ? 'Alle' : 'Medlemmer'}
                 </p>
               </div>
             </div>
             <div className='flex w-full flex-col rounded-2xl bg-white p-6 shadow-2xl'>
-              <h2 className='mb-4 text-2xl font-bold'>{event?.event.title}</h2>
+              <h2 className='mb-4 text-2xl font-bold'>{data.event.title}</h2>
               <p className='mb-2 italic'>
                 Last edited: {new Date().toDateString()}
               </p>
-              <p>{event?.event.description}</p>
+              <p>{data.event.description}</p>
             </div>
           </div>
 
@@ -197,11 +185,12 @@ function Event({ params }: { params: { eventid: string } }): JSX.Element {
                 <h2 className='mb-4 text-2xl font-bold'>Påmelding</h2>
                 <div className='flex flex-col gap-2'>
                   <p>
-                    <b>Antall påmeldte:</b> {event.registrationList.length} /{' '}
-                    {event?.event.maxRegistrations}
+                    <b>Antall påmeldte:</b>{' '}
+                    {data.event._count?.registrationList} /{' '}
+                    {data.event.maxRegistrations}
                   </p>
                   <p>
-                    <b>Venteliste:</b> {event.waitingList.length}
+                    <b>Venteliste:</b> {data.event._count?.waitingList}
                   </p>
                   <div className='mt-2 flex flex-col gap-3'>
                     {session?.user ? (
@@ -211,19 +200,19 @@ function Event({ params }: { params: { eventid: string } }): JSX.Element {
                           text='Se andre påmeldte'
                         />
                         {new Date() >=
-                        new Date(event?.event.registrationDeadline) ? (
+                        new Date(data.event.registrationDeadline) ? (
                           <p className='text-center'>
                             Arrangementet er ikke åpent for påmelding!
                           </p>
                         ) : new Date() >=
-                            new Date(event?.event.cancellationDeadline) &&
+                            new Date(data.event.cancellationDeadline) &&
                           data.hasRegistered ? (
                           <p className='text-center'>
                             Arrangementet er ikke lenger åpent for avmelding!
                           </p>
                         ) : (data.hasMembership &&
-                            event?.event.eventType === 'MEMBERSHIP') ||
-                          event?.event.eventType === 'OPEN' ? (
+                            data.event.eventType === 'MEMBERSHIP') ||
+                          data.event.eventType === 'OPEN' ? (
                           data.hasRegistered ? (
                             <>
                               <Button
@@ -282,59 +271,11 @@ function Event({ params }: { params: { eventid: string } }): JSX.Element {
                 </div>
               )}
             </div>
-            <div className='flex w-full flex-col rounded-2xl bg-white p-6 shadow-2xl'>
-              <h2 className='mb-4 text-2xl font-bold'>Info</h2>
-              <div className='flex flex-col gap-4'>
-                <p>
-                  Til venstre kan man se antallet påmeldte. Hensikten bak dette
-                  er hovedsakelig for å estimere hvor mye mat som skal kjøpes
-                  inn. Det står også en maksgrense, som gjelder hovedsakelig for
-                  mindre arrangementer der vi ikke kan være alt for mange
-                  mennesker samlet (f. eks buldring, mini-golf og bowling).
-                  Fortvil ikke dersom maksgrensen på et arrangement nås, da du
-                  vil få muligheten til å melde deg på ventelista for
-                  arrangementet - gitt at du er nummer 1 i køen, vil du få
-                  plassen dersom noen melder seg av.
-                </p>
-                <p>
-                  I boksen øverst til venstre, står det en oversikt over start-
-                  og sluttid for arrangementet. Merk at det også står
-                  påmeldings- og avmeldingsfrist som er viktige å forholde seg
-                  til. Avmelding er spesielt viktig, dersom det er en venteliste
-                  på arrangementet, slik at nestemann får plass.
-                </p>
-                <p>
-                  PS! Husk å skriv ned mulige matvarer som kan forårsake
-                  allergiske reaksjoner på profilen din, slik at vi kan tilpasse
-                  mattilbudet på våre arrangementer etter deres matbehov ♥.
-                </p>
-              </div>
-            </div>
+            <InfoBox />
           </div>
 
           {session?.user.role === 'ADMIN' && (
-            <div className='flex flex-col text-left'>
-              <div className='flex w-full flex-col rounded-2xl bg-white p-6 shadow-2xl'>
-                <h2 className='mb-4 text-2xl font-bold'>Liste over påmeldte</h2>
-                <div className='flex flex-col overflow-hidden rounded-lg bg-slate-100 text-xs'>
-                  <div className='mb-1 flex bg-light px-10 py-2 font-bold text-white'>
-                    <p className='w-1/3'>Navn</p>
-                    <p className='w-1/3'>E-post</p>
-                    <p className='w-1/3'>Matbehov</p>
-                  </div>
-                  {data?.registrations?.map((user: RegisteredUserType) => (
-                    <div
-                      key={user.email}
-                      className='mx-1 mb-1 flex rounded-md bg-white px-9 py-2'
-                    >
-                      <p className='w-1/3'>{user.name}</p>
-                      <p className='w-1/3'>{user.email}</p>
-                      <p className='w-1/3'>{user.foodNeeds}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+            <AdminRegistrationsList registrations={data?.registrations ?? []} />
           )}
         </div>
       )}

@@ -1,10 +1,11 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
   provider     = "postgresql"
-  url          = "postgres://default:kjTJNnM54VcY@ep-young-union-a2nbaf8m.eu-central-1.aws.neon.tech:5432/verceldb?sslmode=require"
+  url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
 
@@ -75,9 +76,9 @@ model Event {
   endTime              DateTime
   registrationDeadline DateTime
   cancellationDeadline DateTime
-  location             String?
-  eventType            EventType?      @default(MEMBERSHIP)
-  maxRegistrations     Int?
+  location             String          @db.VarChar(100)
+  eventType            EventType       @default(MEMBERSHIP)
+  maxRegistrations     Int             @default(0)
   isDraft              Boolean         @default(false)
   isCancelled          Boolean         @default(false)
   registrationList     Registrations[]

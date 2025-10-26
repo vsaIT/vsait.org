@@ -1,255 +1,273 @@
 'use client';
+import { FormImageInput, FormInput, SelectField } from '@/components/Form';
+import { Button } from '@/components/Input';
 import { useEvent } from '@/lib/hooks/useEvent';
-import { AdminEventsProps } from './eventsTypes';
-import { FormInput, FormImageInput, SelectField } from '@/components/Form';
-//import { TextEditor } from '@/components/Input';
-import { useState } from 'react';
-import { timeEnd } from 'node:console';
+import ImagePreview from '../../../../components/ImagePreview';
+import FormErrorBox from '@/components/Form/FormErrorBox';
+import SlideCheckbox from '@/components/Input/SlideCheckbox';
+import LoadingIndicator from '@/components/LoadingIndicator';
+import {
+  swalAreYouSure,
+  swalError,
+  swalLoading,
+  swalSuccess,
+} from '@/lib/swal';
+import {
+  deleteFetcher,
+  isoToOsloTimestring,
+  osloTimeStringToUtcIso,
+  putFetcher,
+} from '@/lib/utils';
+import { EventType } from '@/types';
+import { EventType as EventTypeOptions } from '@prisma/client';
+import {
+  sliderCheckboxes,
+  eventTypeOptions,
+  getTimeDataInputs,
+  TimeDataInput,
+} from '../schemaObjects';
+import { useCallback, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+
+type AdminEventsProps = {
+  params: {
+    eventid: string;
+  };
+};
 
 function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
   const { eventid } = params;
-  const { event, isLoading } = useEvent('2');
+  const { data, isLoading } = useEvent(eventid);
+  const [image, setImage] = useState<File | null>(null);
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<EventType>({ defaultValues: data?.event });
 
-  function handleChange<T>(attr: string, value: T) {
-    // if (editUser) {
-    //   setEditEvent({
-    //     ...editUser,
-    //     [attr]: value,
-    //   });
-    // }
-    console.log(attr, value);
-  }
-
-  function handleTimeChange<T>(attr: string, value: T) {
-    // if (editUser) {
-    //   setEditEvent({
-    //     ...editUser,
-    //     [attr]: value,
-    //   });
-    // }
-    console.log(attr, value);
-  }
-
-  function handleImageUpload<T>(attr: string, value: T) {
-    // if (editUser) {
-    //   setEditEvent({
-    //     ...editUser,
-    //     [attr]: value,
-    //   });
-    // }
-    console.log(attr, value);
-  }
-
-  if (isLoading) return <div>Loading...</div>;
-
-  const timeDataInputs = [
-    {
-      name: 'Starttid:',
-      attr: 'startTime',
-      date: {
-        key: 'start-date',
-        label: 'Dato',
-        type: 'date',
-        defaultValue: event?.event.startTime
-          ? new Date(event.event.startTime).toISOString().split('T')[0]
-          : '',
-      },
-      time: {
-        key: 'start-time',
-        label: 'Tid',
-        type: 'time',
-        defaultValue: event?.event.startTime
-          ? new Date(event.event.startTime)
-              .toISOString()
-              .split('T')[1]
-              .slice(0, 5)
-          : '',
-      },
-    },
-    {
-      name: 'Sluttid:',
-      attr: 'endTime',
-      date: {
-        key: 'end-date',
-        label: 'Dato',
-        type: 'date',
-        defaultValue: event?.event.endTime
-          ? new Date(event.event.endTime).toISOString().split('T')[0]
-          : '',
-      },
-      time: {
-        key: 'end-time',
-        label: 'Tid',
-        type: 'time',
-        defaultValue: event?.event.endTime
-          ? new Date(event.event.endTime)
-              .toISOString()
-              .split('T')[1]
-              .slice(0, 5)
-          : '',
-      },
-    },
-    {
-      name: 'Registreringsfrist:',
-      attr: 'registrationDeadline',
-      date: {
-        key: 'registration-date',
-        label: 'Dato',
-        type: 'date',
-        defaultValue: event?.event.registrationDeadline
-          ? new Date(event.event.registrationDeadline)
-              .toISOString()
-              .split('T')[0]
-          : '',
-      },
-      time: {
-        key: 'registration-time',
-        label: 'Tid',
-        type: 'time',
-        defaultValue: event?.event.registrationDeadline
-          ? new Date(event.event.registrationDeadline)
-              .toISOString()
-              .split('T')[1]
-              .slice(0, 5)
-          : '',
-      },
-    },
-    {
-      name: 'Avmeldingsfrist:',
-      attr: 'cancellationDeadline',
-      date: {
-        key: 'cancellation-date',
-        label: 'Dato',
-        type: 'date',
-        defaultValue: event?.event.cancellationDeadline
-          ? new Date(event.event.cancellationDeadline)
-              .toISOString()
-              .split('T')[0]
-          : '',
-      },
-      time: {
-        key: 'cancellation-time',
-        label: 'Tid',
-        type: 'time',
-        defaultValue: event?.event.cancellationDeadline
-          ? new Date(event.event.cancellationDeadline)
-              .toISOString()
-              .split('T')[1]
-              .slice(0, 5)
-          : '',
-      },
-    },
-  ];
-
-  const eventTypeOptions = [
-    {
-      value: 'OPEN',
-      label: 'Åpent for alle',
-    },
-    {
-      value: 'MEMBERSHIP',
-      label: 'Medlemskap kreves',
-    },
-  ];
-
-  console.log(event?.event.startTime);
-  console.log(
-    new Date(event?.event.startTime || '')
-      .toISOString()
-      .split('T')[1]
-      .slice(0, 5)
+  const timeDataInputs: Array<TimeDataInput> = getTimeDataInputs().map(
+    (input) => {
+      const eventTime = data?.event[input.attr as keyof EventType];
+      const value = eventTime
+        ? isoToOsloTimestring(new Date(eventTime as string))
+        : '';
+      return {
+        ...input,
+        date: {
+          ...input.date,
+          defaultValue: value,
+        },
+      };
+    }
   );
+
+  const onSubmit = useCallback(
+    async (event: EventType) => {
+      swalLoading('Oppdaterer...', async () => {
+        try {
+          // if (image) {
+          //   const formData = new FormData();
+          //   formData.append('file', image);
+          //   const uploadResponse = await fetch('/api/upload', {
+          //     method: 'POST',
+          //     body: formData,
+          //   });
+
+          //   if (!uploadResponse.ok) {
+          //     throw new Error('Failed to upload image');
+          //   }
+
+          //   const { url } = await uploadResponse.json();
+          //   event.image = url;
+          // }
+          await new Promise((resolve) => setTimeout(resolve, 5000));
+          timeDataInputs.forEach((input) => {
+            event[input.attr] = new Date(
+              osloTimeStringToUtcIso(event[input.attr]?.toString())
+            );
+          });
+          await putFetcher(`/api/events/${eventid}`, event);
+          await swalSuccess('Arrangementet ble oppdatert!');
+        } catch (error) {
+          swalError('Kunne ikke oppdatere arrangementet', error as Error);
+        }
+      });
+    },
+    [timeDataInputs, eventid]
+  );
+
+  const deleteEvent = useCallback(() => {
+    swalAreYouSure(
+      'Er du sikker på at du vil slette dette arrangementet?',
+      async () => {
+        try {
+          await deleteFetcher(`/api/events/${eventid}`);
+          await swalSuccess('Arrangementet ble slettet');
+        } catch (error) {
+          swalError('Arrangementet ble ikke slettet', error as Error);
+        }
+      },
+      'Slett arrangement',
+      'Avbryt'
+    );
+  }, [eventid]);
+
+  if (isLoading) {
+    return <LoadingIndicator />;
+  }
 
   return (
     <div className='flex h-screen w-full flex-col gap-6 p-6'>
       <div className='flex w-full rounded-xl bg-white p-6'>
         <h1 className='text-center text-xl font-medium'>
-          Endre arrangement: {event?.event.title}
+          Endre arrangement: {data?.event.title}
         </h1>
       </div>
-      <div className='flex w-full flex-row items-stretch justify-evenly space-x-3 rounded-xl bg-white p-6'>
-        <div className='col-span-full w-2/3 flex-col space-y-4 rounded-xl border border-stone-300 p-6'>
-          <div className=''>
-            <h2 className='text-xl'>Detaljer:</h2>
-          </div>
 
-          <FormInput
-            key={'tittle'}
-            label={'Tittel'}
-            defaultValue={event?.event.title || ''}
-            onChange={(e) => handleChange('tittle', e.target.value)}
-          />
+      <div className='flex w-full flex-col gap-6'>
+        <FormErrorBox errors={errors} />
+      </div>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className='rounded-xl bg-white p-6'
+      >
+        <div className='flex h-full w-full flex-row items-stretch justify-evenly space-x-3'>
+          <div className='col-span-full w-2/3 flex-col space-y-4 rounded-xl border border-stone-300 p-6'>
+            <div className=''>
+              <h2 className='text-xl'>Detaljer:</h2>
+            </div>
 
-          <div>
-            <h2>Banner:</h2>
-            <div className='max-h-70 flex justify-evenly gap-3 border border-stone-300 p-2'>
-              <div className={'w-1/2 flex-col'}>
-                <h3>Nåværende:</h3>
-                {/*<img src={event?.event.image || ''} alt="Forhåndsvisning" className="mt-2 max-h-45 rounded-lg object-contain" />*/}
-                {event?.event.image}
+            <FormInput
+              key={'title'}
+              label={'Tittel'}
+              required
+              defaultValue={data?.event.title || ''}
+              {...register('title', { required: true })}
+            />
+
+            <div>
+              <h2>Banner:</h2>
+              <div className='max-h-70 flex-col gap-3'>
+                <div className={'w-[38%] flex-col justify-start'}>
+                  <h3 className='text-sm font-light italic'>
+                    Forhåndsvisning:
+                  </h3>
+                  <ImagePreview
+                    src={
+                      image
+                        ? URL.createObjectURL(image)
+                        : data?.event.image || undefined
+                    }
+                    alt='Forhåndsvisning'
+                  />
+                </div>
+                <div className='mt-1 w-1/2'>
+                  <FormImageInput
+                    key={'image'}
+                    label={'Bilde'}
+                    type={'file'}
+                    accept={'image/*'}
+                    onChange={(e) => setImage(e.target.files?.[0] || null)}
+                  />
+                </div>
               </div>
-              <div className={'w-1/2 flex-col'}>
-                <h3>Endre:</h3>
-                <FormImageInput
-                  key={'image'}
-                  label={'Bilde'}
-                  type={'file'}
-                  accept={'image/*'}
-                  onChange={(e) => handleImageUpload('image', e.target.value)}
+            </div>
+
+            <div>
+              <h2>Beskrivelse:</h2>
+              <div className='py-2'>
+                <ReactQuill
+                  theme='snow'
+                  defaultValue={data?.event.description || ''}
+                  onChange={(value) => setValue('description', value)}
                 />
               </div>
             </div>
-          </div>
 
-          <div>
-            <h2>Beskrivelse:</h2>
-            <div className='border border-stone-300 p-2'>
-              <div className='h-1/2'>{event?.event.description}</div>
-            </div>
-          </div>
+            <FormInput
+              key={'location'}
+              label={'Sted'}
+              required
+              defaultValue={data?.event.location || ''}
+              {...register('location', { required: true })}
+            />
 
-          <FormInput
-            key={'location'}
-            label={'Sted'}
-            defaultValue={event?.event.location || ''}
-            onChange={(e) => handleChange('location', e.target.value)}
-          />
-
-          <div>
             <SelectField
               label='Arrangementstype'
               name='arrType'
-              defaultValue={event?.event.eventType || ''}
+              defaultValue={data?.event.eventType || ''}
               options={eventTypeOptions}
-              onChange={(e) => handleChange('student', e.target.value)}
+              onChange={(e) =>
+                setValue('eventType', e.target.value as EventTypeOptions)
+              }
             />
-          </div>
-        </div>
-        <div className='col-span-full w-1/3 flex-col space-y-4 rounded-xl border border-stone-300 p-6'>
-          <div>
-            <h2 className='text-xl'>Dato og tid:</h2>
-          </div>
-          {timeDataInputs.map((inputFieldData, index) => (
-            <div key={index} className='flex flex-col space-y-1 pb-2'>
-              <h2 className='text-l p-2'>{inputFieldData.name}</h2>
-              <div className='flex flex-auto flex-row space-x-3'>
-                <FormInput
-                  {...inputFieldData.date}
-                  onChange={(e) =>
-                    handleTimeChange(inputFieldData.attr, e.target.value)
-                  }
+
+            <FormInput
+              key={'maxRegistrations'}
+              label={'Maks antall påmeldinger'}
+              type='number'
+              required
+              defaultValue={data?.event.maxRegistrations || 0}
+              {...register('maxRegistrations', {
+                required: true,
+                valueAsNumber: true,
+                min: 0,
+              })}
+            />
+
+            {/* Sliders */}
+            <div className='grid grid-cols-2'>
+              {sliderCheckboxes.map((checkbox) => (
+                <SlideCheckbox
+                  key={checkbox.id}
+                  id={checkbox.id}
+                  label={checkbox.label}
+                  {...register(checkbox.id as keyof EventType)}
                 />
-                <FormInput
-                  {...inputFieldData.time}
-                  onChange={(e) =>
-                    handleTimeChange(inputFieldData.attr, e.target.value)
-                  }
-                />
-              </div>
+              ))}
             </div>
-          ))}
+          </div>
+          <div className='flex h-full w-1/3 flex-col justify-between rounded-xl border border-stone-300 p-6'>
+            <div>
+              <div>
+                <h2 className='text-xl'>Dato og tid:</h2>
+              </div>
+              {timeDataInputs.map((inputFieldData, index) => (
+                <div key={index} className='flex flex-col space-y-1 pb-2'>
+                  <h2 className='text-l p-2'>{inputFieldData.name}</h2>
+                  <div className='flex flex-auto flex-row space-x-3'>
+                    <FormInput
+                      key={inputFieldData.attr}
+                      required
+                      {...inputFieldData.date}
+                      {...register(inputFieldData.attr as keyof EventType, {
+                        required: true,
+                      })}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className='flex w-full flex-col justify-evenly space-y-4 lg:flex-row lg:space-x-4 lg:space-y-0'>
+              <Button
+                type='submit'
+                text='Lagre endringer'
+                className='px-6 py-3'
+              />
+              <Button
+                type='button'
+                text='Slett arrangement'
+                className='px-6 py-3'
+                onClick={deleteEvent}
+              />
+            </div>
+          </div>
         </div>
-      </div>
+      </form>
+      <div className='p-4'>&nbsp;</div>
     </div>
   );
 }

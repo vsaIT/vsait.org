@@ -1,29 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server';
-import prisma, { Membership } from 'prisma/index';
+import { generateSalt, hashPassword } from '@/lib/auth/passwords';
 import { getErrorMessage } from '@/lib/utils';
-import { getToken } from 'next-auth/jwt';
-import { hashPassword, generateSalt } from '@/lib/auth/passwords';
-import { sendConfirmEmail } from '../auth/[...nextauth]/utils';
 import { UserType } from '@/types';
+import { getToken } from 'next-auth/jwt';
+import { NextRequest, NextResponse } from 'next/server';
+import prisma from 'prisma/index';
+import { requireAdmin } from '../utils';
 
 const GET = async (req: NextRequest) => {
   const page = req.nextUrl.searchParams.get('page');
-
-  const token = await getToken({ req });
-  if (!token)
-    return NextResponse.json(
-      {
-        message: 'Unauthenticated',
-      },
-      { status: 407 }
-    );
-  if (token?.role !== 'ADMIN')
-    return NextResponse.json(
-      {
-        message: 'Unauthorized',
-      },
-      { status: 401 }
-    );
+  const authResponse = await requireAdmin(req);
+  if (authResponse) return authResponse;
 
   try {
     const [users, userCount] = await prisma.$transaction([
@@ -51,10 +37,8 @@ const GET = async (req: NextRequest) => {
 const POST = async (req: NextRequest) => {
   const token = await getToken({ req });
   console.log(`Processing POST /user request for ${token?.email}`);
-  if (!token)
-    return NextResponse.json({ message: 'Unauthenticated' }, { status: 407 });
-  if (token?.role !== 'ADMIN')
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  const authResponse = await requireAdmin(req);
+  if (authResponse) return authResponse;
 
   try {
     const body = (await req.json()) as UserType;

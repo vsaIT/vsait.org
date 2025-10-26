@@ -3,6 +3,7 @@ import { getErrorMessage, getMembershipYear } from '@/lib/utils';
 import { isEmpty } from 'lodash';
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
+import { requireSelfOrAdmin } from '../../utils';
 
 const POST = async (req: NextRequest) => {
   const searchParams = req.nextUrl.searchParams;
@@ -14,26 +15,20 @@ const POST = async (req: NextRequest) => {
     : Number(searchParams.get('eventId'));
 
   const token = await getToken({ req: req });
-  if (!token || !token?.user) {
-    return NextResponse.json('Unathorized', { status: 401 });
-  }
-  if (userId !== token?.id) {
-    return NextResponse.json('Cannot register event for another user', {
-      status: 401,
-    });
-  }
+  const isAdmin = token?.role === 'ADMIN';
+  const authResponse = await requireSelfOrAdmin(req, userId);
+  if (authResponse) return authResponse;
 
   try {
     const event = await prisma.event.findFirst({
-      where:
-        token?.role === 'ADMIN'
-          ? {
-              id: Number(eventId),
-            }
-          : {
-              id: Number(eventId),
-              isDraft: false,
-            },
+      where: isAdmin
+        ? {
+            id: Number(eventId),
+          }
+        : {
+            id: Number(eventId),
+            isDraft: false,
+          },
       include: {
         registrationList: {
           select: {
@@ -51,7 +46,7 @@ const POST = async (req: NextRequest) => {
             createdAt: 'asc',
           },
         },
-        attendanceList: token?.role === 'ADMIN',
+        attendanceList: isAdmin,
       },
     });
     if (!event) throw new Error(`Could not find event with id ${eventId}`);

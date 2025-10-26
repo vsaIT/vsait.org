@@ -1,25 +1,22 @@
-import { DefaultSession } from 'next-auth';
-import {
-  getSession as getNextSession,
-  GetSessionParams,
-} from 'next-auth/react';
+import { UserType } from '@/types';
+import { Session } from 'next-auth';
 
-type DefaultSessionUser = NonNullable<DefaultSession['user']>;
+/**
+ * Updates the session user fields with new user data.
+ * Example usage: updateUserSession(session, user, ['membership', ...])
+ * @param session - The session object to update.
+ * @param user - The user object containing new data.
+ * @param fields - The fields to update in the session.
+ * @returns void
+ */
+export function updateUserSession<K extends keyof UserType>(
+  session: Session | null,
+  user: UserType | null,
+  fields: K[]
+) {
+  if (!session || !user) return;
 
-type SessionUser = DefaultSessionUser & {
-  id: string;
-  role: string;
-};
-
-export type Session = DefaultSession & {
-  user?: SessionUser;
-};
-
-export async function getSession(
-  options: GetSessionParams
-): Promise<Session | null> {
-  const session = await getNextSession(options);
-
-  // that these are equal are ensured in `[...nextauth]`'s callback
-  return session as Session | null;
+  fields.forEach((field) => {
+    session.user[field] = user[field];
+  });
 }

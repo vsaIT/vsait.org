@@ -3,6 +3,8 @@ import prisma from 'prisma/index';
 import { getErrorMessage } from '@/lib/utils';
 import { isEmpty } from 'lodash';
 import { getToken } from 'next-auth/jwt';
+import { requireAdmin } from '../utils';
+import { Event } from '@prisma/client';
 
 const GET = async (req: NextRequest) => {
   const searchParams = req.nextUrl.searchParams;
@@ -12,16 +14,17 @@ const GET = async (req: NextRequest) => {
   const upcoming = isEmpty(searchParams.get('upcoming')) ? false : true;
   const all = isEmpty(searchParams.get('all')) ? false : true;
   const token = await getToken({ req });
+  const isAdmin = token?.role == 'ADMIN';
 
   // Retrieve all events, admins only
   try {
     if (all) {
-      if (token?.role !== 'ADMIN') {
+      if (!isAdmin) {
         return NextResponse.json(
           {
-            message: 'Unauthorized',
+            message: 'Forbidden: Admins only',
           },
-          { status: 401 }
+          { status: 403 }
         );
       }
       const events = await prisma.event.findMany({
@@ -59,9 +62,18 @@ const GET = async (req: NextRequest) => {
           startTime: 'desc',
         },
         include: {
-          registrationList: true,
+          registrationList: isAdmin,
+          attendanceList: isAdmin,
+          waitingList: isAdmin,
+          _count: {
+            select: {
+              registrationList: true,
+              waitingList: true,
+            },
+          },
         },
       });
+
       const pages = Math.ceil(events.length / take);
       const currentPage = Math.min(page || 1, pages);
 
@@ -83,10 +95,23 @@ const GET = async (req: NextRequest) => {
   }
 };
 
-const POST = async () => {
-  return NextResponse.json('Method Not Allowed', {
-    status: 405,
-  });
+const POST = async (req: NextRequest) => {
+  const authResponse = await requireAdmin(req);
+  if (authResponse) return authResponse;
+
+  try {
+    const body: Event = await req.json();
+    const event = await prisma.event.create({
+      data: body,
+    });
+    return NextResponse.json(event, { status: 201 });
+  } catch (error) {
+    console.error('[api] /api/events [POST]', getErrorMessage(error));
+    return NextResponse.json(
+      { message: getErrorMessage(error) },
+      { status: 500 }
+    );
+  }
 };
 
 export { GET, POST };

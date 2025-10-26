@@ -3,26 +3,34 @@ import { getErrorMessage, getMembershipYear } from '@/lib/utils';
 import { RegisteredUserType } from '@/types/types';
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
+import { Event } from '@prisma/client';
+import { requireAdmin } from '../../utils';
 
-const handler = async (
+const POST = async () => {
+  return NextResponse.json('Method Not Allowed', {
+    status: 405,
+  });
+};
+
+const GET = async (
   req: NextRequest,
   { params }: { params: { eventid: number } }
 ) => {
   const eventid = params.eventid;
   const token = await getToken({ req: req });
+  const isAdmin = token?.role === 'ADMIN';
 
   try {
     // Retrieve events including registrationList, waitingList and attendanceList
     const event = await prisma.event.findFirst({
-      where:
-        token?.role === 'ADMIN'
-          ? {
-              id: Number(eventid),
-            }
-          : {
-              id: Number(eventid),
-              isDraft: false,
-            },
+      where: isAdmin
+        ? {
+            id: Number(eventid),
+          }
+        : {
+            id: Number(eventid),
+            isDraft: false,
+          },
       include: {
         registrationList: {
           select: {
@@ -40,10 +48,15 @@ const handler = async (
           },
         },
         waitingList: true,
-        attendanceList: token?.role === 'ADMIN',
+        attendanceList: isAdmin,
       },
     });
-    if (!event) throw new Error(`Could not find event with id ${eventid}`);
+    if (!event) {
+      return NextResponse.json(
+        { message: `Could not find event with id ${eventid}` },
+        { status: 404 }
+      );
+    }
 
     // Set user ids in registrationList as filtering for registered users
     let registeredUsers: RegisteredUserType[] = [];
@@ -95,4 +108,53 @@ const handler = async (
   }
 };
 
-export { handler as GET, handler as POST };
+const PUT = async (
+  req: NextRequest,
+  { params }: { params: { eventid: number } }
+) => {
+  const eventid = params.eventid;
+  const authResponse = await requireAdmin(req);
+  if (authResponse) return authResponse;
+
+  try {
+    const body: Event = await req.json();
+    console.log(body);
+
+    const updatedEvent = await prisma.event.update({
+      where: { id: Number(eventid) },
+      data: body,
+    });
+    return NextResponse.json({ event: updatedEvent }, { status: 200 });
+  } catch (error) {
+    console.error(`[api] /api/events/${eventid} [PUT]`, getErrorMessage(error));
+    return NextResponse.json(
+      { message: getErrorMessage(error) },
+      { status: 500 }
+    );
+  }
+};
+
+const DELETE = async (
+  req: NextRequest,
+  { params }: { params: { eventid: number } }
+) => {
+  const eventid = params.eventid;
+  const authResponse = await requireAdmin(req);
+  if (authResponse) return authResponse;
+
+  try {
+    await prisma.event.delete({ where: { id: Number(eventid) } });
+    return NextResponse.json({ message: 'Event deleted' }, { status: 200 });
+  } catch (error) {
+    console.error(
+      `[api] /api/events/${eventid} [DELETE]`,
+      getErrorMessage(error)
+    );
+    return NextResponse.json(
+      { message: getErrorMessage(error) },
+      { status: 500 }
+    );
+  }
+};
+
+export { GET, POST, PUT, DELETE };

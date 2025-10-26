@@ -1,7 +1,7 @@
-import prisma from 'prisma/index';
+import { requireSelfOrAdmin } from '@/app/api/utils';
 import { getErrorMessage } from '@/lib/utils';
 import { NextRequest, NextResponse } from 'next/server';
-import { getToken } from 'next-auth/jwt';
+import prisma from 'prisma/index';
 
 const POST = async (
   req: NextRequest,
@@ -10,15 +10,9 @@ const POST = async (
   const body = await req.json();
   const userID = params.userid;
   const { foodNeeds, student } = body;
-  const token = await getToken({ req });
 
-  if (!token)
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
-  if (userID !== token?.id && token?.role !== 'ADMIN')
-    return NextResponse.json(
-      { message: 'Cannot register event for another user' },
-      { status: 401 }
-    );
+  const authResponse = await requireSelfOrAdmin(req, userID);
+  if (authResponse) return authResponse;
 
   try {
     await prisma.user.update({
