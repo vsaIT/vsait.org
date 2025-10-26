@@ -2,7 +2,7 @@
 const nextConfig = {};
 
 nextConfig.images = {
-    domains: ['icocrmeixbkgovql.public.blob.vercel-storage.com']
+  domains: ['icocrmeixbkgovql.public.blob.vercel-storage.com'],
 };
 
 export default nextConfig;

@@ -1,13 +1,12 @@
-import prisma from 'prisma/index';
+import { base64ToBlob, isValidImageUrl } from '@/lib/imageBlobUtil';
 import { getErrorMessage, getMembershipYear } from '@/lib/utils';
 import { RegisteredUserType } from '@/types/types';
-import { NextRequest, NextResponse } from 'next/server';
+import { del, put } from '@vercel/blob';
 import { getToken } from 'next-auth/jwt';
-import { Event } from '@prisma/client';
-import { requireAdmin } from '../../utils';
-import { del, put } from "@vercel/blob"
+import { NextRequest, NextResponse } from 'next/server';
+import prisma from 'prisma/index';
 import { v4 as uuidv4 } from 'uuid';
-import { base64ToBlob, isValidImageUrl } from '@/lib/imageBlobUtil';
+import { requireAdmin } from '../../utils';
 
 const POST = async () => {
   return NextResponse.json('Method Not Allowed', {
@@ -28,12 +27,12 @@ const GET = async (
     const event = await prisma.event.findFirst({
       where: isAdmin
         ? {
-          id: Number(eventid),
-        }
+            id: Number(eventid),
+          }
         : {
-          id: Number(eventid),
-          isDraft: false,
-        },
+            id: Number(eventid),
+            isDraft: false,
+          },
       include: {
         registrationList: {
           select: {
@@ -120,13 +119,13 @@ const PUT = async (
   if (authResponse) return authResponse;
 
   try {
-    const body = (await req.json()) as any;
+    const body = await req.json();
 
     const currentEvent = await prisma.event.findFirst({
       where: {
-        id: Number(eventid)
-      }
-    })
+        id: Number(eventid),
+      },
+    });
 
     const imageUrl = currentEvent?.image as string;
 
@@ -150,7 +149,7 @@ const PUT = async (
 
       const filename = uuidv4();
       const { url } = await put(`images/${filename}`, body.image, {
-        access: "public",
+        access: 'public',
       });
       body.image = url;
     }
@@ -180,9 +179,9 @@ const DELETE = async (
   try {
     const currentEvent = await prisma.event.findFirst({
       where: {
-        id: Number(eventid)
-      }
-    })
+        id: Number(eventid),
+      },
+    });
 
     const imageUrl = currentEvent?.image as string;
 
@@ -204,4 +203,4 @@ const DELETE = async (
   }
 };
 
-export { GET, POST, PUT, DELETE };
+export { DELETE, GET, POST, PUT };

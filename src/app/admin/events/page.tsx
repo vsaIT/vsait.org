@@ -9,8 +9,6 @@ import { CircleCheck, CircleXMark, Search } from '@/components/icons';
 import { useEvents } from '@/lib/hooks/useEvent';
 import { getLocaleDatetimeString } from '@/lib/utils';
 import { EventType } from '@/types';
-import { Event } from '@prisma/client';
-import { useQuery } from '@tanstack/react-query';
 import {
   ColumnFiltersState,
   SortingState,
@@ -25,7 +23,7 @@ import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 
 function AdminEvents(): JSX.Element {
-  const { isLoading, isError, data } = useEvents("all=true")
+  const { isLoading, isError, data } = useEvents('all=true');
   // Selection, filter and sorting states
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [rowSelection, setRowSelection] = useState({});
@@ -35,8 +33,11 @@ function AdminEvents(): JSX.Element {
   //TODO: Make a tanstack table component
   // Column creation through tanstack column helper for strictly typing header and cells
   const columnHelper = createColumnHelper<EventType>();
-  const eventCount = useMemo(() => Math.ceil((data?.events || []).length / 9), [data]);
-  const [eventSplit, setEventSplit] = useState<EventType[]>([])
+  const eventCount = useMemo(
+    () => Math.ceil((data?.events || []).length / 9),
+    [data]
+  );
+  const [eventSplit, setEventSplit] = useState<EventType[]>([]);
 
   const columns = useMemo(
     () => [
@@ -140,7 +141,7 @@ function AdminEvents(): JSX.Element {
           cell: (info) => (
             <span>
               {new Date(info.getValue().startTime) <= new Date() &&
-                new Date(info.getValue().endTime) > new Date() ? (
+              new Date(info.getValue().endTime) > new Date() ? (
                 <>
                   <CircleCheck
                     className='h-[14px] w-[14px] fill-[#70BF2B]'
@@ -220,12 +221,12 @@ function AdminEvents(): JSX.Element {
   if (isError) window.location.href = '/500';
 
   useEffect(() => {
-    const startIndex = (pageIndex) * 9
-    const endIndex = startIndex + 9
+    const startIndex = pageIndex * 9;
+    const endIndex = startIndex + 9;
     if (events != null) {
-      setEventSplit(events.slice(startIndex, endIndex))
+      setEventSplit(events.slice(startIndex, endIndex));
     } else {
-      setEventSplit([])
+      setEventSplit([]);
     }
   }, [pageIndex, events]);
 
@@ -263,10 +264,11 @@ function AdminEvents(): JSX.Element {
           <div className='flex items-center justify-between pb-6'>
             <div>
               <p
-                className={`text-sm text-neutral-500 transition-all duration-500 ${Object.keys(rowSelection).length > 0
-                  ? 'opacity-100'
-                  : 'opacity-0'
-                  }`}
+                className={`text-sm text-neutral-500 transition-all duration-500 ${
+                  Object.keys(rowSelection).length > 0
+                    ? 'opacity-100'
+                    : 'opacity-0'
+                }`}
               >
                 {Object.keys(rowSelection).length} av{' '}
                 {table.getPreFilteredRowModel().rows.length} valgt
