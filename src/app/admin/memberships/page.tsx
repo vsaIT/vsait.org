@@ -1,6 +1,6 @@
 'use client';
 import { AdminTable, AdminTablePagination } from '@/components/Admin';
-import { DebouncedInput, IndeterminateCheckbox } from '@/components/Input';
+import { Button, DebouncedInput, IndeterminateCheckbox } from '@/components/Input';
 import { Search } from '@/components/icons';
 import { Membership } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
@@ -157,14 +157,18 @@ const AdminMemberships: NextPage = () => {
               <p
                 className={`text-sm text-neutral-500 transition-all duration-500 ${
                   Object.keys(rowSelection).length > 0
-                    ? 'opacity-100'
-                    : 'opacity-0'
-                }`}
+                  ? 'opacity-100'
+                  : 'opacity-0'
+                  }`}
               >
                 {Object.keys(rowSelection).length} av{' '}
                 {table.getPreFilteredRowModel().rows.length} valgt
               </p>
             </div>
+
+            <Link href='/admin/memberships/new'>
+              <Button text='Legg til medlemskapsår' className='px-8 py-3 text-xs' />
+            </Link>
           </div>
           <div className='grid [grid-template-rows:minmax(409px,1fr)_50px]'>
             <div className='overflow-hidden rounded-lg border border-neutral-300'>
