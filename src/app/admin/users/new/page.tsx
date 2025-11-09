@@ -16,6 +16,7 @@ import { createAvatar } from '@dicebear/core';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
+import { Membership } from '@prisma/client';
 import { useForm } from 'react-hook-form';
 
 export default function NewUserPage(): JSX.Element {
@@ -62,31 +63,31 @@ export default function NewUserPage(): JSX.Element {
     type: string;
     required: boolean;
   }> = [
-    {
-      label: 'Fornavn',
-      attr: 'firstName',
-      type: 'text',
-      required: true,
-    },
-    {
-      label: 'Etternavn',
-      attr: 'lastName',
-      type: 'text',
-      required: true,
-    },
-    {
-      label: 'E-post',
-      attr: 'email',
-      type: 'email',
-      required: true,
-    },
-    {
-      label: 'Matbehov',
-      attr: 'foodNeeds',
-      type: 'text',
-      required: false,
-    },
-  ];
+      {
+        label: 'Fornavn',
+        attr: 'firstName',
+        type: 'text',
+        required: true,
+      },
+      {
+        label: 'Etternavn',
+        attr: 'lastName',
+        type: 'text',
+        required: true,
+      },
+      {
+        label: 'E-post',
+        attr: 'email',
+        type: 'email',
+        required: true,
+      },
+      {
+        label: 'Matbehov',
+        attr: 'foodNeeds',
+        type: 'text',
+        required: false,
+      },
+    ];
 
   return (
     <div className='flex h-screen w-full flex-col gap-6 p-6'>
@@ -153,12 +154,17 @@ export default function NewUserPage(): JSX.Element {
                     initialItems={
                       memberships
                         ? memberships.map((membership) => ({
-                            value: membership.year,
-                            checked: false,
-                          }))
+                          value: membership.year,
+                          checked: false,
+                        }))
                         : []
                     }
-                    onChange={(m) => setValue('membership', m)}
+                    onChange={(items) =>
+                      setValue(
+                        'membership',
+                        items.map((item) => ({ year: item.value } as unknown as Membership))
+                      )
+                    }
                   />
                 ) : (
                   <LoadingIndicator />

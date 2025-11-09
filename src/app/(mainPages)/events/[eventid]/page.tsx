@@ -42,15 +42,11 @@ function Event({ params }: { params: { eventid: string } }): JSX.Element {
         const cancelButton = StyledSwal.getCancelButton();
         if (cancelButton) cancelButton.style.opacity = '0';
         // Send registration request
-        await fetch('/api/events/register', {
+        await fetch(`/api/events/register?eventid=${eventid}&userid=${session.user.id}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            userId: session?.user?.id,
-            eventId: eventid,
-          }),
         })
           .then(async (response) => {
             if (!response.ok) throw new Error(response.statusText);
@@ -186,11 +182,11 @@ function Event({ params }: { params: { eventid: string } }): JSX.Element {
                 <div className='flex flex-col gap-2'>
                   <p>
                     <b>Antall påmeldte:</b>{' '}
-                    {data.event._count?.registrationList} /{' '}
+                    {data.event.registrationList?.length} /{' '}
                     {data.event.maxRegistrations}
                   </p>
                   <p>
-                    <b>Venteliste:</b> {data.event._count?.waitingList}
+                    <b>Venteliste:</b> {data.event.waitingList?.length}
                   </p>
                   <div className='mt-2 flex flex-col gap-3'>
                     {session?.user ? (
@@ -200,18 +196,17 @@ function Event({ params }: { params: { eventid: string } }): JSX.Element {
                           text='Se andre påmeldte'
                         />
                         {new Date() >=
-                        new Date(data.event.registrationDeadline) ? (
+                          new Date(data.event.registrationDeadline) ? (
                           <p className='text-center'>
                             Arrangementet er ikke åpent for påmelding!
                           </p>
                         ) : new Date() >=
-                            new Date(data.event.cancellationDeadline) &&
+                          new Date(data.event.cancellationDeadline) &&
                           data.hasRegistered ? (
                           <p className='text-center'>
                             Arrangementet er ikke lenger åpent for avmelding!
                           </p>
-                        ) : (data.hasMembership &&
-                            data.event.eventType === 'MEMBERSHIP') ||
+                        ) : (data.event.eventType === 'MEMBERSHIP') ||
                           data.event.eventType === 'OPEN' ? (
                           data.hasRegistered ? (
                             <>

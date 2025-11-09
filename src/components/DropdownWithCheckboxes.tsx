@@ -1,25 +1,26 @@
-import { Membership } from '@prisma/client';
 import { useCallback, useState } from 'react';
 import { Accordion } from './Accordion';
 
-type Item = {
+type Item<T = number> = {
   id?: number;
-  value: number;
+  value: T;
   checked: boolean;
+  label?: React.ReactNode;
 };
 
-type DropdownCheckboxProps = {
+type DropdownCheckboxProps<T = number> = {
   label: string;
-  initialItems: Item[];
-  onChange: (memberships: Membership[]) => void;
+  initialItems: Item<T>[];
+  // onChange will receive the checked items (with their values and optional labels)
+  onChange: (checkedItems: Item<T>[]) => void;
 };
 
-const DropdownWithCheckboxes = ({
+const DropdownWithCheckboxes = <T,>({
   label,
   initialItems,
   onChange,
-}: DropdownCheckboxProps) => {
-  const [items, setItems] = useState<Item[]>(() =>
+}: DropdownCheckboxProps<T>) => {
+  const [items, setItems] = useState<Item<T>[]>(() =>
     initialItems.map((item, index) => ({
       ...item,
       id: index,
@@ -32,11 +33,7 @@ const DropdownWithCheckboxes = ({
         item.id === id ? { ...item, checked: !item.checked } : item
       );
       setItems(updatedItems);
-      onChange(
-        updatedItems
-          .filter((item) => item.checked)
-          .map((item) => ({ year: item.value }))
-      );
+      onChange(updatedItems.filter((item) => item.checked));
     },
     [items, onChange]
   );
@@ -65,7 +62,7 @@ const DropdownWithCheckboxes = ({
               htmlFor={`checkbox-${item.id}`}
               className='text-gray-700 ml-2 text-sm'
             >
-              {item.value}
+              {item.label ?? String(item.value)}
             </label>
           </div>
         ))}

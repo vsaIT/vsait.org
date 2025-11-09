@@ -7,12 +7,12 @@ import { requireSelfOrAdmin } from '../../utils';
 
 const POST = async (req: NextRequest) => {
   const searchParams = req.nextUrl.searchParams;
-  const userId: string = isEmpty(searchParams.get('userId'))
+  const userId: string = isEmpty(searchParams.get('userid'))
     ? ''
-    : (searchParams.get('userId') as string);
-  const eventId = isEmpty(searchParams.get('eventId'))
+    : (searchParams.get('userid') as string);
+  const eventId = isEmpty(searchParams.get('eventid'))
     ? 0
-    : Number(searchParams.get('eventId'));
+    : Number(searchParams.get('eventid'));
 
   const token = await getToken({ req: req });
   const isAdmin = token?.role === 'ADMIN';

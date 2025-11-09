@@ -206,16 +206,19 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
                   initialItems={
                     memberships
                       ? memberships.map((membership) => ({
-                          value: membership.year,
-                          checked: isMembershipInUser(
-                            membership,
-                            user?.membership
-                          ),
-                        }))
+                        value: membership.year,
+                        checked: isMembershipInUser(
+                          membership,
+                          user?.membership
+                        ),
+                      }))
                       : []
                   }
-                  onChange={(memberships) =>
-                    handleChange('membership', memberships)
+                  onChange={(items) =>
+                    handleChange(
+                      'membership',
+                      items.map((item) => ({ year: item.value } as unknown as Membership))
+                    )
                   }
                 />
               </div>
