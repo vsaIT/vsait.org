@@ -23,15 +23,13 @@ export default function AdminMembershipNew() {
         async (membership: MembershipType) => {
             swalLoading('Oppretter...', async () => {
                 try {
-                    const membershipToSend = { ...membership };
-                    membershipToSend['users'] = []
                     const response = await postFetcher<MembershipType>(
-                        '/api/memberships',
-                        membershipToSend
+                        `/api/memberships/${membership.year}`,
+                        null
                     );
                     await swalSuccess('Medlemskapsåret ble opprettet!');
                     reset();
-                    router.replace(`/admin/memberships/${response.year}`);
+                    router.replace(`/admin/memberships/${membership.year}`);
                 } catch (error) {
                     swalError('Kunne ikke opprette medlemskapsåret', error as Error);
                 }
