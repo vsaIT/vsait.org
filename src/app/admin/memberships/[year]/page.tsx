@@ -23,24 +23,6 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
-// const { isLoading, error, isFetching, data } = useQuery({
-//   queryKey: ['memberships', year],
-//   queryFn: () => fetch(`/api/memberships/${year}`).then((res) => res.json()),
-//   enabled: !!year,
-//   refetchOnWindowFocus: false,
-//   refetchOnReconnect: false,
-//   staleTime: 60000,
-// });
-
-// const membership: Membership & { user: User }[] = data;
-// const loading = isLoading || isFetching;
-
-// // Redirect to 404 if event not found
-// if (!loading && !membership) window.location.href = '/404';
-// // Redirect to 500 if error
-// if (error) window.location.href = '/500';
-
-
 const fetchMembershipUsers = async (page: number, year: number) => {
   const response = await fetch(`/api/memberships/${year}?page=${page + 1}`);
   if (!response.ok) {
@@ -58,14 +40,11 @@ const AdminMembershipsView: NextPage = () => {
   });
   const [users, setUsers] = useState<{
     users: User[];
-    userCount: number;
-    year: number;
   }>({
     users: [],
-    userCount: 0,
-    year: 0,
   });
 
+  const userCount = users.users?.length;
 
   const [rowSelection, setRowSelection] = useState({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -220,7 +199,7 @@ const AdminMembershipsView: NextPage = () => {
       sorting,
       columnFilters,
     },
-    pageCount: Math.ceil(users.userCount / 9),
+    pageCount: Math.ceil(userCount / 9),
     manualPagination: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
@@ -252,8 +231,8 @@ const AdminMembershipsView: NextPage = () => {
       <div className='flex h-screen w-full flex-col gap-6 p-6'>
         <div className='flex w-full justify-between gap-6 rounded-xl bg-white p-6'>
           <div className='flex flex-col'>
-            <h1 className='text-xl font-medium'>Medlemskap {users.year}</h1>
-            <p className='text-sm'>Se og endre medlemskap for {users.year} her</p>
+            <h1 className='text-xl font-medium'>Medlemskap {year}</h1>
+            <p className='text-sm'>Se og endre medlemskap for {year} her</p>
           </div>
           <div className='relative w-96'>
             <div className='relative mt-1 fill-stone-400'>
@@ -279,7 +258,7 @@ const AdminMembershipsView: NextPage = () => {
         </div>
 
         <div className='h-full w-full rounded-xl bg-white p-6'>
-          <div className='flex items-center justify-between pb-6'>
+          <div className='flex items-center justify-between'>
             <div>
               <p
                 className={`text-sm text-neutral-500 transition-all duration-500 ${Object.keys(rowSelection).length > 0
@@ -303,9 +282,9 @@ const AdminMembershipsView: NextPage = () => {
                 <strong>
                   {1 + pageIndex * pageSize} -{' '}
                   {pageIndex + 1 == pageCount
-                    ? users?.userCount
+                    ? userCount
                     : (pageIndex + 1) * pageSize}{' '}
-                  av {users?.userCount}
+                  av {userCount}
                 </strong>
                 brukere
               </p>
