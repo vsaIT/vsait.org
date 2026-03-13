@@ -164,10 +164,8 @@ const POST = async (req: NextRequest) => {
   }
 };
 
-const GET = async () => {
-  return NextResponse.json('Method Not Allowed', {
-    status: 405,
-  });
+const GET = async (req: NextRequest) => {
+  return await POST(req);
 };
 
 export { POST, GET };
