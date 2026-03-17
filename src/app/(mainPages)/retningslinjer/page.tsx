@@ -8,7 +8,7 @@ export default function Page(): JSX.Element {
 
       <div className='z-10 mb-12 flex max-w-screen-xl flex-col'>
         <h1 className='text-2xl font-bold'>RETNINGSLINJER FOR VSAiT</h1>
-        <p>Revidert dato: 22. februar 2022</p>
+        <p>Revidert dato: 17. mars 2026</p>
 
         <div className='mb-4 flex w-full flex-col justify-center rounded-2xl bg-white p-8 text-left shadow-lg'>
           <h2 className='mb-3 text-2xl font-bold'>§ 1: NAVN</h2>
@@ -251,11 +251,10 @@ export default function Page(): JSX.Element {
                 Øvrige styremedlemmer med følgende titler:
               </p>
               <ul className='mb-2 list-disc'>
-                <li className='ml-7'>PR- og informasjonsansvarlig</li>
+                <li className='ml-7'>SoMe-ansvarlig</li>
                 <li className='ml-7'>IT-ansvarlig</li>
-                <li className='ml-7'>Planleggingsansvarlig</li>
                 <li className='ml-7'>Matansvarlig</li>
-                <li className='ml-7'>Sportsansvarlig</li>
+                <li className='ml-7'>Designansvarlig</li>
               </ul>
               <p className='mb-2'>
                 Ovennevnte stillinger kan, i samlag med hovedstyret, opprette

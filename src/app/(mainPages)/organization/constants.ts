@@ -35,17 +35,17 @@ export const aboutInfos: AboutUs[] = [
 ];
 
 export const board: BoardMemberType[] = [
-  { name: 'Daniel', role: 'Styreleder' },
-  { name: 'Elvis', role: 'Nestleder' },
-  { name: 'Minh Dinh', role: 'Økonomiansvarlig' },
-  { name: 'Gia Hy', role: 'Sekretær' },
-  { name: 'Adelin', role: 'IT-ansvarlig' },
-  { name: 'Raj', role: 'Logistikkansvarlig' },
-  { name: 'Aina Vy', role: 'Matansvarlig' },
-  { name: 'Ninni', role: 'PR-ansvarlig' },
-  { name: 'Nina Hoang', role: 'Designansvarlig' },
-  { name: 'Vivi', role: 'Styremedlem' },
-  { name: 'Daniel 2.0', role: 'Styremedlem' },
+  { name: 'Linh Dan Bui', role: 'Styreleder' },
+  { name: 'Vernice Dang', role: 'Nestleder' },
+  { name: 'Martin Hylland Mediås', role: 'Økonomiansvarlig' },
+  { name: 'Supattra Wongsamal', role: 'Sekretær' },
+  { name: 'Thomas Nguyen', role: 'IT-ansvarlig' },
+  { name: 'Tran Huyen Huynh Alvarstein', role: 'Matansvarlig' },
+  { name: 'Benedicte Bachmann', role: 'SoMe-ansvarlig' },
+  { name: 'Jenny Luong', role: 'Designansvarlig' },
+  { name: 'Thien Phi Tran', role: 'Styremedlem' },
+  { name: 'David Tri Pham', role: 'Styremedlem' },
+  { name: 'Ban Masri', role: 'Styremedlem' },
 ];
 
 export const eventInfos: EventInfo[] = [
