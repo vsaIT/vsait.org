@@ -6,13 +6,13 @@ Dev: https://dev--jazzy-malasada-b00157.netlify.app
 
 ### 🥞 Stack
 
-- Framework - [Next.js v12](https://nextjs.org)
+- Framework - [Next.js v12](https://nextjs.org/)
 - Language - [TypeScript](https://www.typescriptlang.org/)
 - Auth - [NextAuth.js](https://next-auth.js.org/)
-- Database - [PlanetScale](https://planetscale.com)
-- ORM - [Prisma](https://prisma.io)
-- Hosting - [Netlify](https://netlify.com/)
-- Styling - [TailwindCSS](https://tailwindcss.com)
+- Database - [Vercel](https://vercel.com/)
+- ORM - [Prisma](https://prisma.io/)
+- Hosting - [Vercel](https://vercel.com/)
+- Styling - [TailwindCSS](https://tailwindcss.com/)
 
 ### 🎨 Figma design
 
