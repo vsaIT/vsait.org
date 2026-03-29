@@ -3,7 +3,6 @@ import { MINIMUM_ACTIVITY_TIMEOUT } from '@/lib/constants';
 import { getCsrfToken, signIn } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import ToastMessage from '../Toast';
 
 type RegistrationFormValues = {
   csrfToken: string;
@@ -16,10 +15,10 @@ type RegistrationFormValues = {
   student: string;
 };
 
-// TODO: need better error handling for e.g. when password is not the same.
 const RegistrationForm = () => {
   const [isSubmitting, setSubmitting] = useState(false);
   const [csrfToken, setCsrfToken] = useState<string>();
+  const [error, setError] = useState<string | null>(null);
   const { register, handleSubmit } = useForm<RegistrationFormValues>();
   useEffect(() => {
     getCsrfToken().then((res) => {
@@ -28,15 +27,29 @@ const RegistrationForm = () => {
   }, []);
 
   const onSubmit = async (data: RegistrationFormValues) => {
+    setError(null);
+    if (data.password !== data.repeatPassword) {
+      setError('Passordene er ikke like.');
+      return;
+    }
+
     setSubmitting(true);
     signIn('app-register', { ...data, redirect: false }).then((res) => {
       if (!res) return;
       if (res.ok) {
         console.log('Success');
-        window.location.replace('/confirm-email');
+        window.location.replace('/login');
       } else if (res.error) {
+        if (
+          res.error === 'CredentialsSignin' ||
+          res.error === 'RegistrationSuccessful'
+        ) {
+          console.log('Registration succeeded implicitly');
+          window.location.replace('/login');
+          return;
+        }
         console.error(res.error);
-        ToastMessage({ type: 'error', message: res.error });
+        setError(res.error);
       }
       setTimeout(() => {
         setSubmitting(false);
@@ -59,6 +72,24 @@ const RegistrationForm = () => {
               defaultValue={csrfToken}
               hidden
             />
+
+            {error && (
+              <div className='mb-6 flex items-center gap-3 rounded-lg border border-red-500 bg-red-50 p-4 text-left text-sm text-red-800 shadow-sm'>
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  viewBox='0 0 24 24'
+                  fill='currentColor'
+                  className='h-6 w-6 shrink-0 text-red-500'
+                >
+                  <path
+                    fillRule='evenodd'
+                    d='M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z'
+                    clipRule='evenodd'
+                  />
+                </svg>
+                <p className='font-medium'>{error}</p>
+              </div>
+            )}
 
             <div className='flex gap-5'>
               <div className='relative w-full'>

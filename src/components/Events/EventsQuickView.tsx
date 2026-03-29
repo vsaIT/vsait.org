@@ -25,46 +25,68 @@ const EventsDisplay = ({ className = '' }: ExtendedComponentProps) => {
             enda. Kom gjerne tilbake igjen senere!
           </p>
         ) : (
-          data?.events?.map((event, index) => (
-            <div
-              key={index}
-              className='relative mx-auto my-4 w-full max-w-screen-lg items-center justify-center overflow-hidden rounded-xl'
-            >
-              <Link href={`/events/${event.id}`} className='flex flex-col'>
-                <Image
-                  src={event.image as string}
-                  alt='image src'
-                  width={1352}
-                  height={564}
-                  style={{
-                    maxWidth: '100%',
-                    height: 'auto',
-                    objectFit: 'cover',
-                  }}
-                />
-                <p className='absolute left-4 top-4 rounded-md bg-black bg-opacity-50 px-2 py-1 text-2xl font-bold text-white'>
-                  {event.title}
-                </p>
-                <p className='absolute bottom-10 right-4 -translate-y-20 transform rounded-sm bg-black bg-opacity-80 px-2 py-1 text-base font-bold text-white'>
-                  {event.location}
-                </p>
-                <p className='absolute bottom-10 right-4 -translate-y-10 transform rounded-sm bg-black bg-opacity-80 px-2 py-1 text-base font-bold text-white'>
-                  {new Date(event.startTime).toDateString()}
-                </p>
-                <p className='absolute bottom-10 right-4 rounded-sm bg-black bg-opacity-80 px-2 py-1 text-base font-bold text-white'>
-                  {event.eventType === 'MEMBERSHIP'
-                    ? 'Krever medlemsskap'
-                    : 'Åpen for alle'}
-                </p>
-                <div className='w-full bg-light'>
-                  <p className='m-1 box-border w-full text-white'>
-                    Antall påmeldte {event._count?.registrationList}/
-                    {event.maxRegistrations}
-                  </p>
-                </div>
-              </Link>
-            </div>
-          ))
+          data?.events?.map((event, index) => {
+            const isPast = new Date(event.endTime) < new Date();
+            const isCancelled = event.isCancelled;
+            const isGreyedOut = isPast || isCancelled;
+
+            return (
+              <div
+                key={index}
+                className={`group relative mx-auto my-4 w-full max-w-screen-lg items-center justify-center transition-opacity duration-300 ${
+                  isGreyedOut ? 'opacity-80 hover:opacity-100' : ''
+                }`}
+              >
+                <Link href={`/events/${event.id}`} className='flex flex-col'>
+                  {isCancelled && (
+                    <div className='pointer-events-none absolute -left-4 top-8 z-20 -rotate-12 rounded-lg border-4 border-white bg-red-700 px-6 py-2 text-3xl font-bold text-white shadow-xl transition-transform group-hover:scale-110'>
+                      AVLYST
+                    </div>
+                  )}
+                  <div
+                    className={`relative z-0 flex flex-col overflow-hidden rounded-xl transition-all duration-300 ${
+                      isGreyedOut
+                        ? 'opacity-60 grayscale group-hover:opacity-100 group-hover:grayscale-0'
+                        : ''
+                    }`}
+                  >
+                    <Image
+                      src={(event.image as string) || '/placeholder.png'}
+                      alt={event.title}
+                      width={1352}
+                      height={564}
+                      priority
+                      style={{
+                        maxWidth: '100%',
+                        height: 'auto',
+                        objectFit: 'cover',
+                      }}
+                    />
+                    <p className='absolute left-4 top-4 rounded-md bg-black bg-opacity-50 px-2 py-1 text-2xl font-bold text-white'>
+                      {event.title}
+                    </p>
+                    <p className='absolute bottom-10 right-4 -translate-y-20 transform rounded-sm bg-black bg-opacity-80 px-2 py-1 text-base font-bold text-white'>
+                      {event.location}
+                    </p>
+                    <p className='absolute bottom-10 right-4 -translate-y-10 transform rounded-sm bg-black bg-opacity-80 px-2 py-1 text-base font-bold text-white'>
+                      {new Date(event.startTime).toDateString()}
+                    </p>
+                    <p className='absolute bottom-10 right-4 rounded-sm bg-black bg-opacity-80 px-2 py-1 text-base font-bold text-white'>
+                      {event.eventType === 'MEMBERSHIP'
+                        ? 'Krever medlemsskap'
+                        : 'Åpen for alle'}
+                    </p>
+                  </div>
+                  <div className='z-10 w-full bg-primary'>
+                    <p className='m-1 box-border w-full text-white'>
+                      Antall påmeldte {event._count?.registrationList}/
+                      {event.maxRegistrations}
+                    </p>
+                  </div>
+                </Link>
+              </div>
+            );
+          })
         )}
       </div>
       <Link href='/events'>

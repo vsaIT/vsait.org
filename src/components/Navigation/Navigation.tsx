@@ -62,11 +62,11 @@ const Navigation = () => {
               <Link
                 onClick={closeMenu}
                 href={nav.href}
-                className={`text-red-500 underline-offset-4 transition-all duration-300 hover:brightness-150 
+                className={`relative transition-all duration-300 after:absolute after:-bottom-1 after:left-0 after:h-[2px] after:w-full after:origin-bottom after:scale-x-0 after:bg-current after:transition-transform after:duration-300 after:ease-out hover:after:scale-x-100
                 lg:text-white lg:hover:text-secondary
                 ${
                   pathname.split('/')[1] === nav.href.substring(1)
-                    ? '!text-tertiary underline brightness-150 lg:!text-secondary'
+                    ? '!text-tertiary brightness-150 after:scale-x-100 lg:!text-secondary'
                     : ''
                 }`}
               >

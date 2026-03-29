@@ -6,13 +6,9 @@ import { getToken } from 'next-auth/jwt';
 import { requireSelfOrAdmin } from '../../utils';
 
 const POST = async (req: NextRequest) => {
-  const searchParams = req.nextUrl.searchParams;
-  const userId: string = isEmpty(searchParams.get('userId'))
-    ? ''
-    : (searchParams.get('userId') as string);
-  const eventId = isEmpty(searchParams.get('eventId'))
-    ? 0
-    : Number(searchParams.get('eventId'));
+  const body = await req.json();
+  const userId = body.userId;
+  const eventId = body.eventId;
 
   const token = await getToken({ req: req });
   const isAdmin = token?.role === 'ADMIN';
@@ -21,6 +17,7 @@ const POST = async (req: NextRequest) => {
 
   try {
     const event = await prisma.event.findFirst({
+
       where: isAdmin
         ? {
             id: Number(eventId),
@@ -50,6 +47,11 @@ const POST = async (req: NextRequest) => {
       },
     });
     if (!event) throw new Error(`Could not find event with id ${eventId}`);
+
+    // Check if event is cancelled
+    if (event.isCancelled) {
+      throw new Error('Event is cancelled. Modifications are disabled.');
+    }
 
     // Check for user membership on events with MEMBERSHIP as eventType
     if (event.eventType === 'MEMBERSHIP') {

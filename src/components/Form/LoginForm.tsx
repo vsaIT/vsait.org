@@ -3,7 +3,6 @@ import { MINIMUM_ACTIVITY_TIMEOUT } from '@/lib/constants';
 import { getCsrfToken, signIn } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import ToastMessage from '../Toast';
 
 type LoginFormValues = {
   csrfToken: string;
@@ -14,6 +13,7 @@ type LoginFormValues = {
 const LoginForm = () => {
   const [csrfToken, setCsrfToken] = useState<string>();
   const [isSubmitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { register, handleSubmit } = useForm<LoginFormValues>();
   useEffect(() => {
     getCsrfToken().then((res) => {
@@ -22,7 +22,7 @@ const LoginForm = () => {
   }, []);
 
   const onSubmit = async (data: LoginFormValues) => {
-    setSubmitting(true);
+    setError(null);
     console.log(csrfToken);
     await signIn('app-login', {
       email: data.email,
@@ -35,10 +35,7 @@ const LoginForm = () => {
         console.log('Success');
       } else if (res.error) {
         console.error('Server side:', res.error);
-        ToastMessage({
-          type: 'error',
-          message: res.error,
-        });
+        setError(res.error);
         setTimeout(() => {
           setSubmitting(false);
         }, MINIMUM_ACTIVITY_TIMEOUT);
@@ -61,6 +58,26 @@ const LoginForm = () => {
               defaultValue={csrfToken}
               hidden
             />
+            <div className='relative my-6'>
+              {error && (
+                <div className='mb-6 flex items-center gap-3 rounded-lg border border-red-500 bg-red-50 p-4 text-left text-sm text-red-800 shadow-sm'>
+                  <svg
+                    xmlns='http://www.w3.org/2000/svg'
+                    viewBox='0 0 24 24'
+                    fill='currentColor'
+                    className='h-6 w-6 shrink-0 text-red-500'
+                  >
+                    <path
+                      fillRule='evenodd'
+                      d='M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z'
+                      clipRule='evenodd'
+                    />
+                  </svg>
+                  <p className='font-medium'>{error}</p>
+                </div>
+              )}
+            </div>
+
             <div className='relative my-6'>
               <label
                 htmlFor='email'

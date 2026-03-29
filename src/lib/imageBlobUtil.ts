@@ -40,8 +40,9 @@ export const base64ToBlob = (base64String: string): Blob => {
   return new Blob([arrayBuffer], { type: mimeType });
 };
 
-export const isValidImageUrl = (url: string): boolean => {
+export const isValidImageUrl = (url: string | null | undefined): boolean => {
   if (
+    url &&
     url.includes('icocrmeixbkgovql.public.blob.vercel-storage.com') &&
     url.startsWith('http')
   ) {

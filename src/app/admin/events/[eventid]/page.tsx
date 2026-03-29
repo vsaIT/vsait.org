@@ -26,11 +26,12 @@ import {
   getTimeDataInputs,
   TimeDataInput,
 } from '../schemaObjects';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { imageToBase64 } from '@/lib/imageBlobUtil';
+import { useRouter } from 'next/navigation';
 
 type AdminEventsProps = {
   params: {
@@ -39,6 +40,7 @@ type AdminEventsProps = {
 };
 
 function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
+  const router = useRouter();
   const { eventid } = params;
   const { data, isLoading } = useEvent(eventid);
   const [image, setImage] = useState<File | null>(null);
@@ -47,7 +49,30 @@ function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
     handleSubmit,
     setValue,
     formState: { errors },
+    reset,
   } = useForm<EventType>({ defaultValues: data?.event });
+
+  useEffect(() => {
+    if (data?.event) {
+      const formattedEvent = { ...data.event };
+      const timeFields: (keyof EventType)[] = [
+        'startTime',
+        'endTime',
+        'registrationDeadline',
+        'cancellationDeadline',
+      ];
+
+      timeFields.forEach((field) => {
+        if (formattedEvent[field]) {
+          (formattedEvent[field] as any) = isoToOsloTimestring(
+            new Date(formattedEvent[field] as any)
+          );
+        }
+      });
+
+      reset(formattedEvent);
+    }
+  }, [data, reset]);
 
   const timeDataInputs: Array<TimeDataInput> = getTimeDataInputs().map(
     (input) => {
@@ -69,8 +94,13 @@ function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
     async (event: EventType) => {
       swalLoading('Oppdaterer...', async () => {
         try {
+          const eventToSend = { ...event };
+          delete eventToSend.registrationList;
+          delete eventToSend.waitingList;
+          delete eventToSend.attendanceList;
+
           if (image) {
-            event.image = await imageToBase64(image);
+            eventToSend.image = await imageToBase64(image);
           }
 
           //   const formData = new FormData();
@@ -89,11 +119,11 @@ function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
           // }
           await new Promise((resolve) => setTimeout(resolve, 5000));
           timeDataInputs.forEach((input) => {
-            event[input.attr] = new Date(
+            eventToSend[input.attr] = new Date(
               osloTimeStringToUtcIso(event[input.attr]?.toString())
             );
           });
-          await putFetcher(`/api/events/${eventid}`, event);
+          await putFetcher(`/api/events/${eventid}`, eventToSend);
           await swalSuccess('Arrangementet ble oppdatert!');
         } catch (error) {
           swalError('Kunne ikke oppdatere arrangementet', error as Error);
@@ -110,6 +140,7 @@ function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
         try {
           await deleteFetcher(`/api/events/${eventid}`);
           await swalSuccess('Arrangementet ble slettet');
+          router.push('/admin/events');
         } catch (error) {
           swalError('Arrangementet ble ikke slettet', error as Error);
         }
@@ -117,7 +148,7 @@ function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
       'Slett arrangement',
       'Avbryt'
     );
-  }, [eventid]);
+  }, [eventid, router]);
 
   if (isLoading) {
     return <LoadingIndicator />;

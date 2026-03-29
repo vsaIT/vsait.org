@@ -5,6 +5,9 @@ import { isEmpty } from 'lodash';
 import { getToken } from 'next-auth/jwt';
 import { requireAdmin } from '../utils';
 import { Event } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
+import { put } from '@vercel/blob';
+import { base64ToBlob } from '@/lib/imageBlobUtil';
 
 const GET = async (req: NextRequest) => {
   const searchParams = req.nextUrl.searchParams;
@@ -100,7 +103,25 @@ const POST = async (req: NextRequest) => {
   if (authResponse) return authResponse;
 
   try {
-    const body: Event = await req.json();
+    const body = await req.json();
+
+    // Handle image upload if present
+    if (typeof body.image === 'string' && body.image.startsWith('data:image')) {
+      try {
+        const maybeBlob = base64ToBlob(body.image);
+        if (maybeBlob instanceof Blob) {
+          const filename = uuidv4();
+          const { url } = await put(`images/${filename}`, maybeBlob, {
+            access: 'public',
+          });
+          body.image = url;
+        }
+      } catch (e) {
+        // ignore conversion errors
+        console.error('Image upload failed', e);
+      }
+    }
+
     const event = await prisma.event.create({
       data: body,
     });

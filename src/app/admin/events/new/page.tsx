@@ -16,6 +16,7 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import QuillNoSSR from '@/components/Input/QuillNoSSR';
+import { imageToBase64 } from '@/lib/imageBlobUtil';
 import ImagePreview from '@/components/ImagePreview';
 
 export default function AdminEventsNew() {
@@ -37,6 +38,10 @@ export default function AdminEventsNew() {
       swalLoading('Oppretter...', async () => {
         try {
           const eventToSend = { ...event };
+          if (image) {
+            eventToSend.image = await imageToBase64(image);
+          }
+
           timeDataInputs.forEach((input) => {
             const key = input.attr as keyof EventType;
             (eventToSend[key] as Date) = new Date(
@@ -56,7 +61,7 @@ export default function AdminEventsNew() {
         }
       });
     },
-    [reset, router, timeDataInputs]
+    [reset, router, timeDataInputs, image]
   );
   return (
     <div className='flex h-screen w-full flex-col gap-6 p-6'>
