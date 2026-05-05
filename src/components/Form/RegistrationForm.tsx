@@ -38,14 +38,14 @@ const RegistrationForm = () => {
       if (!res) return;
       if (res.ok) {
         console.log('Success');
-        window.location.replace('/login');
+        window.location.replace('/login?registered=1');
       } else if (res.error) {
         if (
           res.error === 'CredentialsSignin' ||
           res.error === 'RegistrationSuccessful'
         ) {
           console.log('Registration succeeded implicitly');
-          window.location.replace('/login');
+          window.location.replace('/login?registered=1');
           return;
         }
         console.error(res.error);
@@ -59,7 +59,7 @@ const RegistrationForm = () => {
 
   return (
     <>
-      <div className='mb-10 flex w-144 -translate-y-10 transform flex-col justify-center rounded-2xl bg-white p-8 text-left shadow-2xl'>
+      <div className='mb-10 flex w-[calc(100%-1rem)] max-w-xl -translate-y-10 transform flex-col justify-center rounded-2xl bg-white p-4 text-left shadow-2xl sm:p-8'>
         <h1 className='text-gray-900 text-xl font-bold leading-7'>Register:</h1>
         <div className='w-full pt-8'>
           <form
@@ -91,7 +91,7 @@ const RegistrationForm = () => {
               </div>
             )}
 
-            <div className='flex gap-5'>
+            <div className='flex flex-col gap-5 sm:flex-row'>
               <div className='relative w-full'>
                 <label
                   htmlFor='firstname'
@@ -153,7 +153,7 @@ const RegistrationForm = () => {
               </div>
             </div>
 
-            <div className='flex gap-5'>
+            <div className='flex flex-col gap-5 sm:flex-row'>
               <div className='relative w-full'>
                 <label
                   htmlFor='password'
@@ -228,7 +228,7 @@ const RegistrationForm = () => {
                   id='student'
                   required
                   {...register('student')}
-                  className='w-full rounded-xl border-2 border-stone-300 bg-transparent px-4 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out invalid:text-placeholder'
+                  className='w-full rounded-xl border-2 border-stone-300 bg-transparent py-3 pl-4 pr-10 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out invalid:text-placeholder'
                   defaultValue=''
                 >
                   <option value='' disabled hidden>

@@ -2,6 +2,7 @@ import { Button } from '@/components/Input';
 import { MINIMUM_ACTIVITY_TIMEOUT } from '@/lib/constants';
 import { getCsrfToken, signIn } from 'next-auth/react';
 import { useEffect, useState } from 'react';
+import { swalSuccess } from '@/lib/swal';
 import { useForm } from 'react-hook-form';
 
 type LoginFormValues = {
@@ -19,6 +20,19 @@ const LoginForm = () => {
     getCsrfToken().then((res) => {
       if (res) setCsrfToken(res);
     });
+  }, []);
+
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('registered')) {
+        swalSuccess('Sjekk e-posten din for å bekrefte kontoen!');
+        const cleanUrl = window.location.pathname + window.location.hash;
+        window.history.replaceState({}, '', cleanUrl);
+      }
+    } catch (e) {
+      console.error('Error parsing URL parameters:', e);
+    }
   }, []);
 
   const onSubmit = async (data: LoginFormValues) => {
@@ -45,7 +59,7 @@ const LoginForm = () => {
 
   return (
     <>
-      <div className='mb-10 flex w-128 -translate-y-10 transform flex-col justify-center rounded-2xl bg-white p-8 text-left shadow-2xl'>
+      <div className='mb-10 flex w-[calc(100%-1rem)] max-w-lg -translate-y-10 transform flex-col justify-center rounded-2xl bg-white p-4 text-left shadow-2xl sm:p-8'>
         <h1 className='text-gray-900 text-xl font-bold leading-7'>Logg inn:</h1>
         <div className='w-full pt-2'>
           <form

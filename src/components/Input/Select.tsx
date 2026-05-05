@@ -10,7 +10,7 @@ const Select = <T extends object>({
     <div>
       <select
         id={id as string}
-        className='w-full rounded-xl border-2 border-stone-300 bg-transparent px-4 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out invalid:text-placeholder'
+        className='w-full rounded-xl border-2 border-stone-300 bg-transparent py-3 pl-4 pr-10 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out invalid:text-placeholder'
         {...(register && id ? register(id) : {})}
       >
         {options.map((option) => (

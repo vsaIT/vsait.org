@@ -42,7 +42,7 @@ const Navigation = () => {
 
   return (
     <header className='absolute z-20 w-full'>
-      <nav className='flex h-24 w-full items-center justify-between px-6 lg:justify-center'>
+      <nav className='flex h-24 w-full items-center justify-between px-6 sm:px-10'>
         <Link href='/' className='overflow-hidden rounded-full'>
           <Image
             src='/logo.svg'
@@ -54,7 +54,7 @@ const Navigation = () => {
         </Link>
         <div
           className={`fixed right-4 top-4 flex flex-col justify-end gap-5 rounded-lg rounded-tr-3xl bg-white p-4 text-lg transition duration-500 
-          lg:static lg:w-3/5 lg:translate-x-0 lg:flex-row lg:items-center lg:rounded-none lg:bg-transparent lg:p-0 lg:opacity-100
+          lg:static lg:flex-1 lg:translate-x-0 lg:flex-row lg:items-center lg:justify-center lg:rounded-none lg:bg-transparent lg:p-0 lg:opacity-100
           ${isBurgerOpen ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'}`}
         >
           {navigationList.map((nav) => (

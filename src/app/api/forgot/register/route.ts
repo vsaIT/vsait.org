@@ -5,10 +5,8 @@ import { sendEmail } from './utils';
 import { NextRequest, NextResponse } from 'next/server';
 
 const POST = async (req: NextRequest) => {
-  const searchParams = req.nextUrl.searchParams;
-  const email: string = isEmpty(searchParams.get('email'))
-    ? ''
-    : String(searchParams.get('email'));
+  const body = await req.json();
+  const email: string = isEmpty(body.email) ? '' : String(body.email);
   try {
     const user = await prisma.user.findFirst({
       where: {

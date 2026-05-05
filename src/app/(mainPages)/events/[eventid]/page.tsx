@@ -1,5 +1,5 @@
 'use client';
-import { EventsDetailedSkeleton } from '@/components/Events';
+import { CancelledBadge, EventsDetailedSkeleton } from '@/components/Events';
 import { SmallHeader } from '@/components/Header';
 import { Button } from '@/components/Input';
 import StyledSwal from '@/components/StyledSwal';
@@ -144,9 +144,7 @@ function Event({ params }: { params: { eventid: string } }): JSX.Element {
             >
               {data.event.isCancelled && (
                 <div className='pointer-events-none absolute inset-0 z-20 flex items-center justify-center'>
-                  <div className='-rotate-12 rounded-lg border-4 border-white bg-red-600 px-8 py-3 text-4xl font-bold text-white shadow-xl'>
-                    AVLYST!
-                  </div>
+                  <CancelledBadge size='lg' />
                 </div>
               )}
               <Image
@@ -165,7 +163,7 @@ function Event({ params }: { params: { eventid: string } }): JSX.Element {
             </div>
           </div>
 
-          <div className='grid grid-cols-eventdetail gap-6 text-left'>
+          <div className='flex flex-col gap-6 text-left md:grid md:grid-cols-eventdetail'>
             <div className='flex w-full flex-col rounded-2xl bg-white p-6 shadow-2xl'>
               <h2 className='mb-4 text-2xl font-bold'>Detaljer</h2>
 
@@ -207,7 +205,7 @@ function Event({ params }: { params: { eventid: string } }): JSX.Element {
             </div>
           </div>
 
-          <div className='grid grid-cols-eventdetail gap-6 text-left'>
+          <div className='flex flex-col gap-6 text-left md:grid md:grid-cols-eventdetail'>
             <div className='flex flex-col'>
               <div className='mb-6 flex w-full flex-col rounded-2xl bg-white p-6 shadow-2xl'>
                 <h2 className='mb-4 text-2xl font-bold'>Påmelding</h2>

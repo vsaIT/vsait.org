@@ -8,7 +8,7 @@ const CurvyHeader = ({ title, children }: HeaderProps) => {
     <div className='curvyHeader relative flex h-72 w-full flex-col items-center justify-center bg-gradient-to-b from-primary via-primary to-secondary'>
       {title && (
         <div className='relative z-10 m-auto block w-full max-w-screen-xl text-4xl font-bold text-white'>
-          <h1 className='absolute -top-6 left-40'>{title}</h1>
+          <h1 className='absolute -top-6 left-20 md:left-40'>{title}</h1>
         </div>
       )}
       <svg

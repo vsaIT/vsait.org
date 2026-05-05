@@ -94,8 +94,8 @@ const ForgotPassword: NextPage = () => {
     <>
       <SmallHeader />
 
-      <div className='mb-10 flex w-128 -translate-y-10 transform flex-col justify-center rounded-2xl bg-white p-8 text-left shadow-2xl'>
-        <div className='m-auto mb-8 flex w-8/12 flex-col justify-center text-center'>
+      <div className='mb-10 flex w-[calc(100%-1rem)] max-w-lg -translate-y-10 transform flex-col justify-center rounded-2xl bg-white p-4 text-left shadow-2xl sm:p-8'>
+        <div className='m-auto mb-8 flex w-full flex-col justify-center text-center sm:w-8/12'>
           <div className='relative m-auto flex h-24 w-24 justify-center overflow-hidden fill-slate-700'>
             <Lock color='inherit' />
           </div>

@@ -18,7 +18,7 @@ function ConfirmEmail(): JSX.Element {
   >(null);
   const [confirmMessage, setConfirmMessage] = useState('');
 
-  // Countdown
+  // Countdown timer for resend button
   useEffect(() => {
     if (count > 0) {
       const intervalId = setInterval(() => {
@@ -28,7 +28,7 @@ function ConfirmEmail(): JSX.Element {
     }
   }, [count]);
 
-  // Button enabling
+  // Enable resend button when count reaches 0
   useEffect(() => {
     if (count === 0) {
       setDisabled(false);
@@ -67,12 +67,12 @@ function ConfirmEmail(): JSX.Element {
     }
   }, [code]);
 
+  // Resend confirmation email handler
   const handleResend = async () => {
     if (!email) {
       ToastMessage({ type: 'error', message: 'Vennligst fyll inn epost' });
       return;
     }
-
     setDisabled(true);
     try {
       const res = await fetch('/api/auth/resend-confirm', {
@@ -83,7 +83,6 @@ function ConfirmEmail(): JSX.Element {
         body: JSON.stringify({ email }),
       });
       const data = await res.json();
-
       if (res.ok) {
         ToastMessage({ type: 'success', message: 'Epost har blitt sendt!' });
         setCount(60);
