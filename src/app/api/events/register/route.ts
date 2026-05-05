@@ -1,6 +1,5 @@
 import prisma from 'prisma/index';
 import { getErrorMessage, getMembershipYear } from '@/lib/utils';
-import { isEmpty } from 'lodash';
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import { requireSelfOrAdmin } from '../../utils';
@@ -17,7 +16,6 @@ const POST = async (req: NextRequest) => {
 
   try {
     const event = await prisma.event.findFirst({
-
       where: isAdmin
         ? {
             id: Number(eventId),

@@ -41,7 +41,10 @@ const EventsDisplay = ({ className = '' }: ExtendedComponentProps) => {
                 <Link href={`/events/${event.id}`} className='flex flex-col'>
                   {isCancelled && (
                     <div className='pointer-events-none absolute -left-4 top-8 z-20 transition-transform group-hover:scale-110'>
-                      <CancelledBadge size='sm' className='md:px-6 md:text-3xl' />
+                      <CancelledBadge
+                        size='sm'
+                        className='md:px-6 md:text-3xl'
+                      />
                     </div>
                   )}
                   <div

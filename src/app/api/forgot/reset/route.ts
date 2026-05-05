@@ -15,8 +15,7 @@ const handler = async (req: NextRequest) => {
       ? ''
       : String(body.repeatPassword);
 
-    if (password !== repeatPassword)
-    throw new Error('Passwords do not match!');
+    if (password !== repeatPassword) throw new Error('Passwords do not match!');
     if (password.length < 8)
       throw new Error('Minimum password length is set at 8 characters');
 

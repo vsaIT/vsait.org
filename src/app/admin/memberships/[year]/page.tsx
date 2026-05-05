@@ -1,13 +1,9 @@
 'use client';
 import { AdminTable, AdminTablePagination } from '@/components/Admin';
-import {
-  Button,
-  DebouncedInput,
-  IndeterminateCheckbox,
-} from '@/components/Input';
+import { DebouncedInput, IndeterminateCheckbox } from '@/components/Input';
 import { CircleCheck, CircleXMark, Search } from '@/components/icons';
 import { getLocaleDateString, normalize } from '@/lib/utils';
-import { MembershipToUser, User } from '@prisma/client';
+import { User } from '@prisma/client';
 import {
   ColumnFiltersState,
   SortingState,
@@ -224,7 +220,7 @@ const AdminMembershipsView: NextPage = () => {
         error.message;
         window.location.href = '/500';
       });
-  }, [session?.user?.id, pageIndex]);
+  }, [session?.user?.id, pageIndex, year]);
 
   return (
     <>
@@ -261,16 +257,16 @@ const AdminMembershipsView: NextPage = () => {
           <div className='flex items-center justify-between'>
             <div>
               <p
-                className={`text-sm text-neutral-500 transition-all duration-500 ${Object.keys(rowSelection).length > 0
-                  ? 'opacity-100'
-                  : 'opacity-0'
-                  }`}
+                className={`text-sm text-neutral-500 transition-all duration-500 ${
+                  Object.keys(rowSelection).length > 0
+                    ? 'opacity-100'
+                    : 'opacity-0'
+                }`}
               >
                 {Object.keys(rowSelection).length} av{' '}
                 {table.getPreFilteredRowModel().rows.length} valgt
               </p>
             </div>
-
           </div>
           <div className='grid [grid-template-rows:minmax(409px,1fr)_50px]'>
             <div className='overflow-hidden rounded-lg border border-neutral-300'>
@@ -296,6 +292,6 @@ const AdminMembershipsView: NextPage = () => {
       </div>
     </>
   );
-}
+};
 
 export default AdminMembershipsView;

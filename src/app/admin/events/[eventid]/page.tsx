@@ -64,9 +64,8 @@ function AdminEventsView({ params }: AdminEventsProps): JSX.Element {
 
       timeFields.forEach((field) => {
         if (formattedEvent[field]) {
-          (formattedEvent[field] as any) = isoToOsloTimestring(
-            new Date(formattedEvent[field] as any)
-          );
+          (formattedEvent as Record<keyof EventType, unknown>)[field] =
+            isoToOsloTimestring(new Date(formattedEvent[field] as string));
         }
       });
 

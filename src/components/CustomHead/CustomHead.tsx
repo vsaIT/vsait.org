@@ -1,5 +1,6 @@
 'use client';
 import { usePathname } from 'next/navigation';
+import Head from 'next/head';
 
 import { AdminPageTitle, PageTitle } from './titleEnum';
 
@@ -60,13 +61,13 @@ export default function CustomHead(): JSX.Element {
   const pathParam = usePathname();
   const title = mapPageTitle(pathParam);
   return (
-    <head>
+    <Head>
       <title>{title}</title>
       <meta
         name='description'
         content='Vietnamese Student Association in Trondheim'
       />
       <link rel='icon' href='/favicon.ico' />
-    </head>
+    </Head>
   );
 }

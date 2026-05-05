@@ -4,7 +4,6 @@ import { getErrorMessage } from '@/lib/utils';
 import { isEmpty } from 'lodash';
 import { getToken } from 'next-auth/jwt';
 import { requireAdmin } from '../utils';
-import { Event } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { put } from '@vercel/blob';
 import { base64ToBlob } from '@/lib/imageBlobUtil';
