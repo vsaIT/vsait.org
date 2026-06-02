@@ -2,6 +2,9 @@ import { getErrorMessage } from '@/lib/utils';
 import { NextResponse } from 'next/server';
 import prisma from 'prisma/index';
 
+// This route serves the archive of past events, ordered by most recent first.
+export const dynamic = 'force-dynamic';
+
 // Returns the showcase archive of past events most recent first.
 const GET = async () => {
   try {

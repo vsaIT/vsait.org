@@ -4,7 +4,7 @@ CREATE TABLE "EventArchive"
 (
     "id" SERIAL NOT NULL,
     "title" VARCHAR(500) NOT NULL,
-    "description" VARCHAR(8000) NOT NULL DEFAULT '',
+    "description" VARCHAR(12000) NOT NULL DEFAULT '',
     "image" VARCHAR(500),
     "startTime" TIMESTAMP(3) NOT NULL,
     "location" VARCHAR(100) NOT NULL DEFAULT '',
