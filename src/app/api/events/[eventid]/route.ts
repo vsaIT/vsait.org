@@ -83,12 +83,17 @@ const GET = async (
         };
       });
     }
-    const hasMembership =
-      event?.registrationList.filter(
-        ({ user }) =>
-          user?.id === userId &&
-          user?.membership.map((m) => m.year).includes(getMembershipYear())
-      ).length > 0;
+    // Check the logged-in user's own membership directly
+    let hasMembership = false;
+    if (userId) {
+      const currentUser = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { membership: { select: { year: true } } },
+      });
+      hasMembership =
+        currentUser?.membership.some((m) => m.year === getMembershipYear()) ??
+        false;
+    }
 
     return NextResponse.json(
       {

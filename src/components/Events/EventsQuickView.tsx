@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 const EventsDisplay = ({ className = '' }: ExtendedComponentProps) => {
-  const { data, isLoading, isError } = useEvents('page=1&upcomming=true');
+  const { data, isLoading, isError } = useEvents('page=1&upcoming=true');
 
   if (!isLoading && !data) window.location.href = '/404';
   if (isError) throw new Error('Failed to load events');

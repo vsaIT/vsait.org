@@ -1,5 +1,9 @@
 'use client';
-import { CancelledBadge, EventsDisplaySkeleton } from '@/components/Events';
+import {
+  CancelledBadge,
+  EventsDisplaySkeleton,
+  PastEvents,
+} from '@/components/Events';
 import { CurvyHeader } from '@/components/Header';
 import { Calendar, Person, Place } from '@/components/icons';
 import { useEvents } from '@/lib/hooks/useEvent';
@@ -111,6 +115,7 @@ function Events(): JSX.Element {
           </Link>
         ))}
       </div>
+      <PastEvents />
     </>
   );
 }

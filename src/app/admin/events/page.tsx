@@ -23,7 +23,7 @@ import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 
 function AdminEvents(): JSX.Element {
-  const { isLoading, isError, data } = useEvents('all=true');
+  const { isError, data } = useEvents('all=true');
   // Selection, filter and sorting states
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [rowSelection, setRowSelection] = useState({});
@@ -215,8 +215,6 @@ function AdminEvents(): JSX.Element {
   const pageIndex = table.getState().pagination.pageIndex;
   const pageSize = table.getState().pagination.pageSize;
 
-  // Redirect to 404 if event not found
-  if (!isLoading && events?.length === 0) window.location.href = '/404';
   // Redirect to 500 if error
   if (isError) window.location.href = '/500';
 

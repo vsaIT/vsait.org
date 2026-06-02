@@ -27,3 +27,26 @@ export function useEvents(query: string = '') {
     isError: error,
   };
 }
+
+export type ArchivedEvent = {
+  id: number;
+  title: string;
+  description: string;
+  image: string | null;
+  startTime: string;
+  location: string;
+  eventType: 'OPEN' | 'MEMBERSHIP';
+};
+
+export function useEventArchive() {
+  const { data, error, isLoading } = useSWR<{ events: ArchivedEvent[] }>(
+    '/api/events/archive',
+    fetcher
+  );
+
+  return {
+    data,
+    isLoading,
+    isError: error,
+  };
+}

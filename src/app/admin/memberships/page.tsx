@@ -18,7 +18,7 @@ import Link from 'next/link';
 import { useMemo, useState } from 'react';
 
 const AdminMemberships: NextPage = () => {
-  const { isLoading, error, isFetching, data } = useQuery({
+  const { error, data } = useQuery({
     queryKey: ['memberships'],
     queryFn: () => fetch('/api/memberships').then((res) => res.json()),
     refetchOnWindowFocus: false,
@@ -113,17 +113,12 @@ const AdminMemberships: NextPage = () => {
 
   // Variables for reusability
   const memberships: (Membership & { users: { id: string }[] })[] = data;
-  const loading = isLoading || isFetching;
   const pageCount = table.getPageCount();
   const pageIndex = table.getState().pagination.pageIndex;
   const pageSize = table.getState().pagination.pageSize;
 
-  // Redirect to 404 if event not found
-  if (!loading && memberships.length === 0) window.location.href = '/404';
   // Redirect to 500 if error
   if (error) window.location.href = '/500';
-
-  console.log(memberships);
 
   return (
     <>

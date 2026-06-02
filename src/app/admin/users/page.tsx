@@ -6,15 +6,13 @@ import {
   IndeterminateCheckbox,
 } from '@/components/Input';
 import { CircleCheck, CircleXMark, Search } from '@/components/icons';
-import { getLocaleDateString, getMembershipYear, normalize } from '@/lib/utils';
+import { getLocaleDateString, getMembershipYear } from '@/lib/utils';
 import type { User } from '@prisma/client';
 import { Membership } from '@prisma/client';
 import {
-  ColumnFiltersState,
   SortingState,
   createColumnHelper,
   getCoreRowModel,
-  getFilteredRowModel,
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
@@ -25,8 +23,11 @@ import { useEffect, useMemo, useState } from 'react';
 
 type AdminUserType = User & { membership: Membership[] };
 
-const fetchUser = async (page: number) => {
-  const response = await fetch(`/api/user?page=${page + 1}`);
+// Fetch users with pagination and search
+const fetchUser = async (page: number, search: string) => {
+  const params = new URLSearchParams({ page: String(page + 1) });
+  if (search) params.set('search', search);
+  const response = await fetch(`/api/user?${params.toString()}`);
   if (!response.ok) {
     const message = `An error has occured: ${response.status}`;
     throw new Error(message);
@@ -35,6 +36,7 @@ const fetchUser = async (page: number) => {
   return users;
 };
 
+// Main component for displaying and managing users in the admin panel
 const AdminUsers: NextPage = () => {
   const { data: session } = useSession({
     required: true,
@@ -47,8 +49,9 @@ const AdminUsers: NextPage = () => {
     userCount: 0,
   });
 
+  // Variables for reusability
   const [rowSelection, setRowSelection] = useState({});
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [search, setSearch] = useState('');
 
   const [sorting, setSorting] = useState<SortingState>([
     {
@@ -59,6 +62,7 @@ const AdminUsers: NextPage = () => {
 
   const columnHelper = createColumnHelper<AdminUserType>();
 
+  // Define columns for the user table using TanStack Table's column helper
   const columns = useMemo(
     () => [
       columnHelper.display({
@@ -106,15 +110,6 @@ const AdminUsers: NextPage = () => {
             </>
           ),
           footer: (info) => info.column.id,
-          filterFn: (row, columnId, value: string) => {
-            const accessor = row.getValue(columnId) as {
-              id: string;
-              firstName: string;
-            };
-            return normalize(accessor.firstName.toLowerCase()).includes(
-              normalize(value.toLowerCase())
-            );
-          },
         }
       ),
       columnHelper.accessor('lastName', {
@@ -224,16 +219,13 @@ const AdminUsers: NextPage = () => {
     state: {
       rowSelection,
       sorting,
-      columnFilters,
     },
     pageCount: Math.ceil(users.userCount / 9),
     manualPagination: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
     // Pipeline
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     debugTable: false,
   });
@@ -242,16 +234,22 @@ const AdminUsers: NextPage = () => {
   const pageIndex = table.getState().pagination.pageIndex;
   const pageSize = table.getState().pagination.pageSize;
 
+  // Reset to the first page whenever the search term changes
+  // so results are not requested for a page index that may not exist for the new query.
+  useEffect(() => {
+    table.setPageIndex(0);
+  }, [search, table]);
+
   useEffect(() => {
     if (!session?.user?.id) return;
 
-    fetchUser(pageIndex)
+    fetchUser(pageIndex, search)
       .then((users) => setUsers(users))
       .catch((error) => {
-        error.message;
+        console.error(error);
         window.location.href = '/500';
       });
-  }, [session?.user?.id, pageIndex]);
+  }, [session?.user?.id, pageIndex, search]);
 
   return (
     <>
@@ -265,13 +263,8 @@ const AdminUsers: NextPage = () => {
             <div className='relative mt-1 fill-stone-400'>
               <DebouncedInput
                 type='text'
-                value={
-                  (table.getColumn('firstName')?.getFilterValue() as string) ??
-                  ''
-                }
-                onChange={(value) =>
-                  table.getColumn('firstName')?.setFilterValue(String(value))
-                }
+                value={search}
+                onChange={(value) => setSearch(String(value))}
                 placeholder='Søk etter bruker'
                 className='w-full rounded-xl border-2 border-stone-300 bg-transparent px-4 py-2 pl-10 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out'
               />

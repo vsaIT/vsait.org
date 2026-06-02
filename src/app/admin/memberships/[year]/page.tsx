@@ -2,14 +2,12 @@
 import { AdminTable, AdminTablePagination } from '@/components/Admin';
 import { DebouncedInput, IndeterminateCheckbox } from '@/components/Input';
 import { CircleCheck, CircleXMark, Search } from '@/components/icons';
-import { getLocaleDateString, normalize } from '@/lib/utils';
+import { getLocaleDateString } from '@/lib/utils';
 import { User } from '@prisma/client';
 import {
-  ColumnFiltersState,
   SortingState,
   createColumnHelper,
   getCoreRowModel,
-  getFilteredRowModel,
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
@@ -19,8 +17,15 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
-const fetchMembershipUsers = async (page: number, year: number) => {
-  const response = await fetch(`/api/memberships/${year}?page=${page + 1}`);
+// Fetch users for a specific membership year with pagination and search
+const fetchMembershipUsers = async (
+  page: number,
+  year: number,
+  search: string
+) => {
+  const params = new URLSearchParams({ page: String(page + 1) });
+  if (search) params.set('search', search);
+  const response = await fetch(`/api/memberships/${year}?${params.toString()}`);
   if (!response.ok) {
     const message = `An error has occured: ${response.status}`;
     throw new Error(message);
@@ -29,6 +34,7 @@ const fetchMembershipUsers = async (page: number, year: number) => {
   return users;
 };
 
+// Main component for displaying and managing memberships for a specific year
 const AdminMembershipsView: NextPage = () => {
   const { year } = useParams() as { year?: string };
   const { data: session } = useSession({
@@ -36,14 +42,16 @@ const AdminMembershipsView: NextPage = () => {
   });
   const [users, setUsers] = useState<{
     users: User[];
+    userCount: number;
   }>({
     users: [],
+    userCount: 0,
   });
 
-  const userCount = users.users?.length;
-
+  // Fetch memberships data using React Query
+  const userCount = users.userCount;
   const [rowSelection, setRowSelection] = useState({});
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [search, setSearch] = useState('');
 
   const [sorting, setSorting] = useState<SortingState>([
     {
@@ -101,15 +109,6 @@ const AdminMembershipsView: NextPage = () => {
             </>
           ),
           footer: (info) => info.column.id,
-          filterFn: (row, columnId, value: string) => {
-            const accessor = row.getValue(columnId) as {
-              id: string;
-              firstName: string;
-            };
-            return normalize(accessor.firstName.toLowerCase()).includes(
-              normalize(value.toLowerCase())
-            );
-          },
         }
       ),
       columnHelper.accessor('lastName', {
@@ -193,16 +192,13 @@ const AdminMembershipsView: NextPage = () => {
     state: {
       rowSelection,
       sorting,
-      columnFilters,
     },
     pageCount: Math.ceil(userCount / 9),
     manualPagination: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
     // Pipeline
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     debugTable: false,
   });
@@ -211,16 +207,22 @@ const AdminMembershipsView: NextPage = () => {
   const pageIndex = table.getState().pagination.pageIndex;
   const pageSize = table.getState().pagination.pageSize;
 
+  // Reset to the first page whenever the search term changes
+  // so results are not requested for a page index that may not exist for the new query.
+  useEffect(() => {
+    table.setPageIndex(0);
+  }, [search, table]);
+
   useEffect(() => {
     if (!session?.user?.id) return;
 
-    fetchMembershipUsers(pageIndex, Number(year))
+    fetchMembershipUsers(pageIndex, Number(year), search)
       .then((users) => setUsers(users))
       .catch((error) => {
-        error.message;
+        console.error(error.message);
         window.location.href = '/500';
       });
-  }, [session?.user?.id, pageIndex, year]);
+  }, [session?.user?.id, pageIndex, year, search]);
 
   return (
     <>
@@ -234,13 +236,8 @@ const AdminMembershipsView: NextPage = () => {
             <div className='relative mt-1 fill-stone-400'>
               <DebouncedInput
                 type='text'
-                value={
-                  (table.getColumn('firstName')?.getFilterValue() as string) ??
-                  ''
-                }
-                onChange={(value) =>
-                  table.getColumn('firstName')?.setFilterValue(String(value))
-                }
+                value={search}
+                onChange={(value) => setSearch(String(value))}
                 placeholder='Søk etter bruker'
                 className='w-full rounded-xl border-2 border-stone-300 bg-transparent px-4 py-2 pl-10 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out'
               />

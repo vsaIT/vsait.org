@@ -107,7 +107,7 @@ const LoginForm = () => {
                   placeholder='E-post'
                   required
                   {...register('email')}
-                  className='w-full rounded-xl border-2 border-stone-300 bg-transparent px-4 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out'
+                  className='w-full rounded-xl border-2 border-stone-300 bg-transparent px-4 py-3 text-left text-base leading-6 outline-none transition duration-150 ease-in-out'
                 />
               </div>
             </div>
@@ -128,7 +128,7 @@ const LoginForm = () => {
                   minLength={8}
                   required
                   {...register('password')}
-                  className='w-full rounded-xl border-2 border-stone-300 bg-transparent px-4 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out'
+                  className='w-full rounded-xl border-2 border-stone-300 bg-transparent px-4 py-3 text-left text-base leading-6 outline-none transition duration-150 ease-in-out'
                 />
               </div>
             </div>
