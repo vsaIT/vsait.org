@@ -1,10 +1,7 @@
 'use client';
-import {
-  CancelledBadge,
-  EventsDisplaySkeleton,
-  PastEvents,
-} from '@/components/Events';
+import { CancelledBadge, EventsDisplaySkeleton } from '@/components/Events';
 import { CurvyHeader } from '@/components/Header';
+import { Button } from '@/components/Input';
 import { Calendar, Person, Place } from '@/components/icons';
 import { useEvents } from '@/lib/hooks/useEvent';
 import Image from 'next/image';
@@ -102,7 +99,7 @@ function Events(): JSX.Element {
             })}
       </div>
 
-      <div className='mb-32 flex gap-3'>
+      <div className='mb-8 flex gap-3'>
         {new Array(Math.min(data?.pages || 0, 5)).fill(0).map((_, i) => (
           <Link
             href={`/events?page=${i + 1}`}
@@ -115,7 +112,14 @@ function Events(): JSX.Element {
           </Link>
         ))}
       </div>
-      <PastEvents />
+      <div className='mb-32 flex flex-col items-center gap-2'>
+        <p className='text-gray-600 text-sm'>
+          Nysgjerrig på hva vi har gjort tidligere?
+        </p>
+        <Link href='/events/past'>
+          <Button text='Se tidligere arrangementer' />
+        </Link>
+      </div>
     </>
   );
 }

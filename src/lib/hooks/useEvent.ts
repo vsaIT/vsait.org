@@ -39,7 +39,7 @@ export type ArchivedEvent = {
 };
 
 export function useEventArchive() {
-  const { data, error, isLoading } = useSWR<{ events: ArchivedEvent[] }>(
+  const { data, error, isLoading, mutate } = useSWR<{ events: ArchivedEvent[] }>(
     '/api/events/archive',
     fetcher
   );
@@ -48,5 +48,6 @@ export function useEventArchive() {
     data,
     isLoading,
     isError: error,
+    mutate,
   };
 }
