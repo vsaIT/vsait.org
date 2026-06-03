@@ -25,6 +25,10 @@ function Event({ params }: { params: { eventid: string } }): JSX.Element {
 
   if (isError) window.location.href = '/500';
 
+  // Once an event has ended we show it as a finished event.
+  const isPast = data ? new Date(data.event.endTime) < new Date() : false;
+
+  // Registration is closed if the event is in the past, or if the registration deadline has passed.
   const register = useCallback(async () => {
     if (!eventid || !session?.user?.id) return;
     const melding = data?.hasRegistered ? 'av' : 'på';
@@ -91,6 +95,8 @@ function Event({ params }: { params: { eventid: string } }): JSX.Element {
     }).finally(() => setRegistrationEnabled(true));
   }, [eventid, session, data]);
 
+  // Only show the registration button if the event is not in the past, the user is logged in
+  // and the registration deadline has not passed.
   const showRegistrations = useCallback(() => {
     if ((data?.registrations ?? []).length > 0) {
       StyledSwal.fire({
@@ -175,14 +181,18 @@ function Event({ params }: { params: { eventid: string } }): JSX.Element {
                 <p>
                   <b>Sluttid:</b> {new Date(data.event.endTime).toDateString()}
                 </p>
-                <p>
-                  <b>Påmeldingsfrist:</b>{' '}
-                  {new Date(data.event.registrationDeadline).toDateString()}
-                </p>
-                <p>
-                  <b>Avmeldingsfrist:</b>{' '}
-                  {new Date(data.event.cancellationDeadline).toDateString()}
-                </p>
+                {!isPast && (
+                  <>
+                    <p>
+                      <b>Påmeldingsfrist:</b>{' '}
+                      {new Date(data.event.registrationDeadline).toDateString()}
+                    </p>
+                    <p>
+                      <b>Avmeldingsfrist:</b>{' '}
+                      {new Date(data.event.cancellationDeadline).toDateString()}
+                    </p>
+                  </>
+                )}
                 <p>
                   <b>Sted:</b> {data.event.location}
                 </p>
@@ -211,21 +221,27 @@ function Event({ params }: { params: { eventid: string } }): JSX.Element {
                 <h2 className='mb-4 text-2xl font-bold'>Påmelding</h2>
                 <div className='flex flex-col gap-2'>
                   <p>
-                    <b>Antall påmeldte:</b> {data.registrations.length} /{' '}
-                    {data.event.maxRegistrations}
+                    <b>Antall påmeldte:</b>{' '}
+                    {data.event._count?.registrationList ??
+                      data.registrations.length}{' '}
+                    / {data.event.maxRegistrations}
                   </p>
                   <p>
                     <b>Venteliste:</b> {data.event._count?.waitingList}
                   </p>
                   <div className='mt-2 flex flex-col gap-3'>
-                    {session?.user ? (
+                    {session?.user?.role === 'ADMIN' && (
+                      <Button
+                        onClick={() => showRegistrations()}
+                        text='Se andre påmeldte'
+                      />
+                    )}
+                    {isPast ? (
+                      <p className='text-center'>
+                        Dette arrangementet er avsluttet.
+                      </p>
+                    ) : session?.user ? (
                       <>
-                        {session.user.role === 'ADMIN' && (
-                          <Button
-                            onClick={() => showRegistrations()}
-                            text='Se andre påmeldte'
-                          />
-                        )}
                         {data.event.isCancelled ? (
                           <p className='text-center font-bold text-red-500'>
                             Arrangementet er avlyst!

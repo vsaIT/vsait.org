@@ -1,114 +1,167 @@
 'use client';
-import { Calendar, Place } from '@/components/icons';
+import {
+  Calendar,
+  CaretLeft,
+  CaretRight,
+  Person,
+  Place,
+} from '@/components/icons';
 import { useEventArchive } from '@/lib/hooks/useEvent';
-import { imageToBase64 } from '@/lib/imageBlobUtil';
-import { useSession } from 'next-auth/react';
 import Image from 'next/image';
-import { useState } from 'react';
+import Link from 'next/link';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-// Gallery of events that have already happened. Display only for visitors
+// Events that have already happened, shown below the upcoming events on the main events page.
 const PastEvents = () => {
-  const { data, isLoading, mutate } = useEventArchive();
-  const { data: session } = useSession({ required: false });
-  const isAdmin = session?.user?.role === 'ADMIN';
-  const [uploadingId, setUploadingId] = useState<number | null>(null);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  // Keep the current archive page in the URL (?pastPage=).
+  const page = Math.max(1, Number(searchParams.get('pastPage')) || 1);
+  const { data, isLoading } = useEventArchive(`page=${page}`);
 
-  const handleUpload = async (id: number, file: File) => {
-    try {
-      setUploadingId(id);
-      const image = await imageToBase64(file);
-      const res = await fetch(`/api/events/archive/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image }),
-      });
-      if (!res.ok) throw new Error('Opplasting feilet');
-      await mutate();
-    } catch (error) {
-      console.error(error);
-      alert('Kunne ikke laste opp bildet. Prøv igjen.');
-    } finally {
-      setUploadingId(null);
-    }
+  const goToPage = (next: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('pastPage', String(next));
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
-  if (isLoading) {
+  if (isLoading && !data) {
     return <p className='my-10 text-center'>Laster inn...</p>;
   }
 
   if (!data?.events || data.events.length === 0) {
     return (
-      <p className='my-10 text-center text-gray-600'>
+      <p className='text-gray-600 my-10 text-center'>
         Ingen tidligere arrangementer å vise enda.
       </p>
     );
   }
 
+  const totalPages = data.pages || 1;
+  const currentPage = data.page || page;
+
+  // Windowed page numbers
+  const windowSize = Math.min(5, totalPages);
+  const windowEnd = Math.min(
+    totalPages,
+    Math.max(currentPage + Math.floor(windowSize / 2), windowSize)
+  );
+  const windowStart = windowEnd - windowSize + 1;
+  const pageNumbers = Array.from(
+    { length: windowSize },
+    (_, i) => windowStart + i
+  );
+
   return (
-    <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
+    <div className='flex flex-col gap-6'>
       {data.events.map((event) => (
-        <div
-          key={event.id}
-          className='group flex flex-col overflow-hidden rounded-2xl border-2 border-primary bg-white shadow-lg'
-        >
-          <div className='relative h-44 w-full overflow-hidden'>
-            <div className='h-full w-full opacity-70 grayscale transition-all duration-300 group-hover:opacity-100 group-hover:grayscale-0'>
-              <Image
-                src={event.image || '/placeholder.png'}
-                alt={event.title}
-                width={1352}
-                height={564}
-                sizes='100vw'
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              />
-            </div>
-
-            {isAdmin && (
-              <label
-                className='absolute inset-0 flex cursor-pointer items-center justify-center bg-black/0 opacity-0 transition-all duration-200 hover:bg-black/40 hover:opacity-100'
-                title='Last opp bilde'
-              >
-                <span className='rounded-md bg-white px-3 py-1 text-sm font-medium text-black shadow'>
-                  {uploadingId === event.id
-                    ? 'Laster opp...'
-                    : event.image
-                      ? 'Bytt bilde'
-                      : 'Last opp bilde'}
-                </span>
-                <input
-                  type='file'
-                  accept='image/*'
-                  className='hidden'
-                  disabled={uploadingId === event.id}
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) handleUpload(event.id, file);
-                    e.target.value = '';
-                  }}
+        <Link href={`/events/past/${event.id}`} key={event.id}>
+          <div className='group rounded-2xl border-2 border-primary p-3'>
+            <div className='relative mx-auto flex w-full flex-col gap-3 rounded-2xl bg-white p-3 shadow-lg md:grid md:grid-cols-layout'>
+              <div className='h-48 w-full overflow-hidden rounded-2xl opacity-60 grayscale transition-all duration-300 group-hover:opacity-100 group-hover:grayscale-0 md:h-[170px] md:rounded-l-2xl'>
+                <Image
+                  src={event.image || '/placeholder.png'}
+                  alt='event image'
+                  width={1352}
+                  height={564}
+                  sizes='100vw'
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
-              </label>
-            )}
-          </div>
-
-          <div className='flex flex-col gap-2 p-4 text-left'>
-            <h3 className='text-lg font-bold'>{event.title}</h3>
-            <div className='grid grid-cols-event gap-3'>
-              <Calendar className='justify-self-center' />
-              <p className='flex flex-col justify-center text-sm'>
-                {new Date(event.startTime).toDateString()}
-              </p>
-            </div>
-            {event.location && (
-              <div className='grid grid-cols-event gap-3'>
-                <Place className='justify-self-center' />
-                <p className='flex flex-col justify-center text-sm'>
-                  {event.location}
-                </p>
               </div>
-            )}
+              <div className='hidden h-full w-full rounded-lg bg-primary md:block'></div>
+              <div className='text-gray-500 flex w-full flex-col text-left transition-all duration-300 group-hover:text-black'>
+                <h2 className='mb-3 text-xl font-bold md:text-2xl'>
+                  {event.title}
+                </h2>
+                <div className='flex flex-col gap-2'>
+                  <div className='grid grid-cols-event gap-3'>
+                    <Calendar className='justify-self-center' />
+                    <p className='flex flex-col justify-center text-sm md:text-base'>
+                      {new Date(event.startTime).toDateString()} -{' '}
+                      {new Date(event.endTime).toDateString()}
+                    </p>
+                  </div>
+                  <div className='grid grid-cols-event gap-3'>
+                    <Place className='justify-self-center' />
+                    <p className='flex flex-col justify-center text-sm md:text-base'>
+                      {event.location}
+                    </p>
+                  </div>
+                  <div className='grid grid-cols-event gap-3'>
+                    <Person className='justify-self-center' />
+                    <p className='flex flex-col justify-center text-sm md:text-base'>
+                      Antall påmeldte: {event.registrations}
+                      {event.maxRegistrations > 0
+                        ? `/${event.maxRegistrations}`
+                        : ''}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+        </Link>
       ))}
+
+      {totalPages > 1 && (
+        <div className='mt-2 flex items-center justify-center gap-3'>
+          <button
+            type='button'
+            onClick={() => goToPage(1)}
+            disabled={currentPage === 1}
+            aria-label='Første side'
+            className='flex h-12 w-12 items-center justify-center rounded-xl bg-white transition-all hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-40'
+          >
+            <CaretLeft />
+            <CaretLeft className='-ml-2.5' />
+          </button>
+
+          <button
+            type='button'
+            onClick={() => goToPage(Math.max(1, currentPage - 1))}
+            disabled={currentPage === 1}
+            aria-label='Forrige side'
+            className='flex h-12 w-12 items-center justify-center rounded-xl bg-white transition-all hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-40'
+          >
+            <CaretLeft />
+          </button>
+
+          {pageNumbers.map((number) => (
+            <button
+              type='button'
+              key={`past-navigation-${number}`}
+              onClick={() => goToPage(number)}
+              className={`flex h-12 w-12 flex-col justify-center rounded-xl bg-white text-center transition-all hover:brightness-95 ${
+                currentPage === number ? ' border-2 border-primary' : ''
+              }`}
+            >
+              {number}
+            </button>
+          ))}
+
+          <button
+            type='button'
+            onClick={() => goToPage(Math.min(totalPages, currentPage + 1))}
+            disabled={currentPage === totalPages}
+            aria-label='Neste side'
+            className='flex h-12 w-12 items-center justify-center rounded-xl bg-white transition-all hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-40'
+          >
+            <CaretRight />
+          </button>
+
+          <button
+            type='button'
+            onClick={() => goToPage(totalPages)}
+            disabled={currentPage === totalPages}
+            aria-label='Siste side'
+            className='flex h-12 w-12 items-center justify-center rounded-xl bg-white transition-all hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-40'
+          >
+            <CaretRight />
+            <CaretRight className='-ml-2.5' />
+          </button>
+        </div>
+      )}
     </div>
   );
 };

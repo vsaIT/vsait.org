@@ -1,7 +1,10 @@
 'use client';
-import { CancelledBadge, EventsDisplaySkeleton } from '@/components/Events';
+import {
+  CancelledBadge,
+  EventsDisplaySkeleton,
+  PastEvents,
+} from '@/components/Events';
 import { CurvyHeader } from '@/components/Header';
-import { Button } from '@/components/Input';
 import { Calendar, Person, Place } from '@/components/icons';
 import { useEvents } from '@/lib/hooks/useEvent';
 import Image from 'next/image';
@@ -12,15 +15,22 @@ function Events(): JSX.Element {
   const searchParams = useSearchParams();
   const page = Number(searchParams.get('page') || 1);
 
-  const { data, isLoading, isError } = useEvents(`page=${page}`);
+  const { data, isLoading, isError } = useEvents(`page=${page}&upcoming=true`);
 
   if (isError) window.location.href = '/500';
+
+  // The decorative corner blobs only show if there are events to show
+  const showDecorations = isLoading || (data?.events?.length ?? 0) > 0;
 
   return (
     <>
       <CurvyHeader title='Arrangementer' />
 
-      <div className='events relative z-10 mb-8 flex w-11/12 max-w-screen-xl flex-col gap-6'>
+      <div
+        className={`relative z-10 mb-8 flex w-11/12 max-w-screen-xl flex-col gap-6 ${
+          showDecorations ? 'events' : ''
+        }`}
+      >
         {isLoading || !data?.events
           ? new Array(3)
               .fill(0)
@@ -112,13 +122,11 @@ function Events(): JSX.Element {
           </Link>
         ))}
       </div>
-      <div className='mb-32 flex flex-col items-center gap-2'>
-        <p className='text-gray-600 text-sm'>
-          Nysgjerrig på hva vi har gjort tidligere?
-        </p>
-        <Link href='/events/past'>
-          <Button text='Se tidligere arrangementer' />
-        </Link>
+      <div className='relative z-10 mb-32 flex w-11/12 max-w-screen-xl flex-col gap-6'>
+        <h2 className='text-left text-2xl font-bold'>
+          Tidligere arrangementer
+        </h2>
+        <PastEvents />
       </div>
     </>
   );

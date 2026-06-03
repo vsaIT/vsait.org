@@ -34,13 +34,39 @@ export type ArchivedEvent = {
   description: string;
   image: string | null;
   startTime: string;
+  endTime: string;
   location: string;
   eventType: 'OPEN' | 'MEMBERSHIP';
+  maxRegistrations: number;
+  registrations: number;
+  sourceId: number | null;
 };
 
-export function useEventArchive() {
-  const { data, error, isLoading, mutate } = useSWR<{ events: ArchivedEvent[] }>(
-    '/api/events/archive',
+export type ArchiveListResponse = {
+  events: ArchivedEvent[];
+  page: number;
+  pages: number;
+};
+
+// Paginated list of past events from the archive.
+export function useEventArchive(query: string = '') {
+  const { data, error, isLoading, mutate } = useSWR<ArchiveListResponse>(
+    `/api/events/archive?${query}`,
+    fetcher
+  );
+
+  return {
+    data,
+    isLoading,
+    isError: error,
+    mutate,
+  };
+}
+
+// A single archived past event, for its detail page.
+export function useEventArchiveItem(id: string) {
+  const { data, error, isLoading, mutate } = useSWR<{ event: ArchivedEvent }>(
+    id ? `/api/events/archive/${id}` : null,
     fetcher
   );
 

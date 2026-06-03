@@ -51,6 +51,12 @@ const GET = async (
         },
         waitingList: true,
         attendanceList: isAdmin,
+        _count: {
+          select: {
+            registrationList: true,
+            waitingList: true,
+          },
+        },
       },
     });
     if (!event) {

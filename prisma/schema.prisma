@@ -86,17 +86,18 @@ model Event {
   attendanceList       Attendances[]
 }
 
-// Display-only archive of past events. Intentionally has no deadlines,
-// registration relations, or check constraints. Exists purely to
-// showcase events that have already happened.
 model EventArchive {
-  id          Int       @id @default(autoincrement())
-  title       String    @db.VarChar(500)
-  description String    @default("") @db.VarChar(12000)
-  image       String?   @db.VarChar(500)
-  startTime   DateTime
-  location    String    @default("") @db.VarChar(100)
-  eventType   EventType @default(MEMBERSHIP)
+  id               Int       @id @default(autoincrement())
+  title            String    @db.VarChar(500)
+  description      String    @default("") @db.VarChar(12000)
+  image            String?   @db.VarChar(500)
+  startTime        DateTime
+  endTime          DateTime
+  location         String    @default("") @db.VarChar(100)
+  eventType        EventType @default(MEMBERSHIP)
+  maxRegistrations Int       @default(0)
+  registrations    Int       @default(0)
+  sourceId         Int?      @unique
 }
 
 model Registrations {
