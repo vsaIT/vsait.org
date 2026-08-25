@@ -2,11 +2,40 @@ import { base64ToBlob, isValidImageUrl } from '@/lib/imageBlobUtil';
 import { getErrorMessage, getMembershipYear } from '@/lib/utils';
 import { RegisteredUserType } from '@/types/types';
 import { del, put } from '@vercel/blob';
+import { Prisma } from '@prisma/client';
 import { getToken } from 'next-auth/jwt';
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from 'prisma/index';
 import { v4 as uuidv4 } from 'uuid';
 import { requireAdmin } from '../../utils';
+
+// Fields an admin is allowed to change. The request body has to be narrowed before it reaches Prisma.
+const EVENT_UPDATE_FIELDS = [
+  'title',
+  'description',
+  'image',
+  'startTime',
+  'endTime',
+  'registrationDeadline',
+  'cancellationDeadline',
+  'location',
+  'eventType',
+  'maxRegistrations',
+  'isDraft',
+  'isCancelled',
+] as const;
+
+const pickEventFields = (
+  body: Record<string, unknown>
+): Prisma.EventUpdateInput => {
+  const data: Record<string, unknown> = {};
+  for (const field of EVENT_UPDATE_FIELDS) {
+    if (body[field] !== undefined) {
+      data[field] = body[field];
+    }
+  }
+  return data as Prisma.EventUpdateInput;
+};
 
 const POST = async () => {
   return NextResponse.json('Method Not Allowed', {
@@ -167,7 +196,7 @@ const PUT = async (
 
     const updatedEvent = await prisma.event.update({
       where: { id: Number(eventid) },
-      data: body,
+      data: pickEventFields(body),
     });
     return NextResponse.json({ event: updatedEvent }, { status: 200 });
   } catch (error) {
