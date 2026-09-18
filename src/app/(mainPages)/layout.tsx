@@ -1,3 +1,4 @@
+import BackToTop from '@/components/BackToTop';
 import Footer from '@/components/Footer';
 import { Navigation } from '@/components/Navigation';
 
@@ -11,6 +12,7 @@ export default function MainLayout({ children }: { children: JSX.Element }) {
         </main>
       </div>
       <Footer />
+      <BackToTop />
     </>
   );
 }

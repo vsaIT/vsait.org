@@ -105,7 +105,7 @@ function ConfirmEmail(): JSX.Element {
         <SmallHeader />
         <div className='flex min-h-[50vh] w-full flex-col items-center justify-center py-2'>
           <div className='w-full max-w-md rounded-xl bg-white p-8 shadow-xl'>
-            <h1 className='mb-4 text-center text-2xl font-bold'>
+            <h1 className='mb-4 text-center text-2xl'>
               Bekreft Epost
             </h1>
             {confirmStatus === 'error' && (
@@ -146,7 +146,7 @@ function ConfirmEmail(): JSX.Element {
         <div className='w-full max-w-md rounded-xl bg-white p-8 text-center shadow-xl'>
           {isConfirming ? (
             <>
-              <h1 className='mb-4 text-2xl font-bold'>Bekrefter...</h1>
+              <h1 className='mb-4 text-2xl'>Bekrefter...</h1>
               <p className='text-gray-600'>
                 Vennligst vent mens vi bekrefter din epost.
               </p>
@@ -168,7 +168,7 @@ function ConfirmEmail(): JSX.Element {
                   />
                 </svg>
               </div>
-              <h1 className='mb-4 text-2xl font-bold'>Vellykket!</h1>
+              <h1 className='mb-4 text-2xl'>Vellykket!</h1>
               <p className='text-gray-600 mb-6'>{confirmMessage}</p>
               <a
                 href='/login'

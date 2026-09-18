@@ -10,7 +10,7 @@ const GET = async (
   { params }: { params: { year: number } }
 ) => {
   const year = Number(params.year);
-  const page = Number(req.nextUrl.searchParams.get('page')) || 1;
+  const page = Math.max(1, Number(req.nextUrl.searchParams.get('page')) || 1);
   const search = req.nextUrl.searchParams.get('search')?.trim();
   const authResponse = await requireAdmin(req);
   if (authResponse) return authResponse;

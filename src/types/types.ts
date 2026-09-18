@@ -70,15 +70,26 @@ export type SelectProps<T extends FieldValues> = {
   register?: UseFormRegister<T>;
 };
 
+export type AttendedEventType = Pick<
+  Event,
+  'id' | 'title' | 'startTime' | 'endTime'
+>;
+
 export type AttendancesType = {
-  user: UserType;
-  event: EventType;
+  user?: UserType;
+  event?: AttendedEventType | null;
+  createdAt: Date;
+};
+
+export type RegistrationsType = {
+  event?: AttendedEventType | null;
   createdAt: Date;
 };
 
 export type UserType = User & {
   password?: string;
   userAttendanceList: AttendancesType[];
+  userRegistrationList: RegistrationsType[];
   membership: Membership[];
 };
 

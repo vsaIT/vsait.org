@@ -1,145 +1,160 @@
-import { CurvyHeader } from '@/components/Header';
 import Image from 'next/image';
-import ImageWithText from './(components)/EventShowCase';
+import AboutHero from './(components)/AboutHero';
+import AboutSection from './(components)/AboutSection';
 import MemberBox from './(components)/BoardMemberBox';
-import { board, eventInfos, aboutInfos } from './constants';
-
-const BigTextBox = ({ title, content }: { title: string; content: string }) => (
-  <div className='mb-6'>
-    <h2 className='text-xl font-bold italic text-gray'>{title}</h2>
-    <p>{content}</p>
-  </div>
-);
+import EventShowCase from './(components)/EventShowCase';
+import Faq from './(components)/Faq';
+import { MembershipCallout } from '@/components/Home';
+import Reveal from './(components)/Reveal';
+import SectionHeading from '@/components/SectionHeading';
+import Timeline from './(components)/Timeline';
+import { aboutInfos, board, eventInfos, focusAreas } from './constants';
 
 export default function Organization(): JSX.Element {
   return (
     <>
-      <CurvyHeader title='Om oss' />
-      <div className='z-10 mb-12 flex max-w-screen-xl flex-col'>
-        <h1 className='text-center text-6xl font-bold text-black'>VSAiT</h1>
-        <div className='mb-4 flex w-full flex-col justify-center rounded-2xl bg-white p-8 text-left shadow-xl'>
-          {aboutInfos.map((info) => (
-            <BigTextBox
-              key={info.title}
-              title={info.title}
-              content={info.content}
-            />
-          ))}
-        </div>
-
-        <div className='my-12 flex w-full flex-col justify-center p-8'>
-          <h2 className='mb-4 text-center text-3xl font-bold'>Vår fokus</h2>
-          <div className='flex w-full justify-between gap-4'>
-            <div className='grid w-full max-w-xs grid-rows-organizationfocus'>
-              <div className='m-auto mb-3 w-3/4 justify-items-center'>
-                <Image
-                  src='/fokus1.png'
-                  alt='Sosialt miljø icon'
-                  width={2048}
-                  height={1569}
-                  sizes='100vw'
-                  style={{
-                    width: '100%',
-                    height: 'auto',
-                  }}
-                />
-              </div>
-              <div className='m-auto w-3/4'>
-                <h3 className='text-xl font-bold'>Sosialt Miljø</h3>
-                <p>
-                  Skape sosiale bånd i det vietnamesiske studentmiljøet i
-                  Trondheim
+      <AboutHero />
+      <div className='relative z-10 w-full bg-cream'>
+        <div className='mx-auto flex w-11/12 max-w-[60rem] flex-col gap-36 py-28 sm:gap-44 sm:py-36'>
+          <section className='grid grid-cols-1 gap-10 text-left lg:grid-cols-[1fr_2.2fr] lg:gap-16'>
+            <Reveal>
+              <div className='lg:sticky lg:top-28'>
+                <p className='flex items-center gap-3 text-xs uppercase tracking-[0.18em] text-primary'>
+                  <span className='h-0.5 w-6 rounded-full bg-primary' />
+                  Om foreningen
+                </p>
+                <h2 className='mt-3 text-3xl leading-snug  sm:text-4xl'>
+                  Hvem vi er
+                </h2>
+                <p className='mt-4 text-sm leading-relaxed text-gray'>
+                  Tre ting som forklarer hva VSAiT er, hvor vi kommer fra, og
+                  hvordan vi drives.
                 </p>
               </div>
+            </Reveal>
+
+            <div className='flex flex-col gap-5'>
+              {aboutInfos.map((info, index) => (
+                <Reveal
+                  key={info.title}
+                  delay={([0, 100, 200] as const)[index % 3]}
+                >
+                  <AboutSection {...info} />
+                </Reveal>
+              ))}
             </div>
-            <div className='grid w-full max-w-xs grid-rows-organizationfocus'>
-              <div className='m-auto mb-3 w-3/4 justify-items-center'>
-                <Image
-                  src='/fokus2.png'
-                  alt='Kultur icon'
-                  width={2048}
-                  height={1609}
-                  sizes='100vw'
-                  style={{
-                    width: '100%',
-                    height: 'auto',
-                  }}
-                />
-              </div>
-              <div className='m-auto w-3/4'>
-                <h3 className='text-xl font-bold'>Kultur</h3>
-                <p>
-                  Bevare og fremme vietnamesisk kultur blant studenter i
-                  Trondheim
+          </section>
+
+          <section>
+            <Reveal>
+              <SectionHeading title='Vår reise, år for år'>
+                <p className='mt-4 text-sm text-gray'>
+                  Bla sidelengs for å utforske viktige øyeblikk i VSAiTs
+                  historie.
+                </p>
+              </SectionHeading>
+              <Timeline />
+            </Reveal>
+          </section>
+
+          <section>
+            <Reveal>
+              <SectionHeading title='Tre ting vi bryr oss om' />
+            </Reveal>
+            <div className='mt-10 grid gap-5 sm:grid-cols-3'>
+              {focusAreas.map((area, index) => (
+                <Reveal
+                  key={area.title}
+                  delay={([0, 100, 200] as const)[index % 3]}
+                  className='h-full'
+                >
+                  <div className='h-full rounded-2xl bg-white p-8 shadow-sm'>
+                    <div className='mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-primary/10 sm:h-32 sm:w-32'>
+                      <Image
+                        src={area.iconSrc}
+                        alt={area.iconAlt}
+                        width={area.iconWidth}
+                        height={area.iconHeight}
+                        className='h-14 w-auto sm:h-16'
+                      />
+                    </div>
+                    <h3 className='mt-5 text-lg '>{area.title}</h3>
+                    <p className='mt-2 text-xs leading-relaxed text-gray'>
+                      {area.description}
+                    </p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </section>
+
+          <section>
+            <Reveal>
+              <SectionHeading title='Våre arrangementer'>
+                <p className='mt-4 max-w-2xl text-sm leading-relaxed text-gray'>
+                  VSAiTs hensikt er å skape et bånd for det vietnamesiske
+                  studentmiljøet i Trondheim. Dette oppnår vi med ulike sosiale
+                  arrangementer gjennom skoleåret. Vi har både større og mindre
+                  arrangementer der studenter har muligheten til å bli kjent med
+                  hverandre.
+                </p>
+              </SectionHeading>
+            </Reveal>
+
+            <div className='mt-12 flex flex-col gap-14'>
+              {eventInfos.map((event) => (
+                <Reveal key={event.title}>
+                  <EventShowCase {...event} />
+                </Reveal>
+              ))}
+            </div>
+
+            <Reveal>
+              <div className='mt-14 rounded-2xl bg-primary/[0.06] px-6 py-8 sm:px-12'>
+                <h3 className='text-xl '>Småarrangement</h3>
+                <p className='mx-auto mt-3 max-w-xl text-sm leading-relaxed text-gray'>
+                  I løpet av året så holder vi mindre arrangementer som f.eks.
+                  spillkvelder, gameshow, origamikveld eller julekos.
                 </p>
               </div>
+            </Reveal>
+          </section>
+
+          <section>
+            <Reveal>
+              <SectionHeading title='Menneskene bak VSAiT'>
+                <p className='mt-4 text-sm text-gray'>
+                  Vi tar imot innmeldinger, spørsmål og andre henvendelser på{' '}
+                  <a
+                    href='mailto:vsait@vsait.org'
+                    className='text-primary transition-all duration-300 hover:brightness-90'
+                  >
+                    vsait@vsait.org
+                  </a>
+                </p>
+              </SectionHeading>
+            </Reveal>
+
+            <div className='mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4'>
+              {board.map((member, index) => (
+                <Reveal
+                  key={member.name}
+                  delay={([0, 100, 200, 300] as const)[index % 4]}
+                  className='h-full'
+                  once
+                >
+                  <MemberBox name={member.name} role={member.role} />
+                </Reveal>
+              ))}
             </div>
-            <div className='grid w-full max-w-xs grid-rows-organizationfocus'>
-              <div className='m-auto mb-3 w-3/4 justify-items-center'>
-                <Image
-                  src='/fokus3.png'
-                  alt='Arrangement icon'
-                  width={2048}
-                  height={1941}
-                  sizes='100vw'
-                  style={{
-                    width: '100%',
-                    height: 'auto',
-                  }}
-                />
-              </div>
-              <div className='m-auto w-3/4'>
-                <h3 className='text-xl font-bold'>Arrangement</h3>
-                <p>Holde arrangement for medlemmer og bekjente</p>
-              </div>
-            </div>
-          </div>
+          </section>
+
+          <Reveal once>
+            <Faq />
+          </Reveal>
         </div>
 
-        <div className='organization relative my-16'>
-          <div className='mb-4 flex w-full flex-col justify-center rounded-2xl bg-white p-8 text-left shadow-xl'>
-            <h2 className='mb-4 text-center text-3xl font-bold'>
-              Arrangementer
-            </h2>
-            <p className='m-auto w-10/12 text-center'>
-              VSAiTs hensikt er å skape et bånd for det vietnamesiske
-              studentmiljøet i Trondheim. Dette oppnår vi med ulike sosiale
-              arrangementer gjennom skoleåret. Vi har både større og mindre
-              arrangementer der studenter har muligheten til å bli kjent med
-              hverandre.
-            </p>
-          </div>
-          <div className='flex w-full flex-col'>
-            {eventInfos.map((event) => (
-              <ImageWithText key={event.title} {...event} />
-            ))}
-
-            <div className='mb-3 mt-12 rounded-2xl bg-white px-24 py-10 shadow-xl'>
-              <h3 className='mb-3 text-2xl font-medium'>Småarrangement</h3>
-              <p className='m-auto w-1/2 text-center'>
-                I løpet av året så holder vi mindre arrangement som f.eks.
-                spillkvelder, karaokekveld, sportsaktiviteter.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className='my-8 rounded-2xl bg-white px-6 py-10 shadow-xl md:px-24'>
-          <h2 className='mb-4 text-center text-3xl font-bold'>Styret</h2>
-          <p className='m-auto w-11/12 text-center md:w-1/2'>
-            Vi tar imot innmeldinger, spørsmål og andre henvendelser på mail:{' '}
-            <a href='mailto:vsait@vsait.org'>vsait@vsait.org</a>
-          </p>
-          <div className='my-8 grid grid-cols-2 gap-8 lg:grid-cols-3'>
-            {board.map((member) => (
-              <MemberBox
-                key={member.name}
-                name={member.name}
-                role={member.role}
-              />
-            ))}
-          </div>
-        </div>
+        <MembershipCallout />
       </div>
     </>
   );

@@ -1,4 +1,4 @@
-import { getErrorMessage } from '@/lib/utils';
+import { getErrorMessage, isEventDay } from '@/lib/utils';
 import { isEmpty } from 'lodash';
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from 'prisma/index';
@@ -47,6 +47,17 @@ const POST = async (req: NextRequest) => {
       },
     });
     if (!event) throw new Error(`Could not find event with id ${eventId}`);
+
+    // Attendance can only be registered on the day the event takes place
+    if (!isEventDay(event.startTime, event.endTime))
+      return NextResponse.json(
+        {
+          message:
+            'Innsjekk er kun tilgjengelig på dagen arrangementet finner sted',
+        },
+        { status: 403 }
+      );
+
     const registeredUserIds = event.registrationList.map((r) => r.userId) || [];
     const attendingUserIds = event.attendanceList.map((r) => r.userId) || [];
 

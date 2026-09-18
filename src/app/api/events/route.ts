@@ -6,7 +6,12 @@ import { getToken } from 'next-auth/jwt';
 import { requireAdmin } from '../utils';
 import { v4 as uuidv4 } from 'uuid';
 import { put } from '@vercel/blob';
-import { base64ToBlob } from '@/lib/imageBlobUtil';
+import {
+  EventTimes,
+  checkEventTimes,
+  parseEventBody,
+  validationMessage,
+} from './validateEvent';
 
 const GET = async (req: NextRequest) => {
   const searchParams = req.nextUrl.searchParams;
@@ -104,25 +109,41 @@ const POST = async (req: NextRequest) => {
   try {
     const body = await req.json();
 
-    // Handle image upload if present
-    if (typeof body.image === 'string' && body.image.startsWith('data:image')) {
-      try {
-        const maybeBlob = base64ToBlob(body.image);
-        if (maybeBlob instanceof Blob) {
-          const filename = uuidv4();
-          const { url } = await put(`images/${filename}`, maybeBlob, {
-            access: 'public',
-          });
-          body.image = url;
-        }
-      } catch (e) {
-        // ignore conversion errors
-        console.error('Image upload failed', e);
-      }
+    // Everything is checked before anything is uploaded
+    const { fields, image, errors } = parseEventBody(body, { isCreate: true });
+    if (!errors.length) {
+      errors.push(...checkEventTimes(fields as EventTimes));
+    }
+    if (errors.length) {
+      return NextResponse.json(
+        { message: validationMessage(errors), errors },
+        { status: 400 }
+      );
+    }
+
+    let imageUrl: string | null = null;
+    if (image.kind === 'upload') {
+      const { url } = await put(`images/${uuidv4()}`, image.blob, {
+        access: 'public',
+      });
+      imageUrl = url;
     }
 
     const event = await prisma.event.create({
-      data: body,
+      data: {
+        title: fields.title as string,
+        description: fields.description ?? '',
+        location: fields.location as string,
+        startTime: fields.startTime as Date,
+        endTime: fields.endTime as Date,
+        registrationDeadline: fields.registrationDeadline as Date,
+        cancellationDeadline: fields.cancellationDeadline as Date,
+        eventType: fields.eventType,
+        maxRegistrations: fields.maxRegistrations,
+        isDraft: fields.isDraft,
+        isCancelled: fields.isCancelled,
+        image: imageUrl,
+      },
     });
     return NextResponse.json(event, { status: 201 });
   } catch (error) {

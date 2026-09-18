@@ -1,102 +1,91 @@
-import CancelledBadge from './CancelledBadge';
-import { Button } from '@/components/Input';
+import EventCard, { EventCardSkeleton } from './EventCard';
+import { CalendarCheck } from '@/components/icons';
 import { useEvents } from '@/lib/hooks/useEvent';
 import { ExtendedComponentProps } from '@/types/types';
-import Image from 'next/image';
 import Link from 'next/link';
 
-const EventsDisplay = ({ className = '' }: ExtendedComponentProps) => {
+const EmptyState = () => (
+  <div className='flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-primary/20 bg-primary/[0.06] px-6 py-16 text-center'>
+    <div className='flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm'>
+      <CalendarCheck color='#D5564D' className='h-7 w-7' />
+    </div>
+    <h3 className='mt-6 '>Ingen kommende arrangementer akkurat nå</h3>
+    <p className='mt-2 max-w-xs text-sm leading-relaxed text-gray'>
+      Vi legger fortløpende ut nye datoer. Følg oss på Instagram eller Discord
+      så du ikke går glipp av neste samling.
+    </p>
+  </div>
+);
+
+const EventsQuickView = ({ className = '' }: ExtendedComponentProps) => {
   const { data, isLoading, isError } = useEvents('page=1&upcoming=true');
 
-  if (!isLoading && !data) window.location.href = '/404';
   if (isError) throw new Error('Failed to load events');
-  console.log(data);
+
+  const events = data?.events ?? [];
+  // A lone event gets the wide card across the full width
+  const isSingle = events.length === 1;
 
   return (
-    <div
-      className={`my-6 mb-8 flex w-full flex-1 items-center text-center ${className}`}
-    >
-      <h2 className='mb-1.5 text-lg font-bold text-black'>
-        Kommende arrangementer
-      </h2>
-      <div className='mb-2 px-6'>
-        {isLoading ? (
-          <p className='my-10'>
-            Det ser ikke ut som vi har noen planlagte arrangementer annonsert
-            enda. Kom gjerne tilbake igjen senere!
+    <div className={`w-full ${className}`}>
+      <div className='flex flex-col gap-5 text-left sm:flex-row sm:items-start sm:justify-between'>
+        <div>
+          <p className='flex items-center gap-3 text-xs uppercase tracking-[0.18em] text-primary'>
+            <span className='h-0.5 w-6 rounded-full bg-primary' />
+            Hva skjer
           </p>
-        ) : (
-          data?.events?.map((event, index) => {
-            const isPast = new Date(event.endTime) < new Date();
-            const isCancelled = event.isCancelled;
-            const isGreyedOut = isPast || isCancelled;
+          <h2 className='mt-3 text-3xl  sm:text-4xl'>
+            Kommende arrangementer
+          </h2>
+          <p className='mt-2 text-sm text-gray'>
+            Bli med på lek, mat og kultur sammen med andre studenter i
+            Trondheim.
+          </p>
+        </div>
 
-            return (
-              <div
-                key={index}
-                className={`group relative mx-auto my-4 w-full max-w-screen-lg items-center justify-center transition-opacity duration-300 ${
-                  isGreyedOut ? 'opacity-80 hover:opacity-100' : ''
-                }`}
-              >
-                <Link href={`/events/${event.id}`} className='flex flex-col'>
-                  {isCancelled && (
-                    <div className='pointer-events-none absolute -left-4 top-8 z-20 transition-transform group-hover:scale-110'>
-                      <CancelledBadge
-                        size='sm'
-                        className='md:px-6 md:text-3xl'
-                      />
-                    </div>
-                  )}
-                  <div
-                    className={`relative z-0 flex flex-col overflow-hidden rounded-xl transition-all duration-300 ${
-                      isGreyedOut
-                        ? 'opacity-60 grayscale group-hover:opacity-100 group-hover:grayscale-0'
-                        : ''
-                    }`}
-                  >
-                    <Image
-                      src={(event.image as string) || '/placeholder.png'}
-                      alt={event.title}
-                      width={1352}
-                      height={564}
-                      priority
-                      style={{
-                        maxWidth: '100%',
-                        height: 'auto',
-                        objectFit: 'cover',
-                      }}
-                    />
-                    <p className='absolute left-4 top-4 rounded-md bg-black bg-opacity-50 px-2 py-1 text-2xl font-bold text-white'>
-                      {event.title}
-                    </p>
-                    <p className='absolute bottom-10 right-4 -translate-y-20 transform rounded-sm bg-black bg-opacity-80 px-2 py-1 text-base font-bold text-white'>
-                      {event.location}
-                    </p>
-                    <p className='absolute bottom-10 right-4 -translate-y-10 transform rounded-sm bg-black bg-opacity-80 px-2 py-1 text-base font-bold text-white'>
-                      {new Date(event.startTime).toDateString()}
-                    </p>
-                    <p className='absolute bottom-10 right-4 rounded-sm bg-black bg-opacity-80 px-2 py-1 text-base font-bold text-white'>
-                      {event.eventType === 'MEMBERSHIP'
-                        ? 'Krever medlemsskap'
-                        : 'Åpen for alle'}
-                    </p>
-                  </div>
-                  <div className='z-10 w-full bg-primary'>
-                    <p className='m-1 box-border w-full text-white'>
-                      Antall påmeldte {event._count?.registrationList}/
-                      {event.maxRegistrations}
-                    </p>
-                  </div>
-                </Link>
-              </div>
-            );
-          })
+        <Link
+          href='/events'
+          className='w-full shrink-0 rounded-full bg-white px-6 py-3 text-center text-sm text-primary shadow-sm transition-all duration-300 hover:brightness-95 sm:w-fit'
+        >
+          Se alle arrangementer →
+        </Link>
+      </div>
+
+      <div className='mt-10'>
+        {isLoading ? (
+          <div className='flex flex-col gap-6'>
+            <EventCardSkeleton />
+            <EventCardSkeleton />
+          </div>
+        ) : events.length ? (
+          <div
+            className={
+              isSingle
+                ? 'flex flex-col gap-6'
+                : 'grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'
+            }
+          >
+            {events.map((event) => (
+              <EventCard
+                key={event.id}
+                href={`/events/${event.id}`}
+                title={event.title}
+                image={event.image as string}
+                startTime={event.startTime}
+                location={event.location}
+                registrations={event._count?.registrationList ?? 0}
+                seed={String(event.id)}
+                isPast={new Date(event.endTime) < new Date()}
+                isCancelled={event.isCancelled}
+                compact={!isSingle}
+              />
+            ))}
+          </div>
+        ) : (
+          <EmptyState />
         )}
       </div>
-      <Link href='/events'>
-        <Button text='Se alle arrangementer'></Button>
-      </Link>
     </div>
   );
 };
-export default EventsDisplay;
+export default EventsQuickView;

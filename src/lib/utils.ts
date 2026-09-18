@@ -65,9 +65,11 @@ export const getErrorMessage = (error: unknown) => {
   return String(error);
 };
 
+const MEMBERSHIP_YEAR_START_MONTH = 8;
+
 export const getMembershipYear = () => {
-  const date = new Date();
-  return date.getMonth() <= 8 ? date.getFullYear() - 1 : date.getFullYear();
+  const [year, month] = getOsloDateString(new Date()).split('-').map(Number);
+  return month < MEMBERSHIP_YEAR_START_MONTH ? year - 1 : year;
 };
 
 const MONTH = [
@@ -104,6 +106,13 @@ export const getLocaleDateString = (cdate: Date) => {
   } ${date.getFullYear()}`;
 };
 
+export const getLocaleTimeString = (cdate: Date) => {
+  const date = new Date(cdate);
+  return `${String(date.getHours()).padStart(2, '0')}:${String(
+    date.getMinutes()
+  ).padStart(2, '0')}`;
+};
+
 export function exclude<T>(obj: T | null, keys: string[]) {
   if (!obj) return null;
   return Object.fromEntries(
@@ -138,6 +147,22 @@ export function isoToOsloTimestring(date: Date) {
   // 'YYYY-MM-DD HH:MM', which we can then easily adapt.
   // Example: '2018-06-12 19:30' -> '2018-06-12T19:30'
   return formattedString.replace(' ', 'T');
+}
+
+export function getOsloDateString(date: Date | string) {
+  return isoToOsloTimestring(new Date(date)).split('T')[0];
+}
+
+export function isEventDay(
+  startTime: Date | string,
+  endTime: Date | string,
+  now: Date = new Date()
+) {
+  // 'YYYY-MM-DD' strings sort chronologically, so they can be compared directly
+  const today = getOsloDateString(now);
+  return (
+    today >= getOsloDateString(startTime) && today <= getOsloDateString(endTime)
+  );
 }
 
 /**

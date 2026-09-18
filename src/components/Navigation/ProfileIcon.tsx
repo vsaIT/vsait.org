@@ -25,16 +25,16 @@ function ProfileIcon({ user, onClick }: ProfileIconProps) {
         <Link
           href='/profile'
           onClick={onClick}
-          className='flex items-center gap-2 text-red-500 transition-all duration-300 hover:brightness-150 lg:text-white lg:hover:text-secondary'
+          className='-ml-2 -mt-2 flex items-center gap-2 rounded-full border border-green-600 pl-3 pr-0.5 transition-all duration-300 hover:border-green-900 hover:bg-neutral-50 lg:my-0.5 lg:-ml-2'
         >
           <span
-            className={`underline-offset-4 ${pathname.includes('profile') ? '!text-tertiary underline brightness-150 lg:!text-secondary' : ''}`}
+            className={`underline-offset-4 ${pathname.includes('profile') ? '!text-primary underline brightness-150' : ''}`}
           >
             {user.firstName || 'Profil'}
           </span>
           <div className='flex items-center justify-center overflow-hidden rounded-full bg-white bg-opacity-50'>
             <div
-              className={`relative h-12 w-12 transition-all duration-700 lg:h-14 lg:w-14 ${!user.profileIconSeed ? 'opacity-0' : ''}`}
+              className={`relative h-9 w-9 transition-all duration-700 ${!user.profileIconSeed ? 'opacity-0' : ''}`}
             >
               <Image src={avatar.toDataUriSync()} alt='Profile icon' fill />
             </div>

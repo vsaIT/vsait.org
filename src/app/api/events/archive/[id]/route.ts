@@ -1,5 +1,6 @@
 import { base64ToBlob, isValidImageUrl } from '@/lib/imageBlobUtil';
 import { getErrorMessage } from '@/lib/utils';
+import { Prisma } from '@prisma/client';
 import { del, put } from '@vercel/blob';
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from 'prisma/index';
@@ -35,7 +36,7 @@ const GET = async (
   }
 };
 
-// Accepts a base64 data URL in the body and stores it in Vercel Blob.
+// Updates an archived event. 
 const PUT = async (
   req: NextRequest,
   { params }: { params: { id: string } }
@@ -71,10 +72,39 @@ const PUT = async (
       imageUrl = url;
     }
 
-    const updated = await prisma.eventArchive.update({
-      where: { id },
-      data: { image: imageUrl },
-    });
+    const data: Prisma.EventArchiveUpdateInput = { image: imageUrl };
+
+    if (typeof body.title === 'string' && body.title.trim()) {
+      data.title = body.title.trim();
+    }
+    if (typeof body.description === 'string') {
+      data.description = body.description;
+    }
+    if (typeof body.location === 'string') {
+      data.location = body.location;
+    }
+    if (body.eventType === 'OPEN' || body.eventType === 'MEMBERSHIP') {
+      data.eventType = body.eventType;
+    }
+
+    for (const field of ['maxRegistrations', 'registrations'] as const) {
+      if (
+        body[field] === undefined ||
+        body[field] === null ||
+        body[field] === ''
+      )
+        continue;
+      const value = Number(body[field]);
+      if (Number.isInteger(value) && value >= 0) data[field] = value;
+    }
+
+    for (const field of ['startTime', 'endTime'] as const) {
+      if (!body[field]) continue;
+      const value = new Date(body[field]);
+      if (!Number.isNaN(value.getTime())) data[field] = value;
+    }
+
+    const updated = await prisma.eventArchive.update({ where: { id }, data });
     return NextResponse.json({ event: updated }, { status: 200 });
   } catch (error) {
     console.error(

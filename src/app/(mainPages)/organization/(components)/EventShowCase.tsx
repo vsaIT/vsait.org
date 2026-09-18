@@ -1,37 +1,37 @@
 import Image from 'next/image';
 import { EventInfo } from '../types';
 
-const ImageWithText: React.FC<EventInfo> = ({
+const EventShowCase: React.FC<EventInfo> = ({
   direction,
   imageSrc,
   imageAlt,
   title,
   description,
 }) => {
-  const isLeft = direction === 'left';
+  const imageFirst = direction === 'right';
 
   return (
-    <div
-      className={`mx-10 my-2 flex flex-col space-y-4 py-8 ${isLeft ? 'md:flex-row' : 'md:flex-row-reverse'} justify-between px-6 md:mx-0 md:space-y-0 md:px-24 md:py-12`}
-    >
-      <div className='flex w-full flex-col justify-center text-left md:justify-start'>
-        <h3 className='mb-3 text-2xl font-medium'>{title}</h3>
-        <p className='w-full'>{description}</p>
+    <div className='grid grid-cols-1 items-center gap-6 lg:grid-cols-2 lg:gap-14'>
+      <div className={`text-left ${imageFirst ? 'lg:order-2' : ''}`}>
+        <h3 className='text-xl  sm:text-2xl'>{title}</h3>
+        <p className='mt-3 text-sm leading-relaxed text-gray'>{description}</p>
       </div>
-      <div className='flex w-full justify-center md:justify-start'>
-        <div className='mb-4 w-full max-w-sm overflow-hidden rounded-2xl md:mb-0'>
-          <Image
-            src={imageSrc}
-            alt={imageAlt}
-            width={1024}
-            height={683}
-            sizes='100vw'
-            style={{ width: '100%', height: 'auto' }}
-          />
-        </div>
+
+      <div
+        className={`relative aspect-[4/3] overflow-hidden rounded-2xl shadow-md ${
+          imageFirst ? 'lg:order-1' : ''
+        }`}
+      >
+        <Image
+          src={imageSrc}
+          alt={imageAlt}
+          fill
+          sizes='(max-width: 1024px) 90vw, 45vw'
+          className='object-cover'
+        />
       </div>
     </div>
   );
 };
 
-export default ImageWithText;
+export default EventShowCase;

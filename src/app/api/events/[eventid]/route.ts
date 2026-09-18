@@ -1,12 +1,18 @@
-import { base64ToBlob, isValidImageUrl } from '@/lib/imageBlobUtil';
+import { isValidImageUrl } from '@/lib/imageBlobUtil';
 import { getErrorMessage, getMembershipYear } from '@/lib/utils';
 import { RegisteredUserType } from '@/types/types';
+import { Prisma } from '@prisma/client';
 import { del, put } from '@vercel/blob';
 import { getToken } from 'next-auth/jwt';
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from 'prisma/index';
 import { v4 as uuidv4 } from 'uuid';
 import { requireAdmin } from '../../utils';
+import {
+  checkEventTimes,
+  parseEventBody,
+  validationMessage,
+} from '../validateEvent';
 
 const POST = async () => {
   return NextResponse.json('Method Not Allowed', {
@@ -66,26 +72,18 @@ const GET = async (
       );
     }
 
-    // Set user ids in registrationList as filtering for registered users
+    // Who is coming is between them and the admin
     let registeredUsers: RegisteredUserType[] = [];
     const userIds = event.registrationList.map((r) => r.userId) || [];
     const userId = token?.id || '';
 
-    if (token) {
-      // Map registered users with fields name, email and foodNeeds
-      registeredUsers = event?.registrationList.map(({ user }) => {
+    if (isAdmin) {
+      registeredUsers = event.registrationList.map(({ user }) => {
         if (!user) return { name: '', email: '', foodNeeds: '' };
-        if (token?.role === 'ADMIN' || token?.email === user.email) {
-          return {
-            name: `${user.firstName} ${user.lastName}`,
-            email: user.email,
-            foodNeeds: user.foodNeeds,
-          };
-        }
         return {
           name: `${user.firstName} ${user.lastName}`,
-          email: '',
-          foodNeeds: '',
+          email: user.email,
+          foodNeeds: user.foodNeeds,
         };
       });
     }
@@ -101,13 +99,24 @@ const GET = async (
         false;
     }
 
+    const hasRegistered =
+      userIds.includes(userId) ||
+      event.waitingList.map((r) => r.userId).includes(userId);
+
+    // The relations carry the registrants' details
+    const {
+      registrationList: _registrationList,
+      waitingList: _waitingList,
+      ...publicEvent
+    } = event;
+
     return NextResponse.json(
       {
-        event: event,
+        event: isAdmin
+          ? event
+          : { ...publicEvent, registrationList: [], waitingList: [] },
         registrations: registeredUsers,
-        hasRegistered:
-          userIds.includes(userId) ||
-          event.waitingList.map((r) => r.userId).includes(userId),
+        hasRegistered: hasRegistered,
         hasMembership: hasMembership,
       },
       { status: 200 }
@@ -137,37 +146,52 @@ const PUT = async (
         id: Number(eventid),
       },
     });
-
-    const imageUrl = currentEvent?.image as string;
-
-    // If image is a base64 data URL string, convert it to a Blob first.
-    if (typeof body.image === 'string') {
-      try {
-        const maybeBlob = base64ToBlob(body.image);
-        if (maybeBlob instanceof Blob) {
-          body.image = maybeBlob;
-        }
-      } catch (e) {
-        // ignore conversion errors and leave body.image as-is
-      }
+    if (!currentEvent) {
+      return NextResponse.json(
+        { message: `Could not find event with id ${eventid}` },
+        { status: 404 }
+      );
     }
 
-    // If image is a Blob, upload it and replace with the returned URL string.
-    if (body.image && body.image instanceof Blob) {
-      if (isValidImageUrl(imageUrl)) {
-        await del(imageUrl);
-      }
+    // The same checks as creating
+    const { fields, image, errors } = parseEventBody(body, { isCreate: false });
+    if (!errors.length) {
+      errors.push(
+        ...checkEventTimes({
+          startTime: fields.startTime ?? currentEvent.startTime,
+          endTime: fields.endTime ?? currentEvent.endTime,
+          registrationDeadline:
+            fields.registrationDeadline ?? currentEvent.registrationDeadline,
+          cancellationDeadline:
+            fields.cancellationDeadline ?? currentEvent.cancellationDeadline,
+        })
+      );
+    }
+    if (errors.length) {
+      return NextResponse.json(
+        { message: validationMessage(errors), errors },
+        { status: 400 }
+      );
+    }
 
-      const filename = uuidv4();
-      const { url } = await put(`images/${filename}`, body.image, {
+    const data: Prisma.EventUpdateInput = { ...fields };
+
+    if (image.kind === 'upload') {
+      // Drop the blob it replaces, so removed pictures do not linger
+      if (isValidImageUrl(currentEvent.image)) {
+        await del(currentEvent.image as string);
+      }
+      const { url } = await put(`images/${uuidv4()}`, image.blob, {
         access: 'public',
       });
-      body.image = url;
+      data.image = url;
+    } else if (image.kind === 'clear') {
+      data.image = null;
     }
 
     const updatedEvent = await prisma.event.update({
       where: { id: Number(eventid) },
-      data: body,
+      data,
     });
     return NextResponse.json({ event: updatedEvent }, { status: 200 });
   } catch (error) {

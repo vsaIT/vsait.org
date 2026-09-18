@@ -1,6 +1,10 @@
 import { useEffect, useRef } from 'react';
 
-const Wave = () => {
+type WaveProps = {
+  rgb?: string;
+};
+
+const Wave = ({ rgb = '255,255,255' }: WaveProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -15,21 +19,21 @@ const Wave = () => {
           dx: 1,
           y: 0.002,
           dy: 0,
-          color: 'rgba(255,255,255,0.4)',
+          color: `rgba(${rgb},0.4)`,
         },
         {
           x: 1,
           dx: 0.5,
           y: 0.002,
           dy: 0,
-          color: 'rgba(255,255,255,0.6)',
+          color: `rgba(${rgb},0.6)`,
         },
         {
           x: 1,
           dx: 0.1,
           y: 0.002,
           dy: 0,
-          color: 'rgba(255,255,255,1)',
+          color: `rgba(${rgb},1)`,
         },
       ];
       const drawWave = (
@@ -56,6 +60,7 @@ const Wave = () => {
       };
 
       let t = 0;
+      let frame = 0;
       const tm = 90;
       const draw = () => {
         context.clearRect(0, 0, w, h);
@@ -79,11 +84,12 @@ const Wave = () => {
         }
         context.restore();
         t++;
-        window.requestAnimationFrame(draw);
+        frame = window.requestAnimationFrame(draw);
       };
       draw();
+      return () => window.cancelAnimationFrame(frame);
     }
-  }, []);
+  }, [rgb]);
 
   return (
     <canvas

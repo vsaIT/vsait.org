@@ -25,7 +25,7 @@ const EventsDisplaySkeleton = () => {
         </div>
         <div className='h-full w-full rounded-lg bg-primary'></div>
         <div className='flex w-full flex-col text-left'>
-          <h2 className='mb-3 w-7/12 animate-pulse rounded-md bg-slate-400 p-4 text-2xl font-bold'></h2>
+          <h2 className='mb-3 w-7/12 animate-pulse rounded-md bg-slate-400 p-4 text-2xl'></h2>
           <div className='flex flex-col gap-3'>
             <div className='grid grid-cols-event gap-3'>
               <Calendar className='justify-self-center' />

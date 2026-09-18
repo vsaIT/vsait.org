@@ -21,7 +21,7 @@ const Button = ({
       <button
         {...props}
         onClick={onClick}
-        className={`rounded-xl bg-white px-10 py-2 text-black shadow-md transition-all duration-300 hover:brightness-85 ${className}`}
+        className={`rounded-full bg-white px-10 py-2 text-black shadow-md transition-all duration-300 hover:brightness-85 ${className}`}
       >
         {text ?? ''}
         {children}
@@ -32,7 +32,7 @@ const Button = ({
     <button
       {...props}
       onClick={onClick}
-      className={`rounded-xl bg-primary px-10 py-2 text-white shadow-md transition-all duration-300 hover:brightness-85 ${className}`}
+      className={`rounded-full bg-primary px-10 py-2 text-white shadow-md transition-all duration-300 hover:brightness-85 ${className}`}
     >
       {text ?? ''}
       {children}

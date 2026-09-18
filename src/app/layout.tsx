@@ -4,6 +4,14 @@ import { Suspense } from 'react';
 import { ToastContainer } from 'react-toastify';
 import '@/styles/globals.css';
 import { CustomHead } from '@/components/CustomHead';
+import { Sniglet } from 'next/font/google';
+
+const sniglet = Sniglet({
+  weight: ['400', '800'],
+  subsets: ['latin', 'latin-ext'],
+  display: 'swap',
+  variable: '--font-sniglet',
+});
 
 export default function RootLayout({
   children,
@@ -11,7 +19,7 @@ export default function RootLayout({
   children: JSX.Element;
 }): JSX.Element {
   return (
-    <html lang='no'>
+    <html lang='no' className={sniglet.variable}>
       <CustomHead />
       <body>
         <Providers>

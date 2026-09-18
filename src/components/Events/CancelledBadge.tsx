@@ -14,7 +14,7 @@ const CancelledBadge = ({
   className?: string;
 }) => (
   <div
-    className={`-rotate-12 rounded-lg border-4 border-white bg-red-700 font-bold text-white shadow-xl ${sizeClasses[size]} ${className}`}
+    className={`-rotate-12 rounded-lg border-4 border-white bg-red-700 text-white shadow-xl ${sizeClasses[size]} ${className}`}
   >
     AVLYST
   </div>

@@ -5,16 +5,21 @@ import prisma from 'prisma/index';
 
 // This route serves the archive of past events, most recent first, paginated.
 export const dynamic = 'force-dynamic';
+const TAKE = 6;
 
-const TAKE = 7;
-
-// Returns a page of the past-events archive (most recent first).
 const GET = async (req: NextRequest) => {
   try {
     const searchParams = req.nextUrl.searchParams;
     const page = isEmpty(searchParams.get('page'))
       ? 1
       : Number(searchParams.get('page'));
+
+    if (!isEmpty(searchParams.get('all'))) {
+      const events = await prisma.eventArchive.findMany({
+        orderBy: { startTime: 'desc' },
+      });
+      return NextResponse.json({ events, page: 1, pages: 1 }, { status: 200 });
+    }
 
     const total = await prisma.eventArchive.count();
     const pages = Math.max(1, Math.ceil(total / TAKE));
