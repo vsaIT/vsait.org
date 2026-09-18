@@ -10,7 +10,7 @@ const Custom404: NextPage = () => {
     <>
       <LargeHeader>
         <>
-          <h1 className='mb-1.5 text-7xl font-bold text-white'>404</h1>
+          <h1 className='mb-1.5 text-7xl text-white'>404</h1>
           <p className='w-9/12 text-white'>
             Denne siden &quot;{pathname}&quot; finnes ikke...
           </p>

@@ -12,7 +12,7 @@ const LargeHeader = (
   return (
     <div
       ref={ref}
-      className={`relative flex h-144 w-full flex-col items-center justify-center bg-gradient-to-b from-primary via-primary to-secondary py-24 ${className}`}
+      className={`relative flex h-144 w-full flex-col items-center justify-center overflow-hidden bg-[linear-gradient(160deg,var(--tw-gradient-stops))] from-primary via-primary to-secondary py-24 sm:bg-gradient-to-br ${className}`}
     >
       {children}
     </div>

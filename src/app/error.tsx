@@ -13,7 +13,7 @@ const Error = ({ error }: { error: Error & { digest?: string } }) => {
     <>
       <LargeHeader>
         <>
-          <h1 className='mb-1.5 text-7xl font-bold text-white'>500</h1>
+          <h1 className='mb-1.5 text-7xl text-white'>500</h1>
           <p className='w-9/12 text-white'>Server-side error occurred...</p>
           <p className='w-9/12 text-white'>Error: {error.message}</p>
           <Wave />

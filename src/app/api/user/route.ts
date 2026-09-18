@@ -9,7 +9,7 @@ import { requireAdmin } from '../utils';
 
 // GET handler for fetching users with pagination and search
 const GET = async (req: NextRequest) => {
-  const page = req.nextUrl.searchParams.get('page');
+  const page = Math.max(1, Number(req.nextUrl.searchParams.get('page')) || 1);
   const search = req.nextUrl.searchParams.get('search')?.trim();
   const authResponse = await requireAdmin(req);
   if (authResponse) return authResponse;
@@ -32,7 +32,7 @@ const GET = async (req: NextRequest) => {
         include: {
           membership: true,
         },
-        skip: (Number(page) - 1) * 9,
+        skip: (page - 1) * 9,
         take: 9,
       }),
       prisma.user.count({ where }),

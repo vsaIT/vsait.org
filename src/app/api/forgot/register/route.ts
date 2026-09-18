@@ -1,5 +1,10 @@
 import prisma from 'prisma/index';
 import { getErrorMessage } from '@/lib/utils';
+import {
+  RESET_TOKEN_TTL_MS,
+  generateResetToken,
+  hashResetToken,
+} from '@/lib/auth/resetTokens';
 import { isEmpty } from 'lodash';
 import { sendEmail } from './utils';
 import { NextRequest, NextResponse } from 'next/server';
@@ -8,19 +13,31 @@ const POST = async (req: NextRequest) => {
   const body = await req.json();
   const email: string = isEmpty(body.email) ? '' : String(body.email);
   try {
-    const user = await prisma.user.findFirst({
-      where: {
-        email: email,
-      },
-      select: {
-        email: true,
-        firstName: true,
-        passwordResetUrl: true,
-      },
-    });
+    const user = email
+      ? await prisma.user.findFirst({
+          where: {
+            email: email,
+          },
+          select: {
+            id: true,
+            email: true,
+            firstName: true,
+          },
+        })
+      : null;
 
     if (user) {
-      await sendEmail(user.firstName, user.email, user.passwordResetUrl)
+      // A fresh token on every request, so asking again cancels the link sent before it
+      const token = generateResetToken();
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          passwordResetUrl: hashResetToken(token),
+          passwordResetExpires: new Date(Date.now() + RESET_TOKEN_TTL_MS),
+        },
+      });
+
+      await sendEmail(user.firstName, user.email, token)
         .then(({ data }) => {
           if (data.error) throw new Error('Sending failed!');
         })

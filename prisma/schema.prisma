@@ -57,6 +57,7 @@ model User {
   profileIconSeed      String          @default(cuid())
   emailVerificationUrl String
   passwordResetUrl     String
+  passwordResetExpires DateTime?
   accounts             Account[]
   sessions             Session[]
   membership           Membership[]

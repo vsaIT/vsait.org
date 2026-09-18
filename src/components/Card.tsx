@@ -10,10 +10,11 @@
 
 import { Accordion } from '@/components/Accordion';
 import { Button, Select } from '@/components/Input';
+import StatusPill from '@/components/StatusPill';
 import StyledSwal from '@/components/StyledSwal';
 import { swalError, swalSuccess } from '@/lib/swal';
 import { getLocaleDatetimeString, getMembershipYear } from '@/lib/utils';
-import { ApiResponseType, CardProps } from '@/types/types';
+import { ApiResponseType, AttendedEventType, CardProps } from '@/types/types';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -38,11 +39,43 @@ const studentSelectOptions = [
   { value: 'Other', label: 'Andre' },
 ];
 
+const FIELD_LABEL = 'text-[0.625rem] uppercase tracking-[0.20em] text-gray';
+const TEXT_INPUT =
+  'mt-1.5 w-full rounded-xl border-2 border-stone-200 bg-transparent px-4 py-2.5 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out focus:border-primary/40';
+
+const Panel = ({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) => (
+  <div className='overflow-hidden rounded-2xl bg-white text-left shadow-sm'>
+    <h2 className='border-b border-primary/10 px-6 py-4 text-sm '>
+      {title}
+    </h2>
+    {children}
+  </div>
+);
+
 const Card = ({ user, session }: CardProps) => {
   const [attendanceCount, setAttendanceCount] = useState(5);
+  // Events the user signed up for that have already finished
+  const attendedEvents = (user?.userRegistrationList ?? [])
+    .map(({ event }) => event)
+    .filter((event): event is AttendedEventType => !!event);
   const { register, handleSubmit, setValue } = useForm<UserFormValues>();
   const { register: registerPassword, handleSubmit: handlePasswordSubmit } =
     useForm<PasswordFormValues>();
+
+  const membershipYear = getMembershipYear();
+  const isMember = !!user.membership?.some(
+    ({ year }) => year === membershipYear
+  );
+  const previousMemberships = (user.membership ?? [])
+    .map(({ year }) => year)
+    .filter((year) => year !== membershipYear)
+    .sort((a, b) => b - a);
 
   const updateUserPassword = useCallback(
     (data: PasswordFormValues) => {
@@ -121,127 +154,103 @@ const Card = ({ user, session }: CardProps) => {
 
   return (
     <>
-      <div className='w-full rounded-xl border border-stone-300'>
+      <Panel title='Brukerinformasjon'>
         <form onSubmit={handleSubmit(updateUserData)}>
-          <div className='flex flex-col border-stone-300'>
-            <div className='flex h-16 flex-col justify-center rounded-t-xl border-b border-stone-300 bg-neutral-50 shadow-md'>
-              <h1 className='py-6 pl-4 text-left text-xl font-medium'>
-                Brukerinformasjon
-              </h1>
-            </div>
-            <div className='flex flex-col border-b border-stone-300 sm:grid sm:grid-cols-2'>
-              <div className='grid grid-rows-2 border-r border-stone-300'>
-                <div className='h-full border-b border-stone-300 py-5 pl-4 text-left'>
-                  <p className='text-stone-500'>Navn:</p>
-                  <p>
-                    {user.firstName} {user.lastName}
-                  </p>
-                </div>
-                <div className='h-full py-5 pl-4 text-left'>
-                  <p className='text-stone-500'>E-post:</p>
-                  <p>{user.email}</p>
-                </div>
-              </div>
-
-              <div className='my-5 flex flex-col px-12'>
-                <div className='pb-3'>
-                  <label
-                    htmlFor='foodNeeds'
-                    className='relative left-4 top-3 block w-fit bg-white px-2 text-left text-sm font-medium text-stone-500'
-                  >
-                    Matbehov
-                  </label>
-                  <div>
-                    <input
-                      id='foodNeeds'
-                      type='text'
-                      {...register('foodNeeds')}
-                      autoComplete='allergies'
-                      placeholder={
-                        user.foodNeeds === ''
-                          ? 'Matallergi og intoleranse'
-                          : user.foodNeeds
-                      }
-                      className='w-full rounded-xl border-2 border-stone-300 bg-transparent px-4 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out'
-                    />
-                  </div>
-                </div>
-
-                <div className='pb-3'>
-                  <label
-                    htmlFor='education'
-                    className='relative left-4 top-3 block w-fit bg-white px-2 text-left text-sm font-medium text-stone-500'
-                  >
-                    Utdanningsinstutisjon*
-                  </label>
-                  <div>
-                    <Select
-                      id='student'
-                      options={studentSelectOptions}
-                      register={register}
-                    />
-                  </div>
-                </div>
-              </div>
+          <div className='grid gap-5 px-6 py-6 sm:grid-cols-2'>
+            <div>
+              <p className={FIELD_LABEL}>Navn</p>
+              <p className='mt-1.5 text-sm '>
+                {user.firstName} {user.lastName}
+              </p>
             </div>
 
-            <div className='my-5 flex h-16 flex-col justify-center'>
-              <div className='my-10'>
-                <Button type='submit' text='Oppdater' className='bg-light' />
+            <div>
+              <label htmlFor='foodNeeds' className={FIELD_LABEL}>
+                Matbehov
+              </label>
+              <input
+                id='foodNeeds'
+                type='text'
+                {...register('foodNeeds')}
+                autoComplete='allergies'
+                placeholder={
+                  user.foodNeeds === ''
+                    ? 'Matallergi og intoleranse'
+                    : user.foodNeeds
+                }
+                className={TEXT_INPUT}
+              />
+            </div>
+
+            <div>
+              <p className={FIELD_LABEL}>E-post</p>
+              <p className='mt-1.5 break-words text-sm '>
+                {user.email}
+              </p>
+            </div>
+
+            <div>
+              <label htmlFor='student' className={FIELD_LABEL}>
+                Utdanningsinstitusjon
+              </label>
+              <div className='mt-1.5'>
+                <Select
+                  id='student'
+                  options={studentSelectOptions}
+                  register={register}
+                />
               </div>
             </div>
+          </div>
+
+          <div className='border-t border-primary/10 px-6 py-4 text-center'>
+            <Button
+              type='submit'
+              text='Oppdater'
+              className='w-full border border-primary !text-primary bg-white !rounded-full !px-8 !py-2.5 text-sm sm:w-44'
+            />
           </div>
         </form>
-      </div>
+      </Panel>
 
-      <div className='mt-10 flex w-full flex-col rounded-xl border border-stone-300'>
-        <div className='flex h-16 flex-col justify-center rounded-t-xl border-b border-stone-300 bg-neutral-50 shadow-md'>
-          <h1 className='py-6 pl-4 text-left text-xl font-medium'>
-            Medlemskap
-          </h1>
-        </div>
-        <div className='flex flex-col sm:flex-row'>
-          <div className='flex h-fit flex-col border-b border-stone-300 py-5 pl-4 text-left sm:w-full sm:border-b-0 sm:border-r'>
-            <p className='text-stone-500'>Status:</p>
-            {user.membership.some(
-              ({ year }) => year === getMembershipYear()
-            ) ? (
-              <p>
-                Medlemskap bekreftet for {getMembershipYear()}/
-                {getMembershipYear() + 1}
-              </p>
-            ) : (
-              <p>Ingen aktiv medlemskap</p>
-            )}
+      <Panel title='Medlemskap'>
+        <div className='grid gap-5 px-6 py-6 sm:grid-cols-2'>
+          <div>
+            <p className={FIELD_LABEL}>Status</p>
+            <div className='mt-1.5'>
+              <StatusPill active={isMember}>
+                {isMember
+                  ? `Bekreftet for ${membershipYear}/${membershipYear + 1}`
+                  : 'Ingen aktiv medlemskap'}
+              </StatusPill>
+            </div>
           </div>
-          <div className='flex h-fit flex-col py-5 pl-4 text-left sm:w-full'>
-            <p className='text-stone-500'>Tidligere medlemskap:</p>
-            {user.membership.map(({ year }) =>
-              year !== getMembershipYear() ? (
-                <p key={year}>
-                  {year}/{year + 1}
-                </p>
-              ) : null
-            )}
+
+          <div>
+            <p className={FIELD_LABEL}>Tidligere medlemskap</p>
+            <p className='mt-1.5 text-sm '>
+              {previousMemberships.length > 0
+                ? previousMemberships
+                    .map((year) => `${year}/${year + 1}`)
+                    .join(' · ')
+                : 'Ingen'}
+            </p>
           </div>
         </div>
-      </div>
+      </Panel>
 
-      <div className='mt-10 flex flex-col rounded-xl border border-stone-300'>
+      <div className='overflow-hidden rounded-2xl bg-white text-left shadow-sm'>
         <Accordion
           label='Endre passord'
-          labelClassName='text-xl font-medium text-left pl-2 py-4'
-          buttonClassName='bg-neutral-50 shadow-md'
+          labelClassName='pl-4 py-2 text-sm '
+          buttonClassName='px-2 py-2'
         >
           <form
             onSubmit={handlePasswordSubmit(updateUserPassword)}
-            className='px-4 py-4 sm:mx-28 sm:my-10'
+            className='flex flex-col gap-4 border-t border-primary/10 px-6 py-6'
           >
-            <div className='sm:mx-5'>
-              <label
-                htmlFor='old-password'
-                className='relative left-4 top-3 block w-fit bg-white px-2 text-left text-sm font-medium text-stone-500'
-              >
+            <div>
+              <label htmlFor='old-password' className={FIELD_LABEL}>
                 Nåværende passord*
               </label>
               <input
@@ -251,15 +260,12 @@ const Card = ({ user, session }: CardProps) => {
                 })}
                 minLength={8}
                 type='password'
-                className='w-full rounded-xl border-2 border-stone-300 bg-transparent px-4 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out'
+                className={TEXT_INPUT}
               />
             </div>
 
-            <div className='sm:mx-5'>
-              <label
-                htmlFor='new-password'
-                className='relative left-4 top-3 block w-fit bg-white px-2 text-left text-sm font-medium text-stone-500'
-              >
+            <div>
+              <label htmlFor='new-password' className={FIELD_LABEL}>
                 Nytt passord*
               </label>
               <input
@@ -269,15 +275,12 @@ const Card = ({ user, session }: CardProps) => {
                 })}
                 minLength={8}
                 type='password'
-                className='w-full rounded-xl border-2 border-stone-300 bg-transparent px-4 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out'
+                className={TEXT_INPUT}
               />
             </div>
 
-            <div className='sm:mx-5'>
-              <label
-                htmlFor='confirm-password'
-                className='relative left-4 top-3 block w-fit bg-white px-2 text-left text-sm font-medium text-stone-500'
-              >
+            <div>
+              <label htmlFor='confirm-password' className={FIELD_LABEL}>
                 Bekreft nytt passord*
               </label>
               <input
@@ -287,66 +290,56 @@ const Card = ({ user, session }: CardProps) => {
                 })}
                 minLength={8}
                 type='password'
-                className='w-full rounded-xl border-2 border-stone-300 bg-transparent px-4 py-3 text-left text-sm leading-6 outline-none transition duration-150 ease-in-out'
+                className={TEXT_INPUT}
               />
             </div>
 
-            <div className='my-5 flex h-16 flex-col justify-center'>
-              <div className='my-10'>
-                <Button
-                  type='submit'
-                  text='Bytt passord'
-                  className='bg-light'
-                />
-              </div>
+            <div className='pt-1 text-center'>
+              <Button
+                type='submit'
+                text='Bytt passord'
+                className='w-full border border-primary !text-primary bg-white !rounded-full !px-8 !py-2.5 text-sm sm:w-44'
+              />
             </div>
           </form>
         </Accordion>
       </div>
 
-      <div className='mt-10 flex flex-col rounded-xl border border-stone-300'>
+      <div className='overflow-hidden rounded-2xl bg-white text-left shadow-sm'>
         <Accordion
           label='Statistikk'
-          labelClassName='text-xl font-medium text-left pl-2 py-4'
-          buttonClassName='bg-neutral-50 shadow-md'
+          labelClassName='pl-4 py-2 text-sm '
+          buttonClassName='px-2 py-2'
         >
-          <div className='flex min-h-[320px] flex-col justify-evenly gap-4 px-4 py-4'>
-            <div className=''>
-              <p>
-                Du har vært med på {user?.userAttendanceList?.length || 0}{' '}
-                arrangementer så langt!
-              </p>
-            </div>
+          <div className='flex flex-col gap-3 border-t border-primary/10 px-6 py-6'>
+            <p className='text-sm text-gray'>
+              Du har vært med på {attendedEvents.length} arrangementer så langt!
+            </p>
 
-            {user?.userAttendanceList
-              ?.slice(
-                0,
-                Math.min(attendanceCount, user?.userAttendanceList?.length)
-              )
-              .map(({ event }) => (
+            {attendedEvents
+              .slice(0, Math.min(attendanceCount, attendedEvents.length))
+              .map((event) => (
                 <Link
                   key={event.id}
                   href={`/events/${event.id}`}
-                  className='text-bold flex w-full justify-between rounded-lg border border-stone-200 bg-stone-200 px-6 py-3 text-left text-sm text-stone-700'
+                  className='flex flex-col gap-1 rounded-xl bg-primary/[0.06] px-4 py-3 text-left text-xs text-gray transition-all duration-300 hover:brightness-95 sm:flex-row sm:items-center sm:justify-between'
                 >
-                  <span>{event.title}</span>
+                  <span className=''>{event.title}</span>
                   <span>{`${getLocaleDatetimeString(
                     event.startTime
                   )} - ${getLocaleDatetimeString(event.endTime)}`}</span>
                 </Link>
               ))}
 
-            {attendanceCount < (user?.userAttendanceList?.length || 0) ? (
-              <div className='my-5 flex h-16 flex-col justify-center'>
-                <div className='my-10'>
-                  <Button
-                    onClick={() => setAttendanceCount((prev) => prev + 5)}
-                    type='submit'
-                    text='Vis mer'
-                    className='border-2 border-light'
-                    inverted
-                  />
-                </div>
+            {attendanceCount < attendedEvents.length ? (
+              <div className='pt-1 text-center'>
+                <Button
+                  onClick={() => setAttendanceCount((prev) => prev + 5)}
+                  type='button'
+                  text='Vis mer'
+                  className='!rounded-full border-2 border-primary !px-8 !py-2 text-sm !text-primary'
+                  inverted
+                />
               </div>
             ) : null}
           </div>

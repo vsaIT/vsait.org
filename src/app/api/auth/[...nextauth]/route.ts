@@ -1,9 +1,11 @@
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import chalk from 'chalk';
 import NextAuth, { AuthOptions, User } from 'next-auth';
+import { JWT } from 'next-auth/jwt';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import prisma, { Role } from 'prisma/index';
 
+import { checkNewPassword } from '@/lib/auth/passwordRules';
 import {
   generateSalt,
   hashPassword,
@@ -11,6 +13,32 @@ import {
 } from '@/lib/auth/passwords';
 import { getErrorMessage } from '@/lib/utils';
 import { sendConfirmEmail } from './utils';
+
+type TokenUser = Pick<
+  User,
+  | 'id'
+  | 'firstName'
+  | 'lastName'
+  | 'role'
+  | 'profileIconSeed'
+  | 'membership'
+  | 'foodNeeds'
+  | 'email'
+  | 'student'
+>;
+
+// User fields the session token carries
+const copyUserToToken = (token: JWT, user: TokenUser) => {
+  token.id = user.id;
+  token.firstName = user.firstName;
+  token.lastName = user.lastName;
+  token.role = user.role;
+  token.profileIconSeed = user.profileIconSeed;
+  token.membership = user.membership;
+  token.foodNeeds = user.foodNeeds;
+  token.email = user.email;
+  token.student = user.student;
+};
 
 type RegisterInputType =
   | 'firstName'
@@ -72,6 +100,11 @@ const authOptions: AuthOptions = {
             }
             if (credentials.password !== credentials.repeatPassword) {
               throw new Error('Passord er ikke like');
+            }
+            // The form checks the length 
+            const passwordProblem = checkNewPassword(credentials.password);
+            if (passwordProblem) {
+              throw new Error(passwordProblem);
             }
             newUser = await prisma.user.create({
               data: {
@@ -158,28 +191,16 @@ const authOptions: AuthOptions = {
       return url.startsWith(baseUrl) ? url : baseUrl;
     },
 
-    async jwt({ token, user, session, trigger }) {
-      if (trigger === 'update' && session.user) {
-        console.log(session.user);
-        token.id = session.user.id;
-        token.firstName = session.user.firstName;
-        token.lastName = session.user.lastName;
-        token.role = session.user.role;
-        token.profileIconSeed = session.user.profileIconSeed;
-        token.membership = session.user.membership;
-        token.foodNeeds = session.user.foodNeeds;
-        token.email = session.user.email;
-        token.student = session.user.student;
-      } else if (user) {
-        token.id = user.id;
-        token.firstName = user.firstName;
-        token.lastName = user.lastName;
-        token.role = user.role;
-        token.profileIconSeed = user.profileIconSeed;
-        token.membership = user.membership;
-        token.foodNeeds = user.foodNeeds;
-        token.email = user.email;
-        token.student = user.student;
+    async jwt({ token, user, trigger }) {
+      if (user) {
+        // Signing in 'user' is the record the login provider just verified
+        copyUserToToken(token, user);
+      } else if (trigger === 'update' && token.id) {
+        const freshUser = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          include: { membership: true },
+        });
+        if (freshUser) copyUserToToken(token, freshUser);
       }
       return token;
     },

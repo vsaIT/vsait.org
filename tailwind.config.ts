@@ -8,8 +8,14 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['var(--font-sniglet)', 'sans-serif'],
+      },
       colors: {
         gray: '#464646',
+        brown: '#2C221C',
+        brownlight: '#3B2E26',
+        cream: '#FDF8F0',
         primary: '#D5564D',
         light: '#FE6151',
         dark: '#CC2222',
@@ -22,14 +28,21 @@ const config: Config = {
         128: '32rem',
         144: '40rem',
       },
+      maxWidth: {
+        'screen-sm': '40rem',
+        'screen-md': '48rem',
+        'screen-lg': '64rem',
+        'screen-xl': '80rem',
+        'screen-2xl': '96rem',
+      },
       gridTemplateColumns: {
-        layout: '400px 0.75rem 1fr',
-        eventdetail: 'minmax(300px, 1fr) 2fr',
-        event: '30px 1fr',
-        sideNavigationButton: '1.25rem minmax(120px, 1fr)',
+        layout: '25rem 0.75rem 1fr',
+        eventdetail: 'minmax(18.75rem, 1fr) 2fr',
+        event: '1.875rem 1fr',
+        sideNavigationButton: '1.25rem minmax(7.5rem, 1fr)',
       },
       gridTemplateRows: {
-        organizationfocus: '1fr 150px',
+        organizationfocus: '1fr 9.375rem',
       },
       brightness: {
         80: '.80',
@@ -41,6 +54,20 @@ const config: Config = {
       },
       transitionDuration: {
         1200: '1200ms',
+      },
+      keyframes: {
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-0.75rem)' },
+        },
+        floatSlow: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-1.25rem)' },
+        },
+      },
+      animation: {
+        float: 'float 6s ease-in-out infinite',
+        'float-slow': 'floatSlow 9s ease-in-out infinite',
       },
     },
   },

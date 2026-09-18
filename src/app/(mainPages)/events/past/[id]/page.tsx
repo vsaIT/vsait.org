@@ -1,140 +1,136 @@
 'use client';
 import { EventsDetailedSkeleton } from '@/components/Events';
-import { SmallHeader } from '@/components/Header';
+import { CurvyHeader } from '@/components/Header';
+import { CalendarOutline, MapPin, Person, Users } from '@/components/icons';
 import { useEventArchiveItem } from '@/lib/hooks/useEvent';
-import { imageToBase64 } from '@/lib/imageBlobUtil';
+import { getLocaleDateString, getLocaleTimeString } from '@/lib/utils';
 import DOMPurify from 'isomorphic-dompurify';
-import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
 
 // Read-only detail page for an archived (past) event.
 function PastEventDetail({ params }: { params: { id: string } }): JSX.Element {
   const { id } = params;
-  const { data, isLoading, isError, mutate } = useEventArchiveItem(id);
-  const { data: session } = useSession({ required: false });
-  const isAdmin = session?.user?.role === 'ADMIN';
-  const [uploading, setUploading] = useState(false);
+  const { data, isLoading, isError } = useEventArchiveItem(id);
 
   if (isError) window.location.href = '/500';
 
-  // Admins can upload an image for past events that are missing one.
-  const handleUpload = async (file: File) => {
-    try {
-      setUploading(true);
-      const image = await imageToBase64(file);
-      const res = await fetch(`/api/events/archive/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image }),
-      });
-      if (!res.ok) throw new Error('Opplasting feilet');
-      await mutate();
-    } catch (error) {
-      console.error(error);
-      alert('Kunne ikke laste opp bildet. Prøv igjen.');
-    } finally {
-      setUploading(false);
-    }
-  };
-
   const event = data?.event;
+
+  if (isLoading || !event) return <EventsDetailedSkeleton />;
 
   return (
     <>
-      <SmallHeader />
-      {isLoading || !event ? (
-        <EventsDetailedSkeleton />
-      ) : (
-        <div className='z-10 mb-32 flex w-11/12 max-w-screen-xl -translate-y-10 transform flex-col gap-6'>
-          <div className='mt-16 text-left'>
-            <Link
-              href='/events'
-              className='font-medium text-primary hover:underline'
-            >
-              ← Tilbake til arrangementer
-            </Link>
-          </div>
+      <CurvyHeader waveColor='#FDF8F0' height='sm:h-[28rem]'>
+        <div className='relative z-20 mx-auto w-11/12 max-w-[58rem] text-left'>
+          <Link
+            href='/events?tab=past'
+            className='text-sm text-white/85 transition-all duration-300 hover:text-white'
+          >
+            ← Tilbake til arrangementer
+          </Link>
 
-          <div className='relative flex w-full rounded-2xl bg-white p-6 shadow-2xl'>
-            <div className='relative w-full overflow-hidden'>
-              <Image
-                src={event.image || '/placeholder.png'}
-                alt={event.title}
-                width={1352}
-                height={564}
-                sizes='100vw'
-                priority
-                style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
-              />
-              {isAdmin && (
-                <label
-                  className='absolute inset-0 flex cursor-pointer items-center justify-center bg-black/0 opacity-0 transition-all duration-200 hover:bg-black/40 hover:opacity-100'
-                  title='Last opp bilde'
-                >
-                  <span className='rounded-md bg-white px-3 py-1 text-sm font-medium shadow'>
-                    {uploading
-                      ? 'Laster opp...'
-                      : event.image
-                        ? 'Bytt bilde'
-                        : 'Last opp bilde'}
-                  </span>
-                  <input
-                    type='file'
-                    accept='image/*'
-                    className='hidden'
-                    disabled={uploading}
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) handleUpload(file);
-                      e.target.value = '';
-                    }}
-                  />
-                </label>
-              )}
-            </div>
-          </div>
+          <h1 className='mt-6 max-w-3xl text-4xl leading-snug text-white sm:text-5xl'>
+            {event.title}
+          </h1>
 
-          <div className='flex flex-col gap-6 text-left md:grid md:grid-cols-eventdetail'>
-            <div className='flex w-full flex-col rounded-2xl bg-white p-6 shadow-2xl'>
-              <h2 className='mb-4 text-2xl font-bold'>Detaljer</h2>
-              <div className='flex flex-col gap-2'>
-                <p>
-                  <b>Starttid:</b> {new Date(event.startTime).toDateString()}
-                </p>
-                <p>
-                  <b>Sluttid:</b> {new Date(event.endTime).toDateString()}
-                </p>
-                <p>
-                  <b>Sted:</b> {event.location}
-                </p>
-                <p>
-                  <b>Åpent for:</b>{' '}
-                  {event.eventType === 'OPEN' ? 'Alle' : 'Medlemmer'}
-                </p>
-                <p>
-                  <b>Antall påmeldte:</b> {event.registrations}
-                  {event.maxRegistrations > 0
-                    ? ` / ${event.maxRegistrations}`
-                    : ''}
-                </p>
-              </div>
-            </div>
-            <div className='flex w-full flex-col rounded-2xl bg-white p-6 shadow-2xl'>
-              <h2 className='mb-2 text-2xl font-bold'>{event.title}</h2>
-              <p className='text-gray-500 mb-4 font-medium'>
-                Dette arrangementet er avsluttet.
-              </p>
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(event.description),
-                }}
-              />
-            </div>
+          <div className='mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-white'>
+            <span className='flex items-center gap-2'>
+              <CalendarOutline color='#FFFFFF' className='h-4 w-4 shrink-0' />
+              {getLocaleDateString(new Date(event.startTime))},{' '}
+              {getLocaleTimeString(new Date(event.startTime))}–
+              {getLocaleTimeString(new Date(event.endTime))}
+            </span>
+            <span className='flex items-center gap-2'>
+              <MapPin color='#FFFFFF' className='h-4 w-4 shrink-0' />
+              {event.location}
+            </span>
           </div>
         </div>
-      )}
+      </CurvyHeader>
+
+      <section className='w-full bg-cream pb-20'>
+        <div className='relative mx-auto mt-12 w-11/12 max-w-[58rem] overflow-hidden rounded-3xl shadow-sm'>
+          <Image
+            src={event.image || '/placeholder.png'}
+            alt={event.title}
+            width={1352}
+            height={564}
+            sizes='(max-width: 1215px) 95vw, 1115px'
+            priority
+            className='h-auto w-full object-cover'
+          />
+        </div>
+
+        <div className='mx-auto grid w-11/12 max-w-[58rem] grid-cols-1 gap-8 py-8 text-left lg:grid-cols-[1.6fr_1fr]'>
+          <div className='min-w-0 rounded-3xl bg-white p-6 shadow-sm sm:p-8'>
+            <h2 className='text-xl '>Om arrangementet</h2>
+            <p className='mt-1 text-sm text-white'>
+              Dette arrangementet er avsluttet.
+            </p>
+            <div
+              className='mt-4 break-words text-sm leading-relaxed [&_a]:text-primary [&_a]:underline'
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(event.description),
+              }}
+            />
+          </div>
+
+          <aside className='flex flex-col gap-6'>
+            <div className='rounded-3xl bg-white p-6 shadow-sm'>
+              <h2 className='text-lg '>Detaljer</h2>
+              <dl className='mt-4 flex flex-col'>
+                <div className='flex items-start gap-3 border-b border-primary/10 pb-4'>
+                  <CalendarOutline
+                    color='#D5564D'
+                    className='mt-0.5 h-4 w-4 shrink-0'
+                  />
+                  <div>
+                    <dt className='text-sm '>
+                      {getLocaleDateString(new Date(event.startTime))}
+                    </dt>
+                    <dd className='text-xs text-gray'>
+                      {getLocaleTimeString(new Date(event.startTime))}–
+                      {getLocaleTimeString(new Date(event.endTime))}
+                    </dd>
+                  </div>
+                </div>
+
+                <div className='flex items-start gap-3 border-b border-primary/10 py-4'>
+                  <MapPin color='#D5564D' className='mt-0.5 h-4 w-4 shrink-0' />
+                  <div>
+                    <dt className='text-sm '>{event.location}</dt>
+                    <dd className='text-xs text-gray'>Sted</dd>
+                  </div>
+                </div>
+
+                <div className='flex items-start gap-3 border-b border-primary/10 py-4'>
+                  <Person color='#D5564D' className='mt-0.5 h-4 w-4 shrink-0' />
+                  <div>
+                    <dt className='text-sm '>
+                      {event.eventType === 'OPEN' ? 'Alle' : 'Medlemmer'}
+                    </dt>
+                    <dd className='text-xs text-gray'>Åpent for</dd>
+                  </div>
+                </div>
+
+                <div className='flex items-start gap-3 pt-4'>
+                  <Users color='#D5564D' className='mt-0.5 h-4 w-4 shrink-0' />
+                  <div>
+                    <dt className='text-sm '>
+                      {event.registrations}
+                      {event.maxRegistrations > 0
+                        ? ` / ${event.maxRegistrations}`
+                        : ''}
+                    </dt>
+                    <dd className='text-xs text-gray'>Antall påmeldte</dd>
+                  </div>
+                </div>
+              </dl>
+            </div>
+          </aside>
+        </div>
+      </section>
     </>
   );
 }

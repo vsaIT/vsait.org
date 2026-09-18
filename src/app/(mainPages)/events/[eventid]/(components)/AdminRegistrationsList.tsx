@@ -8,27 +8,48 @@ export default function AdminRegistrationsList({
   registrations,
 }: AdminRegistrationsListProps) {
   return (
-    <div className='flex flex-col text-left'>
-      <div className='flex w-full flex-col rounded-2xl bg-white p-6 shadow-2xl'>
-        <h2 className='mb-4 text-2xl font-bold'>Liste over påmeldte</h2>
-        <div className='flex flex-col overflow-hidden rounded-lg bg-slate-100 text-xs'>
-          <div className='mb-1 flex bg-light px-10 py-2 font-bold text-white'>
-            <p className='w-1/3'>Navn</p>
-            <p className='w-1/3'>E-post</p>
-            <p className='w-1/3'>Matbehov</p>
-          </div>
-          {registrations?.map((user: RegisteredUserType) => (
-            <div
-              key={user.email}
-              className='mx-1 mb-1 flex rounded-md bg-white px-9 py-2'
-            >
-              <p className='w-1/3'>{user.name}</p>
-              <p className='w-1/3'>{user.email}</p>
-              <p className='w-1/3'>{user.foodNeeds}</p>
-            </div>
-          ))}
+    <div className='rounded-3xl bg-white p-6 shadow-sm sm:p-8'>
+      <h2 className='text-xl '>
+        Liste over påmeldte ({registrations.length})
+      </h2>
+
+      {registrations.length === 0 ? (
+        <p className='mt-4 text-sm text-gray'>Ingen påmeldte enda.</p>
+      ) : (
+        <div className='mt-4 overflow-x-auto'>
+          <table className='w-full min-w-[32rem] border-separate border-spacing-0 text-left text-sm'>
+            <thead>
+              <tr className='text-[0.7rem] uppercase tracking-[0.14em] text-primary'>
+                <th className='rounded-l-xl bg-primary/[0.06] px-4 py-3 font-normal'>
+                  Navn
+                </th>
+                <th className='bg-primary/[0.06] px-4 py-3 font-normal'>E-post</th>
+                <th className='rounded-r-xl bg-primary/[0.06] px-4 py-3 font-normal'>
+                  Matbehov
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {registrations.map((user: RegisteredUserType, index: number) => (
+                <tr
+                  key={`${user.email}-${index}`}
+                  className='align-top [&:first-child>td]:border-t-0'
+                >
+                  <td className='border-t border-primary/10 px-4 py-3 '>
+                    {user.name}
+                  </td>
+                  <td className='border-t border-primary/10 px-4 py-3 text-gray'>
+                    {user.email || '—'}
+                  </td>
+                  <td className='border-t border-primary/10 px-4 py-3 text-gray'>
+                    {user.foodNeeds || '—'}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-      </div>
+      )}
     </div>
   );
 }

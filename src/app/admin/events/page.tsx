@@ -6,9 +6,8 @@ import {
   IndeterminateCheckbox,
 } from '@/components/Input';
 import { CircleCheck, CircleXMark, Search } from '@/components/icons';
-import { useEvents } from '@/lib/hooks/useEvent';
+import { useEventArchive, useEvents } from '@/lib/hooks/useEvent';
 import { getLocaleDatetimeString } from '@/lib/utils';
-import { EventType } from '@/types';
 import {
   ColumnFiltersState,
   SortingState,
@@ -20,10 +19,22 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
+
+type AdminEventRow = {
+  id: number;
+  title: string;
+  startTime: Date;
+  endTime: Date;
+  updatedAt: Date | null;
+  status: string;
+  isArchived: boolean;
+  href: string;
+};
 
 function AdminEvents(): JSX.Element {
   const { isError, data } = useEvents('all=true');
+  const { data: archiveData } = useEventArchive('all=true');
   // Selection, filter and sorting states
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [rowSelection, setRowSelection] = useState({});
@@ -32,12 +43,31 @@ function AdminEvents(): JSX.Element {
   ]);
   //TODO: Make a tanstack table component
   // Column creation through tanstack column helper for strictly typing header and cells
-  const columnHelper = createColumnHelper<EventType>();
-  const eventCount = useMemo(
-    () => Math.ceil((data?.events || []).length / 9),
-    [data]
-  );
-  const [eventSplit, setEventSplit] = useState<EventType[]>([]);
+  const columnHelper = createColumnHelper<AdminEventRow>();
+
+  const events = useMemo<AdminEventRow[]>(() => {
+    const editable = (data?.events || []).map((event) => ({
+      id: event.id,
+      title: event.title,
+      startTime: new Date(event.startTime),
+      endTime: new Date(event.endTime),
+      updatedAt: new Date(event.updatedAt),
+      status: event.isDraft ? 'utkast' : event.isCancelled ? 'avlyst' : 'åpen',
+      isArchived: false,
+      href: `/admin/events/${event.id}`,
+    }));
+    const archived = (archiveData?.events || []).map((event) => ({
+      id: event.id,
+      title: event.title,
+      startTime: new Date(event.startTime),
+      endTime: new Date(event.endTime),
+      updatedAt: null,
+      status: 'arkivert',
+      isArchived: true,
+      href: `/admin/events/archive/${event.id}`,
+    }));
+    return [...editable, ...archived];
+  }, [data, archiveData]);
 
   const columns = useMemo(
     () => [
@@ -69,26 +99,36 @@ function AdminEvents(): JSX.Element {
         ),
       }),
 
-      columnHelper.accessor(
-        (row) => {
-          return { id: row.id, title: row.title };
-        },
-        {
-          id: 'title',
-          header: () => 'Tittel',
-          cell: (info) => (
-            <>
-              <Link
-                href={`/admin/events/${info.getValue().id}`}
-                className='inline-block min-w-[180px] font-medium text-primary transition-all hover:brightness-75'
-              >
-                {info.getValue().title}
-              </Link>
-            </>
-          ),
-          footer: (info) => info.column.id,
-        }
-      ),
+      // Plain string accessor so the search box can filter on the raw title.
+      columnHelper.accessor('title', {
+        id: 'title',
+        header: () => 'Tittel',
+        cell: (info) => (
+          <Link
+            href={info.row.original.href}
+            className='inline-block min-w-[180px] font-medium text-primary transition-all hover:brightness-75'
+          >
+            {info.getValue()}
+          </Link>
+        ),
+        footer: (info) => info.column.id,
+      }),
+      columnHelper.accessor('isArchived', {
+        id: 'source',
+        header: () => 'Kilde',
+        cell: (info) => (
+          <span
+            className={`whitespace-nowrap rounded-md px-2 py-1 text-xs font-medium ${
+              info.getValue()
+                ? 'bg-neutral-200 text-neutral-700'
+                : 'bg-primary/15 text-primary'
+            }`}
+          >
+            {info.getValue() ? 'Arkiv' : 'System'}
+          </span>
+        ),
+        footer: (info) => info.column.id,
+      }),
       columnHelper.accessor('startTime', {
         id: 'startTime',
         header: () => 'Starttid',
@@ -104,7 +144,13 @@ function AdminEvents(): JSX.Element {
       columnHelper.accessor('updatedAt', {
         id: 'lastEdited',
         header: () => <span>Sist endret</span>,
-        cell: (info) => <span>{getLocaleDatetimeString(info.getValue())}</span>,
+        // Archived events carry no edit history.
+        cell: (info) => {
+          const updatedAt = info.getValue();
+          return (
+            <span>{updatedAt ? getLocaleDatetimeString(updatedAt) : '—'}</span>
+          );
+        },
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor('startTime', {
@@ -161,25 +207,12 @@ function AdminEvents(): JSX.Element {
           footer: (info) => info.column.id,
         }
       ),
-      columnHelper.accessor(
-        (row) => {
-          return { isDraft: row.isDraft, isCancelled: row.isCancelled };
-        },
-        {
-          id: 'status',
-          header: () => 'Status',
-          cell: (info) => (
-            <span>
-              {info.getValue().isDraft
-                ? 'utkast'
-                : info.getValue().isCancelled
-                  ? 'avlyst'
-                  : 'åpen'}
-            </span>
-          ),
-          footer: (info) => info.column.id,
-        }
-      ),
+      columnHelper.accessor('status', {
+        id: 'status',
+        header: () => 'Status',
+        cell: (info) => <span>{info.getValue()}</span>,
+        footer: (info) => info.column.id,
+      }),
     ],
 
     [columnHelper]
@@ -187,7 +220,7 @@ function AdminEvents(): JSX.Element {
 
   // Create table
   const table = useReactTable({
-    data: eventSplit,
+    data: events,
     columns: columns,
     // States
     initialState: { pagination: { pageIndex: 0, pageSize: 9 } },
@@ -196,8 +229,6 @@ function AdminEvents(): JSX.Element {
       sorting,
       columnFilters,
     },
-    pageCount: eventCount,
-    manualPagination: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -210,23 +241,12 @@ function AdminEvents(): JSX.Element {
   });
 
   // Variables for reusability
-  const events = data?.events;
-  const pageCount = table.getPageCount();
   const pageIndex = table.getState().pagination.pageIndex;
   const pageSize = table.getState().pagination.pageSize;
+  const filteredCount = table.getFilteredRowModel().rows.length;
 
   // Redirect to 500 if error
   if (isError) window.location.href = '/500';
-
-  useEffect(() => {
-    const startIndex = pageIndex * 9;
-    const endIndex = startIndex + 9;
-    if (events != null) {
-      setEventSplit(events.slice(startIndex, endIndex));
-    } else {
-      setEventSplit([]);
-    }
-  }, [pageIndex, events]);
 
   return (
     <>
@@ -288,11 +308,9 @@ function AdminEvents(): JSX.Element {
               <p className='flex items-center gap-1 text-sm'>
                 Viser
                 <strong>
-                  {1 + pageIndex * pageSize} -{' '}
-                  {pageIndex + 1 == pageCount
-                    ? events?.length
-                    : (pageIndex + 1) * pageSize}{' '}
-                  av {events?.length}
+                  {filteredCount === 0 ? 0 : 1 + pageIndex * pageSize} -{' '}
+                  {Math.min((pageIndex + 1) * pageSize, filteredCount)} av{' '}
+                  {filteredCount}
                 </strong>
                 arrangementer
               </p>

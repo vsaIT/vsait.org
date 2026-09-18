@@ -63,6 +63,32 @@ export function useEventArchive(query: string = '') {
   };
 }
 
+export type PastEvent = ArchivedEvent & {
+  source: 'archive' | 'event';
+  isCancelled: boolean;
+};
+
+export type PastListResponse = {
+  events: PastEvent[];
+  page: number;
+  pages: number;
+};
+
+// Every event that has finished
+export function usePastEvents(query: string = '') {
+  const { data, error, isLoading, mutate } = useSWR<PastListResponse>(
+    `/api/events/past?${query}`,
+    fetcher
+  );
+
+  return {
+    data,
+    isLoading,
+    isError: error,
+    mutate,
+  };
+}
+
 // A single archived past event, for its detail page.
 export function useEventArchiveItem(id: string) {
   const { data, error, isLoading, mutate } = useSWR<{ event: ArchivedEvent }>(

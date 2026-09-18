@@ -1,17 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from 'prisma/index';
 import { getErrorMessage } from '@/lib/utils';
+import { activeResetTokenWhere } from '@/lib/auth/resetTokens';
 
-const handler = async (
-  req: NextRequest,
+// Tells the reset page whether its link is still usable
+const GET = async (
+  _req: NextRequest,
   { params }: { params: { resetid: string } }
 ) => {
-  const resetid = params.resetid;
+  const resetid = String(params.resetid ?? '');
   try {
+    if (!resetid) return NextResponse.json(null, { status: 200 });
+
     const user = await prisma.user.findFirst({
-      where: {
-        passwordResetUrl: String(resetid),
-      },
+      where: activeResetTokenWhere(resetid),
       select: {
         id: true,
       },
@@ -26,4 +28,4 @@ const handler = async (
   }
 };
 
-export { handler as GET, handler as POST };
+export { GET };

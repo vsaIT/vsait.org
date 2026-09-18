@@ -1,16 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
-
 @layer base {
   html {
-    font-family: 'Poppins', sans-serif;
+    font-family: var(--font-sniglet), sans-serif;
+    font-size: 120%;
   }
   select {
     appearance: none;
     background-image: url('/angle-down-solid.svg');
-    background-size: 12px;
+    background-size: 0.75rem;
     background-repeat: no-repeat;
     background-position: calc(100% - 1.25rem) center;
   }
@@ -25,8 +24,8 @@
       position: absolute;
       top: 0;
       left: 0;
-      width: 240px;
-      height: 240px;
+      width: 15rem;
+      height: 15rem;
       z-index: -1;
       border-radius: 60px 0px;
       background-color: #d5564d;
@@ -37,8 +36,8 @@
     .events::after {
       top: initial;
       left: initial;
-      width: 240px;
-      height: 240px;
+      width: 15rem;
+      height: 15rem;
       bottom: 0;
       right: 0;
       background-color: #f2cf76;
@@ -49,15 +48,15 @@
     .events::before {
       left: initial;
       right: 0;
-      width: 180px;
-      height: 180px;
+      width: 11.25rem;
+      height: 11.25rem;
       transform: translate(15%, -15%);
     }
     .events::after {
       right: initial;
       left: 0;
-      width: 180px;
-      height: 180px;
+      width: 11.25rem;
+      height: 11.25rem;
       transform: translate(-15%, 21%);
     }
   }
