@@ -83,10 +83,37 @@ const GET = async (req: NextRequest) => {
 
       const pages = Math.ceil(events.length / take);
       const currentPage = Math.min(page || 1, pages);
+      const pageEvents = events.slice(
+        (currentPage - 1) * take,
+        currentPage * take
+      );
+
+      // Tells the logged-in user which of these they are already signed up for
+      const userId = token?.id || '';
+      let registeredEventIds = new Set<number>();
+      if (userId && pageEvents.length) {
+        const eventIds = pageEvents.map((event) => event.id);
+        const [registrations, waiting] = await Promise.all([
+          prisma.registrations.findMany({
+            where: { userId, eventId: { in: eventIds } },
+            select: { eventId: true },
+          }),
+          prisma.waiting.findMany({
+            where: { userId, eventId: { in: eventIds } },
+            select: { eventId: true },
+          }),
+        ]);
+        registeredEventIds = new Set(
+          [...registrations, ...waiting].map((r) => r.eventId)
+        );
+      }
 
       return NextResponse.json(
         {
-          events: events.slice((currentPage - 1) * take, currentPage * take),
+          events: pageEvents.map((event) => ({
+            ...event,
+            hasRegistered: registeredEventIds.has(event.id),
+          })),
           page: currentPage,
           pages: pages,
         },

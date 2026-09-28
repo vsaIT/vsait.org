@@ -1,4 +1,4 @@
-import { CalendarOutline, MapPin } from '@/components/icons';
+import { CalendarOutline, CircleCheck, MapPin } from '@/components/icons';
 import { getLocaleDateString } from '@/lib/utils';
 import { bigSmile } from '@dicebear/collection';
 import { createAvatar } from '@dicebear/core';
@@ -55,6 +55,7 @@ type EventCardProps = {
   seed: string;
   isPast?: boolean;
   isCancelled?: boolean;
+  hasRegistered?: boolean;
   compact?: boolean;
 };
 
@@ -68,8 +69,10 @@ const EventCard = ({
   seed,
   isPast = false,
   isCancelled = false,
+  hasRegistered = false,
   compact = false,
 }: EventCardProps) => {
+  const isDone = isPast || isCancelled;
   return (
     <Link
       href={href}
@@ -130,9 +133,16 @@ const EventCard = ({
               {registrations} påmeldte
             </span>
           </div>
-          <span className='w-full shrink-0 rounded-full border border-primary px-4 py-2 text-center text-sm text-primary transition-colors duration-300 group-hover:bg-primary group-hover:text-white sm:ml-auto sm:w-auto'>
-            {isPast || isCancelled ? 'Se detaljer' : 'Meld deg på'}
-          </span>
+          {!isDone && hasRegistered ? (
+            <span className='flex w-full shrink-0 items-center justify-center gap-2 rounded-full border border-primary bg-primary px-4 py-2 text-center text-sm text-white transition-all duration-300 group-hover:brightness-95 sm:ml-auto sm:w-auto'>
+              <CircleCheck color='#FFFFFF' className='h-4 w-4 shrink-0' />
+              Du er meldt på
+            </span>
+          ) : (
+            <span className='w-full shrink-0 rounded-full border border-primary px-4 py-2 text-center text-sm text-primary transition-colors duration-300 group-hover:bg-primary group-hover:text-white sm:ml-auto sm:w-auto'>
+              {isDone ? 'Se detaljer' : 'Meld deg på'}
+            </span>
+          )}
         </div>
       </div>
     </Link>

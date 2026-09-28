@@ -55,6 +55,7 @@ export type EventType = Event & {
   registrationList?: string[];
   waitingList?: string[];
   attendanceList?: string[];
+  hasRegistered?: boolean;
   _count?: {
     registrationList: number;
     waitingList: number;

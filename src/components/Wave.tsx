@@ -94,7 +94,7 @@ const Wave = ({ rgb = '255,255,255' }: WaveProps) => {
   return (
     <canvas
       ref={canvasRef}
-      className='absolute bottom-0 flex h-52 w-full'
+      className='pointer-events-none absolute bottom-0 flex h-52 w-full'
     ></canvas>
   );
 };
