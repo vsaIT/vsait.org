@@ -77,6 +77,7 @@ const EventsQuickView = ({ className = '' }: ExtendedComponentProps) => {
                 seed={String(event.id)}
                 isPast={new Date(event.endTime) < new Date()}
                 isCancelled={event.isCancelled}
+                hasRegistered={event.hasRegistered}
                 compact={!isSingle}
               />
             ))}

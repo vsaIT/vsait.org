@@ -6,6 +6,7 @@ const pageLinks = [
   { href: '/', text: 'Hjem' },
   { href: '/events', text: 'Arrangementer' },
   { href: '/organization', text: 'Om oss' },
+  { href: '/medlemskap', text: 'Medlemskap' },
   { href: '/retningslinjer', text: 'Retningslinjer' },
 ];
 
