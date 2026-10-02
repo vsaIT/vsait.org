@@ -153,6 +153,15 @@ export function getOsloDateString(date: Date | string) {
   return isoToOsloTimestring(new Date(date)).split('T')[0];
 }
 
+// True while an event is ongoing
+export function isEventOngoing(
+  startTime: Date | string,
+  endTime: Date | string,
+  now: Date = new Date()
+) {
+  return new Date(startTime) <= now && new Date(endTime) > now;
+}
+
 export function isEventDay(
   startTime: Date | string,
   endTime: Date | string,

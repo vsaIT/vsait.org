@@ -75,11 +75,11 @@ function AdminUsersView({ params }: AdminUsersViewProps): JSX.Element {
       await swalLoading('Oppdaterer bruker...', async () => {
         try {
           if (!putUser) throw new Error('No user data');
-          const response = await putFetcher<UserType>(
+          const { user: updatedUser } = await putFetcher<{ user: UserType }>(
             `/api/user/${params.userid}`,
             putUser
           );
-          setEditUser(response);
+          setEditUser({ ...putUser, ...updatedUser });
           await swalSuccess('Brukeren ble oppdatert');
         } catch (error) {
           swalError('Brukeren ble ikke oppdatert', error as Error);

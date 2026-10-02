@@ -40,6 +40,9 @@ const copyUserToToken = (token: JWT, user: TokenUser) => {
   token.student = user.student;
 };
 
+// How often a logged-in session re-reads its user from the database
+const TOKEN_REFRESH_MS = 60 * 1000;
+
 type RegisterInputType =
   | 'firstName'
   | 'lastName'
@@ -195,12 +198,18 @@ const authOptions: AuthOptions = {
       if (user) {
         // Signing in 'user' is the record the login provider just verified
         copyUserToToken(token, user);
-      } else if (trigger === 'update' && token.id) {
+        token.refreshedAt = Date.now();
+      } else if (
+        token.id &&
+        (trigger === 'update' ||
+          Date.now() - (token.refreshedAt ?? 0) > TOKEN_REFRESH_MS)
+      ) {
         const freshUser = await prisma.user.findUnique({
           where: { id: token.id as string },
           include: { membership: true },
         });
         if (freshUser) copyUserToToken(token, freshUser);
+        token.refreshedAt = Date.now();
       }
       return token;
     },

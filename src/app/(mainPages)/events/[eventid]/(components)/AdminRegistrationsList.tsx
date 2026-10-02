@@ -9,9 +9,7 @@ export default function AdminRegistrationsList({
 }: AdminRegistrationsListProps) {
   return (
     <div className='rounded-3xl bg-white p-6 shadow-sm sm:p-8'>
-      <h2 className='text-xl '>
-        Liste over påmeldte ({registrations.length})
-      </h2>
+      <h2 className='text-xl '>Liste over påmeldte ({registrations.length})</h2>
 
       {registrations.length === 0 ? (
         <p className='mt-4 text-sm text-gray'>Ingen påmeldte enda.</p>
@@ -23,7 +21,9 @@ export default function AdminRegistrationsList({
                 <th className='rounded-l-xl bg-primary/[0.06] px-4 py-3 font-normal'>
                   Navn
                 </th>
-                <th className='bg-primary/[0.06] px-4 py-3 font-normal'>E-post</th>
+                <th className='bg-primary/[0.06] px-4 py-3 font-normal'>
+                  E-post
+                </th>
                 <th className='rounded-r-xl bg-primary/[0.06] px-4 py-3 font-normal'>
                   Matbehov
                 </th>
@@ -35,10 +35,10 @@ export default function AdminRegistrationsList({
                   key={`${user.email}-${index}`}
                   className='align-top [&:first-child>td]:border-t-0'
                 >
-                  <td className='border-t border-primary/10 px-4 py-3 '>
+                  <td className='whitespace-nowrap border-t border-primary/10 px-4 py-3'>
                     {user.name}
                   </td>
-                  <td className='border-t border-primary/10 px-4 py-3 text-gray'>
+                  <td className='whitespace-nowrap border-t border-primary/10 px-4 py-3 text-gray'>
                     {user.email || '—'}
                   </td>
                   <td className='border-t border-primary/10 px-4 py-3 text-gray'>

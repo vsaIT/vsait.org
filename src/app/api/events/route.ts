@@ -58,7 +58,7 @@ const GET = async (req: NextRequest) => {
         where: upcoming
           ? {
               isDraft: false,
-              startTime: {
+              endTime: {
                 gte: new Date(),
               },
             }

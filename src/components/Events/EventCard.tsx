@@ -54,6 +54,7 @@ type EventCardProps = {
   registrations: number;
   seed: string;
   isPast?: boolean;
+  isOngoing?: boolean;
   isCancelled?: boolean;
   hasRegistered?: boolean;
   compact?: boolean;
@@ -68,6 +69,7 @@ const EventCard = ({
   registrations,
   seed,
   isPast = false,
+  isOngoing = false,
   isCancelled = false,
   hasRegistered = false,
   compact = false,
@@ -102,15 +104,26 @@ const EventCard = ({
 
       <div className={`flex flex-1 flex-col p-5 ${compact ? '' : 'sm:p-6'}`}>
         <span
-          className={`w-fit rounded-full px-3 py-1 text-xs ${
+          className={`inline-flex w-fit items-center gap-2 rounded-full px-3 py-1 text-xs ${
             isCancelled
               ? 'bg-dark/10 text-dark'
-              : isPast
-                ? 'bg-gray/10 text-gray'
-                : 'bg-primary/10 text-primary'
+              : isOngoing
+                ? 'bg-emerald-50 text-emerald-700'
+                : isPast
+                  ? 'bg-gray/10 text-gray'
+                  : 'bg-primary/10 text-primary'
           }`}
         >
-          {isCancelled ? 'Avlyst' : isPast ? 'Avsluttet' : 'Kommende'}
+          {!isCancelled && isOngoing && (
+            <span className='h-1.5 w-1.5 shrink-0 animate-pulse rounded-full bg-emerald-500' />
+          )}
+          {isCancelled
+            ? 'Avlyst'
+            : isOngoing
+              ? 'Pågår'
+              : isPast
+                ? 'Avsluttet'
+                : 'Kommende'}
         </span>
 
         <h3 className='mt-3 text-lg '>{title}</h3>

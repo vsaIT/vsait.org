@@ -32,8 +32,7 @@ const formatTime = (date: Date | string) => {
   ).padStart(2, '0')}`;
 };
 
-const cardClass =
-  'rounded-3xl bg-white p-6 shadow-sm sm:p-8';
+const cardClass = 'rounded-3xl bg-white p-6 shadow-sm sm:p-8';
 
 function Event({ params }: { params: { eventid: string } }): JSX.Element {
   const { status, data: session } = useSession({
@@ -131,9 +130,7 @@ function Event({ params }: { params: { eventid: string } }): JSX.Element {
   const registrationAction = () => {
     if (isPast)
       return (
-        <p className='text-sm text-white'>
-          Dette arrangementet er avsluttet.
-        </p>
+        <p className='text-sm text-white'>Dette arrangementet er avsluttet.</p>
       );
     if (!session?.user)
       return (
@@ -235,158 +232,174 @@ function Event({ params }: { params: { eventid: string } }): JSX.Element {
           />
         </div>
 
-        <div className='mx-auto grid w-11/12 max-w-[58rem] grid-cols-1 gap-8 py-8 text-left lg:grid-cols-[1.6fr_1fr]'>
-          <div className='flex min-w-0 flex-col gap-8'>
-            <div className={cardClass}>
-              <h2 className='text-xl '>Om arrangementet</h2>
-              <div
-                className='mt-4 break-words text-sm leading-relaxed [&_a]:text-primary [&_a]:underline'
-                dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(event.description),
-                }}
-              />
-            </div>
-
-            {registrations > 0 && (
-              <div className={cardClass}>
-                <h2 className='text-xl '>
-                  Påmeldte ({registrations})
-                </h2>
-                <div className='mt-4 flex flex-col-reverse items-start gap-3 sm:flex-row sm:items-center'>
-                  <AvatarStack
-                    count={registrations}
-                    seed={String(event.id)}
-                    max={5}
-                  />
-                  <div>
-                    {registeredNames.length > 0 ? (
-                      <>
-                        <p className='text-sm '>
-                          {registeredNames.slice(0, 3).join(', ')}
-                          {registrations > registeredNames.slice(0, 3).length
-                            ? ` + ${
-                                registrations -
-                                registeredNames.slice(0, 3).length
-                              } andre`
-                            : ''}
-                        </p>
-                        <p className='text-xs text-gray'>
-                          {isPast ? 'var med på' : 'blir med på'} arrangementet
-                        </p>
-                      </>
-                    ) : (
-                      <p className='text-sm '>
-                        {registrations} {registrations === 1 ? 'person' : 'personer'}{' '}
-                        {isPast ? 'var med på' : 'blir med på'} arrangementet
-                      </p>
-                    )}
-                  </div>
-                </div>
+        <div className='mx-auto flex w-11/12 max-w-[58rem] flex-col gap-8 py-8 text-left'>
+          <div className='grid grid-cols-1 gap-8 lg:grid-cols-[1.6fr_1fr]'>
+            <div className='flex min-w-0 flex-col gap-8'>
+              <div className={`${cardClass} flex-1`}>
+                <h2 className='text-xl '>Om arrangementet</h2>
+                <div
+                  className='mt-4 break-words text-sm leading-relaxed [&_a]:text-primary [&_a]:underline'
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(event.description),
+                  }}
+                />
               </div>
-            )}
-
-            {isAdmin && (
-              <AdminRegistrationsList registrations={data.registrations} />
-            )}
-          </div>
-
-          <aside className='flex flex-col gap-6'>
-            <div className='rounded-3xl bg-primary p-6 text-center text-white shadow-sm'>
-              <p className='text-2xl'>{registrations} påmeldte</p>
-              <p className='mt-1 text-xs text-white'>
-                {event.maxRegistrations > 0
-                  ? `av ${event.maxRegistrations} plasser`
-                  : 'Ingen plassbegrensning'}
-                {' · '}
-                {event.eventType === 'OPEN'
-                  ? 'Åpent for alle'
-                  : 'For medlemmer'}
-              </p>
-              {waitingList > 0 && (
-                <p className='mt-1 text-xs text-white'>
-                  {waitingList} på venteliste
-                </p>
-              )}
-              <div className='mt-5'>{registrationAction()}</div>
             </div>
 
-            <div className='rounded-3xl bg-white p-6 shadow-sm'>
-              <h2 className='text-lg '>Detaljer</h2>
-              <dl className='mt-4 flex flex-col'>
-                <div className='flex items-start gap-3 border-b border-primary/10 pb-4'>
-                  <CalendarOutline
-                    color='#D5564D'
-                    className='mt-0.5 h-4 w-4 shrink-0'
-                  />
-                  <div>
-                    <dt className='text-sm '>
-                      {getLocaleDateString(event.startTime)}
-                    </dt>
-                    <dd className='text-xs text-gray'>
-                      {formatTime(event.startTime)}–{formatTime(event.endTime)}
-                    </dd>
-                  </div>
-                </div>
+            <aside className='flex flex-col gap-6'>
+              <div className='rounded-3xl bg-primary p-6 text-center text-white shadow-sm'>
+                <p className='text-2xl'>{registrations} påmeldte</p>
+                <p className='mt-1 text-xs text-white'>
+                  {event.maxRegistrations > 0
+                    ? `av ${event.maxRegistrations} plasser`
+                    : 'Ingen plassbegrensning'}
+                  {' · '}
+                  {event.eventType === 'OPEN'
+                    ? 'Åpent for alle'
+                    : 'For medlemmer'}
+                </p>
+                {waitingList > 0 && (
+                  <p className='mt-1 text-xs text-white'>
+                    {waitingList} på venteliste
+                  </p>
+                )}
+                <div className='mt-5'>{registrationAction()}</div>
+              </div>
 
-                {!isPast && (
-                  <div className='flex items-start gap-3 border-b border-primary/10 py-4'>
-                    <CalendarCheck
+              <div className='rounded-3xl bg-white p-6 shadow-sm'>
+                <h2 className='text-lg '>Detaljer</h2>
+                <dl className='mt-4 flex flex-col'>
+                  <div className='flex items-start gap-3 border-b border-primary/10 pb-4'>
+                    <CalendarOutline
                       color='#D5564D'
                       className='mt-0.5 h-4 w-4 shrink-0'
                     />
                     <div>
                       <dt className='text-sm '>
-                        Påmeldingsfrist{' '}
-                        {getLocaleDateString(event.registrationDeadline)}
+                        {getLocaleDateString(event.startTime)}
                       </dt>
                       <dd className='text-xs text-gray'>
-                        Avmeldingsfrist{' '}
-                        {getLocaleDateString(event.cancellationDeadline)}
+                        {formatTime(event.startTime)}–
+                        {formatTime(event.endTime)}
                       </dd>
                     </div>
                   </div>
-                )}
 
-                <div className='flex items-start gap-3 border-b border-primary/10 py-4'>
-                  <MapPin color='#D5564D' className='mt-0.5 h-4 w-4 shrink-0' />
-                  <div>
-                    <dt className='text-sm '>{event.location}</dt>
-                    <dd className='text-xs text-gray'>Sted</dd>
+                  {!isPast && (
+                    <div className='flex items-start gap-3 border-b border-primary/10 py-4'>
+                      <CalendarCheck
+                        color='#D5564D'
+                        className='mt-0.5 h-4 w-4 shrink-0'
+                      />
+                      <div>
+                        <dt className='text-sm '>
+                          Påmeldingsfrist{' '}
+                          {getLocaleDateString(event.registrationDeadline)}
+                        </dt>
+                        <dd className='text-xs text-gray'>
+                          Avmeldingsfrist{' '}
+                          {getLocaleDateString(event.cancellationDeadline)}
+                        </dd>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className='flex items-start gap-3 border-b border-primary/10 py-4'>
+                    <MapPin
+                      color='#D5564D'
+                      className='mt-0.5 h-4 w-4 shrink-0'
+                    />
+                    <div>
+                      <dt className='text-sm '>{event.location}</dt>
+                      <dd className='text-xs text-gray'>Sted</dd>
+                    </div>
                   </div>
-                </div>
 
-                <div className='flex items-start gap-3 pt-4'>
-                  <Person color='#D5564D' className='mt-0.5 h-4 w-4 shrink-0' />
-                  <div>
-                    <dt className='text-sm '>
-                      {event.eventType === 'OPEN' ? 'Alle' : 'Medlemmer'}
-                    </dt>
-                    <dd className='text-xs text-gray'>Åpent for</dd>
+                  <div className='flex items-start gap-3 pt-4'>
+                    <Person
+                      color='#D5564D'
+                      className='mt-0.5 h-4 w-4 shrink-0'
+                    />
+                    <div>
+                      <dd className='text-xs text-gray'>Åpent for</dd>
+                      <dt className='text-sm '>
+                        {event.eventType === 'OPEN' ? 'Alle' : 'Medlemmer'}
+                      </dt>
+                    </div>
                   </div>
-                </div>
-              </dl>
-            </div>
-
-            <InfoBox />
-
-            {isAdmin && (
-              <div className='rounded-3xl bg-white p-6 shadow-sm'>
-                <h2 className='flex items-center gap-2 text-lg '>
-                  <Users color='#D5564D' className='h-4 w-4' />
-                  Innslipp
-                </h2>
-                <p className='mt-2 text-xs leading-relaxed text-gray'>
-                  Registrer oppmøte på arrangementet.
-                </p>
-                <Link
-                  href={`/events/checkin/${eventid}`}
-                  className='mt-4 block rounded-full bg-primary py-3 text-center text-sm text-white shadow-md transition-all duration-300 hover:brightness-90'
-                >
-                  Gå til innslipp
-                </Link>
+                </dl>
               </div>
-            )}
-          </aside>
+
+              {/* Grows to fill the column, so both sides end level */}
+              <InfoBox className='flex-1' />
+            </aside>
+          </div>
+
+          {(registrations > 0 || isAdmin) && (
+            <div className='grid grid-cols-1 gap-8 lg:grid-cols-[1.6fr_1fr]'>
+              {registrations > 0 && (
+                <div
+                  className={`${cardClass} ${isAdmin ? '' : 'lg:col-span-2'}`}
+                >
+                  <h2 className='text-xl '>Påmeldte ({registrations})</h2>
+                  <div className='mt-4 flex flex-col-reverse items-start gap-3 sm:flex-row sm:items-center'>
+                    <AvatarStack
+                      count={registrations}
+                      seed={String(event.id)}
+                      max={5}
+                    />
+                    <div>
+                      {registeredNames.length > 0 ? (
+                        <>
+                          <p className='text-sm '>
+                            {registeredNames.slice(0, 3).join(', ')}
+                            {registrations > registeredNames.slice(0, 3).length
+                              ? ` + ${
+                                  registrations -
+                                  registeredNames.slice(0, 3).length
+                                } andre`
+                              : ''}
+                          </p>
+                          <p className='text-xs text-gray'>
+                            {isPast ? 'var med på' : 'blir med på'}{' '}
+                            arrangementet
+                          </p>
+                        </>
+                      ) : (
+                        <p className='text-sm '>
+                          {registrations}{' '}
+                          {registrations === 1 ? 'person' : 'personer'}{' '}
+                          {isPast ? 'var med på' : 'blir med på'} arrangementet
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {isAdmin && (
+                <div className='rounded-3xl bg-white p-6 shadow-sm'>
+                  <h2 className='flex items-center gap-2 text-lg '>
+                    <Users color='#D5564D' className='h-4 w-4' />
+                    Innslipp
+                  </h2>
+                  <p className='mt-2 text-xs leading-relaxed text-gray'>
+                    Registrer oppmøte på arrangementet.
+                  </p>
+                  <Link
+                    href={`/events/checkin/${eventid}`}
+                    className='mt-4 block rounded-full bg-primary py-3 text-center text-sm text-white shadow-md transition-all duration-300 hover:brightness-90'
+                  >
+                    Gå til innslipp
+                  </Link>
+                </div>
+              )}
+            </div>
+          )}
+
+          {isAdmin && (
+            <AdminRegistrationsList registrations={data.registrations} />
+          )}
         </div>
       </section>
     </>
