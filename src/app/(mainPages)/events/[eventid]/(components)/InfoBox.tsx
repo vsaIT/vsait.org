@@ -1,8 +1,8 @@
-export default function InfoBox() {
+export default function InfoBox({ className = '' }: { className?: string }) {
   return (
-    <div className='rounded-3xl bg-white p-6'>
+    <div className={`rounded-3xl bg-primary/5 p-6 ${className}`}>
       <h2 className='text-lg'>Godt å vite</h2>
-      <div className='mt-4 flex flex-col gap-4 text-xs leading-relaxed'>
+      <div className='mt-4 flex flex-col gap-4 text-sm leading-relaxed'>
         <p>
           Antallet påmeldte brukes hovedsakelig for å estimere hvor mye mat som
           skal kjøpes inn. Maksgrensen gjelder hovedsakelig for mindre

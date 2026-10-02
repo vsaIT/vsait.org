@@ -267,7 +267,8 @@ export const focusAreas: FocusArea[] = [
 export const board: BoardMemberType[] = [
   { name: 'Linh Dan Bui', role: 'Styreleder' },
   { name: 'Vernice Dang', role: 'Nestleder' },
-  { name: 'Supattra Wongsamal', role: 'Sekretær og Økonomiansvarlig' },
+  { name: 'Supattra Wongsamal', role: 'Sekretær' },
+  { name: 'Leah Anh Thy Nguyen', role: 'Økonomiansvarlig' },
   { name: 'Thomas Nguyen', role: 'IT-ansvarlig' },
   { name: 'Tran Huyen Huynh Alvarstein', role: 'Matansvarlig' },
   { name: 'Benedicte Bachmann', role: 'SoMe-ansvarlig' },

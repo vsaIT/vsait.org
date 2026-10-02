@@ -1,6 +1,7 @@
 import EventCard, { EventCardSkeleton } from './EventCard';
 import { CalendarCheck } from '@/components/icons';
 import { useEvents } from '@/lib/hooks/useEvent';
+import { isEventOngoing } from '@/lib/utils';
 import { ExtendedComponentProps } from '@/types/types';
 import Link from 'next/link';
 
@@ -76,6 +77,7 @@ const EventsQuickView = ({ className = '' }: ExtendedComponentProps) => {
                 registrations={event._count?.registrationList ?? 0}
                 seed={String(event.id)}
                 isPast={new Date(event.endTime) < new Date()}
+                isOngoing={isEventOngoing(event.startTime, event.endTime)}
                 isCancelled={event.isCancelled}
                 hasRegistered={event.hasRegistered}
                 compact={!isSingle}
