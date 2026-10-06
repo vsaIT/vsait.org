@@ -47,7 +47,7 @@ export const membershipTiers: MembershipTier[] = [
   },
   {
     label: 'Arrangement',
-    price: '100',
+    price: '150',
     period: 'Inngang til Tết og Tết Trung Thu',
     perks: ['Gjelder Tết (nyttårsfeiringen) og Tết Trung Thu (månefestivalen)', 'Betales i tillegg til medlemskap'],
     note: 'Tết er vår største feiring, og har egen inngangsbillett.',
