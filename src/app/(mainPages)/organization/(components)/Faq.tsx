@@ -44,7 +44,7 @@ const faqs: FaqItem[] = [
         </Link>{' '}
         koster 100 kr for ett semester og 175 kr for hele studieåret. Dette gir
         deg tilgang til alle våre arrangementer og aktiviteter. Tết (Nyttårsfeiring) og Tết Trung Thu (Månefestival) har egne
-        inngangsbillett som koster 100 kr i tillegg til medlemskapet.
+        inngangsbillett som koster 150 kr i tillegg til medlemskapet.
       </>
     ),
   },
