@@ -1,3 +1,5 @@
+import { escapeHtml } from '@/lib/utils';
+
 export const sendEmail = async (
   name: string,
   email: string,
@@ -12,7 +14,7 @@ export const sendEmail = async (
     text_body: `Hei ${name}!\n\nVi har mottatt en forespørsel om å tilbakestille passordet ditt.\nBenytt denne lenken for å opprette et nytt passord: ${url}/forgot/${restUrl}\n\nLenken er gyldig i 1 time og kan bare brukes én gang.\n\nHvis du ikke har sendt denne forespørselen, kan du se bort fra denne eposten.\n\nVennlig hilsen,\nVietnamese Student Association in Trondheim`,
     html_body: `
       <body>
-      Hei ${name}!<br/>
+      Hei ${escapeHtml(name)}!<br/>
       <br/>
       Vi har mottatt en forespørsel om å tilbakestille passordet ditt.<br/>
       Benytt denne lenken for å opprette et nytt passord: <a href="${url}/forgot/${restUrl}">${url}/forgot/${restUrl}</a><br/>

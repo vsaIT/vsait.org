@@ -5,12 +5,15 @@ import { JWT } from 'next-auth/jwt';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import prisma, { Role } from 'prisma/index';
 
+import { checkName } from '@/lib/auth/nameRules';
 import { checkNewPassword } from '@/lib/auth/passwordRules';
 import {
   generateSalt,
   hashPassword,
   verifyPassword,
 } from '@/lib/auth/passwords';
+import { verifyTurnstile } from '@/lib/auth/turnstile';
+import { TOO_MANY_REQUESTS, clientIp, isRateLimited } from '@/lib/rateLimit';
 import { getErrorMessage } from '@/lib/utils';
 import { sendConfirmEmail } from './utils';
 
@@ -42,6 +45,10 @@ const copyUserToToken = (token: JWT, user: TokenUser) => {
 
 // How often a logged-in session re-reads its user from the database
 const TOKEN_REFRESH_MS = 60 * 1000;
+
+// Sign-up attempts allowed per IP.
+const SIGNUP_LIMIT = 20;
+const SIGNUP_WINDOW_MS = 60 * 60 * 1000;
 
 type RegisterInputType =
   | 'firstName'
@@ -75,9 +82,19 @@ const authOptions: AuthOptions = {
         repeatPassword: {},
         foodNeeds: {},
         student: {},
+        turnstileToken: {},
       },
-      async authorize(credentials): Promise<User | null> {
+      async authorize(credentials, req): Promise<User | null> {
         try {
+          // Bot checks come first
+          const ip = clientIp(req?.headers?.['x-forwarded-for']);
+          if (isRateLimited(`signup:${ip}`, SIGNUP_LIMIT, SIGNUP_WINDOW_MS)) {
+            throw new Error(TOO_MANY_REQUESTS);
+          }
+          if (!(await verifyTurnstile(credentials?.turnstileToken, ip))) {
+            throw new Error('Sikkerhetssjekken feilet. Prøv igjen.');
+          }
+
           // Check if user exist
           const maybeUser = await prisma.user.findFirst({
             where: {
@@ -101,6 +118,13 @@ const authOptions: AuthOptions = {
                     .join(', ')
               );
             }
+            // Names go into the confirmation email
+            const nameProblem =
+              checkName(credentials.firstName) ??
+              checkName(credentials.lastName);
+            if (nameProblem) {
+              throw new Error(nameProblem);
+            }
             if (credentials.password !== credentials.repeatPassword) {
               throw new Error('Passord er ikke like');
             }
@@ -111,8 +135,8 @@ const authOptions: AuthOptions = {
             }
             newUser = await prisma.user.create({
               data: {
-                firstName: credentials.firstName,
-                lastName: credentials.lastName,
+                firstName: credentials.firstName.trim(),
+                lastName: credentials.lastName.trim(),
                 email: credentials.email,
                 password: hashPassword(credentials.password, 12),
                 foodNeeds: credentials.foodNeeds,

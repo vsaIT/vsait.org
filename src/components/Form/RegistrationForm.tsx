@@ -1,3 +1,4 @@
+'use client';
 import { MINIMUM_ACTIVITY_TIMEOUT } from '@/lib/constants';
 import { getCsrfToken, signIn } from 'next-auth/react';
 import { useEffect, useState } from 'react';
@@ -13,6 +14,8 @@ import {
   Utensils,
 } from '@/components/icons';
 import { Checkbox } from '@/components/Input';
+import Turnstile from '@/components/Turnstile';
+import { NAME_MAX_LENGTH } from '@/lib/auth/nameRules';
 import {
   PASSWORD_MAX_LENGTH,
   PASSWORD_MIN_LENGTH,
@@ -29,11 +32,19 @@ type RegistrationFormValues = {
   student: string;
 };
 
-const RegistrationForm = () => {
+type RegistrationFormProps = {
+  // The captcha is shown, and required, only when this is set
+  turnstileSiteKey?: string;
+};
+
+const RegistrationForm = ({ turnstileSiteKey }: RegistrationFormProps) => {
   const [isSubmitting, setSubmitting] = useState(false);
   const [csrfToken, setCsrfToken] = useState<string>();
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  // A captcha token works once, so a failed attempt remounts the widget
+  const [turnstileKey, setTurnstileKey] = useState(0);
   const { register, handleSubmit } = useForm<RegistrationFormValues>();
   useEffect(() => {
     getCsrfToken().then((res) => {
@@ -49,7 +60,11 @@ const RegistrationForm = () => {
     }
 
     setSubmitting(true);
-    signIn('app-register', { ...data, redirect: false }).then((res) => {
+    signIn('app-register', {
+      ...data,
+      ...(turnstileToken && { turnstileToken }),
+      redirect: false,
+    }).then((res) => {
       if (!res) return;
       if (res.ok) {
         console.log('Success');
@@ -65,6 +80,8 @@ const RegistrationForm = () => {
         }
         console.error(res.error);
         setError(res.error);
+        setTurnstileToken(null);
+        setTurnstileKey((key) => key + 1);
       }
       setTimeout(() => {
         setSubmitting(false);
@@ -136,6 +153,7 @@ const RegistrationForm = () => {
                 type='text'
                 autoComplete='given-name'
                 placeholder='Fornavn'
+                maxLength={NAME_MAX_LENGTH}
                 required
                 {...register('firstName')}
                 className={inputClass}
@@ -154,6 +172,7 @@ const RegistrationForm = () => {
                 type='text'
                 autoComplete='family-name'
                 placeholder='Etternavn'
+                maxLength={NAME_MAX_LENGTH}
                 required
                 {...register('lastName')}
                 className={inputClass}
@@ -281,8 +300,14 @@ const RegistrationForm = () => {
           medlemsadministrasjon.
         </label>
 
+        <Turnstile
+          key={turnstileKey}
+          siteKey={turnstileSiteKey}
+          onToken={setTurnstileToken}
+        />
+
         <button
-          disabled={isSubmitting}
+          disabled={isSubmitting || (!!turnstileSiteKey && !turnstileToken)}
           type='submit'
           className='mt-6 w-full rounded-full bg-primary py-3.5 text-sm text-white shadow-md transition-all duration-300 hover:brightness-90 disabled:brightness-95'
         >
