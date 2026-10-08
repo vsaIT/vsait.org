@@ -45,8 +45,9 @@ const ForgotPasswordForm = () => {
           }),
         })
           .then(async (response) => {
-            if (!response.ok) throw new Error(response.statusText);
             const data: ApiResponseType = await response.json();
+            if (!response.ok)
+              throw new Error(data.message || response.statusText);
             return data;
           })
           .then(async (data) => {

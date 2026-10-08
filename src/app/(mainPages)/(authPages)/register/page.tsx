@@ -1,6 +1,8 @@
-'use client';
 import AuthAside from '@/components/AuthAside';
-import { RegistrationForm } from '@/components/Form';
+import RegistrationForm from '@/components/Form/RegistrationForm';
+
+// Read on every request, so a changed captcha key needs no rebuild
+export const dynamic = 'force-dynamic';
 
 function Registration(): JSX.Element {
   return (
@@ -12,7 +14,8 @@ function Registration(): JSX.Element {
       />
 
       <section className='flex w-full flex-1 items-center justify-center bg-cream px-6 pb-20 pt-32 sm:px-12 lg:w-1/2 lg:pb-24 lg:pt-40'>
-        <RegistrationForm />
+        {/* The site key is public by design*/}
+        <RegistrationForm turnstileSiteKey={process.env.TURNSTILE_SITE_KEY} />
       </section>
     </div>
   );

@@ -1,3 +1,5 @@
+import { escapeHtml } from '@/lib/utils';
+
 export const sendConfirmEmail = async (
   name: string,
   email: string,
@@ -12,7 +14,7 @@ export const sendConfirmEmail = async (
     text_body: `Hei ${name}!\n\nVi har mottatt en forespørsel om din registrering av ny bruker.\nBenytt denne lenken for å bekrefte email på brukeren din ${url}/confirm-email?code=${code}\n\nHvis du ikke har sendt denne forespørselen, kan du se bort fra denne eposten.\n\nVennlig hilsen,\nVietnamese Student Association in Trondheim`,
     html_body: `
         <body>
-        Hei ${name}!<br/>
+        Hei ${escapeHtml(name)}!<br/>
         <br/>
         Vi har mottatt en forespørsel om din registrering av ny bruker.<br/>
         Benytt denne lenken for å bekrefte email på brukeren din: <a href="${url}/confirm-email?code=${code}">${url}/confirm-email?code=${code}<br/>

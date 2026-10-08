@@ -60,6 +60,15 @@ export async function deleteFetcher(url: string): Promise<ApiResponseType> {
   return json;
 }
 
+// For user-typed text placed inside HTML.
+export const escapeHtml = (value: string) =>
+  value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
 export const getErrorMessage = (error: unknown) => {
   if (error instanceof Error) return error.message;
   return String(error);

@@ -2,8 +2,19 @@ import { NextResponse } from 'next/server';
 import prisma from 'prisma/index';
 import { sendConfirmEmail } from '../[...nextauth]/utils';
 import { generateSalt } from '@/lib/auth/passwords';
+import { TOO_MANY_REQUESTS, clientIp, isRateLimited } from '@/lib/rateLimit';
+
+const RESEND_LIMIT = 10;
+const RESEND_WINDOW_MS = 15 * 60 * 1000;
+// Sending a code updates the user
+const RESEND_COOLDOWN_MS = 60 * 1000;
 
 export async function POST(req: Request) {
+  const ip = clientIp(req.headers.get('x-forwarded-for'));
+  if (isRateLimited(`resend-confirm:${ip}`, RESEND_LIMIT, RESEND_WINDOW_MS)) {
+    return NextResponse.json({ error: TOO_MANY_REQUESTS }, { status: 429 });
+  }
+
   try {
     const { email } = await req.json();
 
@@ -29,6 +40,12 @@ export async function POST(req: Request) {
       return NextResponse.json(
         { error: 'Epost er allerede bekreftet' },
         { status: 400 }
+      );
+    }
+    if (Date.now() - user.updatedAt.getTime() < RESEND_COOLDOWN_MS) {
+      return NextResponse.json(
+        { error: 'Vent et minutt før du ber om en ny epost' },
+        { status: 429 }
       );
     }
     // Generate new code
