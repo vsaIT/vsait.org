@@ -41,6 +41,7 @@ export type AttendingUserType = {
 export type SingleEventType = {
   event: EventType;
   registrations: RegisteredUserType[];
+  waiting: RegisteredUserType[];
   hasRegistered: boolean;
   hasMembership: boolean;
 };

@@ -398,7 +398,10 @@ function Event({ params }: { params: { eventid: string } }): JSX.Element {
           )}
 
           {isAdmin && (
-            <AdminRegistrationsList registrations={data.registrations} />
+            <AdminRegistrationsList
+              registrations={data.registrations}
+              waiting={data.waiting}
+            />
           )}
         </div>
       </section>
