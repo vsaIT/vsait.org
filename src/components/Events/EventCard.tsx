@@ -139,7 +139,7 @@ const EventCard = ({
           </span>
         </div>
 
-        <div className='mt-auto flex flex-wrap items-center gap-3 pt-6'>
+        <div className='mt-auto flex flex-col gap-3 pt-6'>
           <div className='flex items-center gap-2'>
             <AvatarStack count={registrations} seed={seed} />
             <span className='whitespace-nowrap text-sm text-gray'>
@@ -147,12 +147,12 @@ const EventCard = ({
             </span>
           </div>
           {!isDone && hasRegistered ? (
-            <span className='flex w-full shrink-0 items-center justify-center gap-2 rounded-full border border-primary bg-primary px-4 py-2 text-center text-sm text-white transition-all duration-300 group-hover:brightness-95 sm:ml-auto sm:w-auto'>
+            <span className='flex w-full shrink-0 items-center justify-center gap-2 rounded-full border border-primary bg-primary px-4 py-2 text-center text-sm text-white transition-all duration-300 group-hover:brightness-95 sm:w-auto sm:self-end'>
               <CircleCheck color='#FFFFFF' className='h-4 w-4 shrink-0' />
               Du er meldt på
             </span>
           ) : (
-            <span className='w-full shrink-0 rounded-full border border-primary px-4 py-2 text-center text-sm text-primary transition-colors duration-300 group-hover:bg-primary group-hover:text-white sm:ml-auto sm:w-auto'>
+            <span className='w-full shrink-0 rounded-full border border-primary px-4 py-2 text-center text-sm text-primary transition-colors duration-300 group-hover:bg-primary group-hover:text-white sm:w-auto sm:self-end'>
               {isDone ? 'Se detaljer' : 'Meld deg på'}
             </span>
           )}

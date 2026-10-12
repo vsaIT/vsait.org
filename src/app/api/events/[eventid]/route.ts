@@ -83,7 +83,21 @@ const GET = async (
             },
           },
         },
-        waitingList: true,
+        waitingList: {
+          orderBy: { createdAt: 'asc' },
+          select: {
+            userId: true,
+            createdAt: true,
+            user: {
+              select: {
+                lastName: true,
+                firstName: true,
+                email: true,
+                foodNeeds: true,
+              },
+            },
+          },
+        },
         attendanceList: isAdmin,
         _count: {
           select: {
@@ -102,18 +116,31 @@ const GET = async (
 
     // Who is coming is between them and the admin
     let registeredUsers: RegisteredUserType[] = [];
+    let waitingUsers: RegisteredUserType[] = [];
     const userIds = event.registrationList.map((r) => r.userId) || [];
     const userId = token?.id || '';
 
     if (isAdmin) {
-      registeredUsers = event.registrationList.map(({ user }) => {
+      const toRegisteredUser = ({
+        user,
+      }: {
+        user: {
+          firstName: string;
+          lastName: string;
+          email: string;
+          foodNeeds: string;
+        } | null;
+      }): RegisteredUserType => {
         if (!user) return { name: '', email: '', foodNeeds: '' };
         return {
           name: `${user.firstName} ${user.lastName}`,
           email: user.email,
           foodNeeds: user.foodNeeds,
         };
-      });
+      };
+      registeredUsers = event.registrationList.map(toRegisteredUser);
+      // Already in queue order (oldest first)
+      waitingUsers = event.waitingList.map(toRegisteredUser);
     }
     // Check the logged-in user's own membership directly
     let hasMembership = false;
@@ -144,6 +171,7 @@ const GET = async (
           ? event
           : { ...publicEvent, registrationList: [], waitingList: [] },
         registrations: registeredUsers,
+        waiting: waitingUsers,
         hasRegistered: hasRegistered,
         hasMembership: hasMembership,
       },
